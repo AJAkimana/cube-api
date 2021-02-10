@@ -1,42 +1,44 @@
-// import chaihttp from 'chai-http';
-// import chai, { expect } from 'chai';
-// import server from '../../server';
-// import dummyData from './invoice.dummy';
-// import Invoice from '../../database/model/invoice.model';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import { BAD_REQUEST, CREATED } from 'http-status';
+import server from '../../server';
+import {
+  newInvoice,
+  updateInvoice,
+} from '../../utils/fixtures/invoice.fixture';
 
-// chai.use(chaihttp);
-// const router = () => chai.request(server);
+chai.should();
+chai.use(chaiHttp);
 
-// describe('/invoice', async () => {
-//   before(async () => {
-//     await Invoice.deleteMany({});
-//   });
-//   it('users should be able to generate an invoice with correct body', (done) => {
-//     router()
-//       .post('/api/v1/invoice')
-//       .send(dummyData[1])
-//       .end((error, response) => {
-//         expect(response).to.have.status([201]);
-//         expect(response.body).to.be.a('object');
-//         expect(response.body).to.have.property('data');
-//         expect(response.body.message).to.be.a('string');
-//         expect(response.body).to.have.property(
-//           'message',
-//           'Invoice generated successfully, check your email',
-//         );
-//         done(error);
-//       });
-//   });
-//   it('users should not be able to generate an invoice with wrong body', (done) => {
-//     router()
-//       .post('/api/v1/invoice')
-//       .send(dummyData[0])
-//       .end((error, response) => {
-//         expect(response).to.have.status([400]);
-//         expect(response.body).to.be.a('object');
-//         expect(response.body).to.have.property('status');
-//         expect(response.body).to.have.property('message');
-//         done(error);
-//       });
-//   });
-// });
+describe('/POST invoice data', async () => {
+  it('users should be able to generate an invoice with correct body', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/invoice')
+      .send(newInvoice)
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.body.status.should.equal(CREATED);
+        res.body.should.have.property('message');
+        res.body.message.should.equal(
+          'Invoice generated successfully, check your email',
+        );
+        res.body.should.have.property('data');
+      });
+    done();
+  });
+  it('users should not be able to generate an invoice with wrong body', (done) => {
+    chai
+      .request(server)
+      .post('/api/v1/invoice')
+      .send(updateInvoice)
+      .end((error, res) => {
+        res.body.status.should.equal(BAD_REQUEST);
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.body.should.have.property('message');
+      });
+    done();
+  });
+});
