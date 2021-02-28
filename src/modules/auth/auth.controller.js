@@ -51,12 +51,6 @@ class AuthController {
   static async login(req, res) {
     const { email } = req.body;
     try {
-      await InstanceMaintain.findOneAndUpdateData(
-        User,
-        { email },
-        { role: 'client' },
-      );
-
       const user = await InstanceMaintain.findOneData(User, {
         email,
       });

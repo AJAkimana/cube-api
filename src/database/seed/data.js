@@ -8,6 +8,8 @@ const data = {
       phoneNumber: '+250788558899',
       password: BcryptUtil.hashPassword(process.env.PASSWORD),
       role: 'Manager',
+      companyName: 'Timecapsule 3D',
+      address: 'Kigali, RWanda',
     },
     {
       fullName: 'Maombi',
@@ -15,6 +17,8 @@ const data = {
       phoneNumber: '+250788558899',
       password: BcryptUtil.hashPassword(process.env.PASSWORD),
       role: 'Client',
+      companyName: 'Timecapsule 3D',
+      address: 'Kigali, RWanda',
     },
     {
       fullName: 'Gatete',
@@ -22,6 +26,8 @@ const data = {
       phoneNumber: '+250788558899',
       password: BcryptUtil.hashPassword(process.env.PASSWORD),
       role: 'Manager',
+      companyName: 'Timecapsule 3D',
+      address: 'Kigali, RWanda',
     },
   ],
 };
