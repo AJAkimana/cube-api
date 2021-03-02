@@ -27,18 +27,26 @@ class AccountHelpers {
       email: user.email,
       phoneNumber: user.phoneNumber,
       role: user.role,
+      companyName: user.companyName,
+      website: user.website,
     });
     return savedUser;
   }
 
   static async editUserProfile(id, data) {
-    const editedUserProfile = await UserSchema.findByIdAndUpdate(id, {
-      $set: {
-        fullname: data.fullname,
-        email: data.email,
-        phone: data.phone,
+    const editedUserProfile = await UserSchema.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          fullname: data.fullname,
+          email: data.email,
+          phone: data.phone,
+          companyName: data.companyName,
+          website: data.website,
+        },
       },
-    });
+      { new: true },
+    );
     return editedUserProfile;
   }
 }

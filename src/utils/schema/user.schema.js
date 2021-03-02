@@ -75,3 +75,21 @@ export const passwordSchema = Joi.object({
         'Password must be at least 8 characters long with a number, Upper and lower cases, and a special character',
     }),
 }).options({ abortEarly: false });
+
+// ================ Account scheama =========================
+export const profileSchema = Joi.object({
+  fullName: Joi.string().trim().min(2).messages({
+    'string.empty': 'Full Name is not allowed to be empty',
+    'string.min':
+      'Full Name length must be at least 2 characters long',
+  }),
+  website: Joi.string().trim().min(2).messages({
+    'string.empty': 'website is not allowed to be empty',
+    'string.min': 'website length must be at least 2 characters long',
+  }),
+  companyName: Joi.string().trim().min(2).messages({
+    'string.empty': 'Company Name is not allowed to be empty',
+    'string.min':
+      'Company Name length must be at least 2 characters long',
+  }),
+}).options({ abortEarly: false });

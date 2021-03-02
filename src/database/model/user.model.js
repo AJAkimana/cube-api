@@ -55,6 +55,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    website: {
+      type: String,
+    },
     address: {
       type: String,
       required: true,
@@ -79,11 +82,6 @@ const userSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    writeConcern: {
-      w: 'majority',
-      j: true,
-      wtimeout: 1000,
-    },
   },
 );
 

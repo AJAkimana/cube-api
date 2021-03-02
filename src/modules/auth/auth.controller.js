@@ -6,7 +6,6 @@ import {
 } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import User from '../../database/model/user.model';
-import accountHelper from '../account/helpers/account.helper';
 import BcryptUtil from '../../utils/Bcrypt.util';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import data from '../../database/seed/data';
@@ -80,7 +79,8 @@ class AuthController {
       const { id } = req.params;
       const userToEdit = await User.findById(id);
       if (userToEdit) {
-        const editedProfile = await accountHelper.editUserProfile(
+        const editedProfile = await InstanceMaintain.findByIdAndUpdateData(
+          User,
           id,
           req.body,
         );
