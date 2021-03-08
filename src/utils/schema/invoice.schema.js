@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import Joi from 'joi';
 
 export const invoiceSchema = Joi.object({
@@ -33,5 +32,24 @@ export const invoiceSchema = Joi.object({
     'any.required': 'customerEmail is required',
     'string.empty': 'customerEmail is not allowed to be empty',
     'string.email': 'customerEmail must be a valid email',
+  }),
+}).options({ abortEarly: false });
+
+// ================ Invoice update schema =========================
+
+export const invoiceUpdateSchema = Joi.object({
+  amount: Joi.number()
+    .positive()
+    .integer()
+    .label('amount')
+    .required()
+    .messages({
+      'any.required': 'amount is required',
+      'string.empty': 'amount is not allowed to be empty',
+    }),
+  status: Joi.string().valid('pending', 'paid', 'canceled').messages({
+    'any.required': 'status is required',
+    'string.empty': 'status is not allowed to be empty',
+    'any.only': 'status must be one of [pending, paid, canceled]',
   }),
 }).options({ abortEarly: false });
