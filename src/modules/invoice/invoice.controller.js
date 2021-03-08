@@ -1,4 +1,6 @@
 import { INTERNAL_SERVER_ERROR, CREATED } from 'http-status';
+import InstanceMaintain from '../../database/maintains/instance.maintain';
+import Invoice from '../../database/model/invoice.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
 
@@ -16,7 +18,10 @@ class InvoiceController {
   static async generateInvoice(req, res) {
     try {
       await invoiceHelper.generatePDF(req.body);
-      const data = await invoiceHelper.saveInvoice(req.body);
+      const data = await InstanceMaintain.createData(
+        Invoice,
+        req.body,
+      );
       ResponseUtil.setSuccess(
         CREATED,
         'Invoice generated successfully, check your email',

@@ -1,9 +1,10 @@
 import { Router } from 'express';
 import invoice from './invoice.controller';
-import validateInvoice from './invoice.middleware';
+import { validateInvoiceBody } from './invoice.validation';
+// import validateInvoice from './invoice.middleware';
 
 const invoiceRouter = Router();
 
-invoiceRouter.post('/', validateInvoice, invoice.generateInvoice);
+invoiceRouter.post('/', validateInvoiceBody, invoice.generateInvoice);
 
 export default invoiceRouter;
