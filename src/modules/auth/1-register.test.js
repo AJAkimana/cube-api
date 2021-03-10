@@ -2,7 +2,16 @@ import chai from 'chai';
 import chaiHttp from 'chai-http';
 import server from '../../server';
 import cleanAllTables from '../../utils/fixtures/database.fixture';
-import { createUser, user } from '../../utils/fixtures/user.fixture';
+import {
+  createUser,
+  user,
+  subscriptionId,
+} from '../../utils/fixtures/user.fixture';
+import {
+  createService,
+  dummySubscriptionId,
+} from '../../utils/fixtures/service.fixture';
+import { subscription } from '../../utils/fixtures/subscription.fixture';
 
 chai.should();
 chai.use(chaiHttp);
@@ -11,6 +20,7 @@ describe('/POST register', () => {
   before(async () => {
     await cleanAllTables();
     await createUser();
+    await createService();
   });
   it('Should register a user', (done) => {
     chai
@@ -72,5 +82,48 @@ describe('/POST register', () => {
         );
       });
     done();
+  });
+  it('Should create a subscription', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/v1/user/subscription/${subscriptionId}`)
+      .send({ ...subscription, serviceId: dummySubscriptionId })
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.status.should.be.eql(200);
+        res.body.should.have.property('message');
+        res.body.message.should.equal(
+          'Subscription has been created successfully',
+        );
+        res.body.should.have.property('data');
+        done();
+      });
+  });
+  it('Should not create a subscription', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/v1/user/subscription/${subscriptionId}`)
+      .send(subscription)
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.status.should.be.eql(400);
+        res.body.should.have.property('message');
+        done();
+      });
+  });
+  it('Should not create a subscription', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/v1/user/subscription/${dummySubscriptionId}`)
+      .send({ ...subscription, serviceId: dummySubscriptionId })
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.status.should.be.eql(404);
+        res.body.should.have.property('message');
+        done();
+      });
   });
 });

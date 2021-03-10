@@ -14,6 +14,16 @@ export const user = {
   address: faker.address.city(),
 };
 
+export const subscribeUser = {
+  _id: objectId,
+  fullName: faker.name.findName(),
+  email: faker.internet.email(),
+  phoneNumber: '+250788445847',
+  role: 'Client',
+  companyName: faker.company.companyName(),
+  address: faker.address.city(),
+};
+
 const password = faker.internet.password();
 const newUser = {
   _id: objectId,
@@ -61,6 +71,8 @@ export const mockLoginUser = {
   email: newUser.email,
   password,
 };
+
+export const subscriptionId = newUser._id;
 
 export const createUser = async () => {
   await User.create(newUser);
