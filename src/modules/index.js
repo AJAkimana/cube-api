@@ -7,6 +7,7 @@ import serviceRouter from './services/service.route';
 import authVerification from './middleware/auth.middleware';
 import orderRouter from './order';
 import subscriptionRouter from './subscription';
+import projectRouter from './project';
 
 const indexRouter = Router();
 
@@ -19,5 +20,6 @@ indexRouter.use('/services', serviceRouter);
 indexRouter.use('/edit-profile', userRouter);
 indexRouter.use('/order', authVerification, orderRouter);
 indexRouter.use('/user', subscriptionRouter);
+indexRouter.use('/project', projectRouter);
 
 export default indexRouter;
