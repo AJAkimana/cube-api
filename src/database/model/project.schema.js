@@ -14,8 +14,9 @@ const projectSchema = new Schema(
     status: {
       type: String,
       required: true,
+      default: 'pending',
     },
-    descriptions: {
+    description: {
       type: String,
       required: true,
     },
