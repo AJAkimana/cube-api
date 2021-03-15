@@ -12,6 +12,7 @@ import {
   dummySubscriptionId,
 } from '../../utils/fixtures/service.fixture';
 import { subscription } from '../../utils/fixtures/subscription.fixture';
+import { createProject } from '../../utils/fixtures/project.fixture';
 
 chai.should();
 chai.use(chaiHttp);
@@ -21,6 +22,7 @@ describe('/POST register', () => {
     await cleanAllTables();
     await createUser();
     await createService();
+    await createProject();
   });
   it('Should register a user', (done) => {
     chai

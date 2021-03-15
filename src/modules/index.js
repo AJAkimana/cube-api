@@ -8,6 +8,7 @@ import authVerification from './middleware/auth.middleware';
 import orderRouter from './order';
 import subscriptionRouter from './subscription';
 import projectRouter from './project';
+import quoteRouter from './quote';
 
 const indexRouter = Router();
 
@@ -21,5 +22,6 @@ indexRouter.use('/edit-profile', userRouter);
 indexRouter.use('/order', authVerification, orderRouter);
 indexRouter.use('/user', subscriptionRouter);
 indexRouter.use('/project', projectRouter);
+indexRouter.use('/quote', quoteRouter);
 
 export default indexRouter;
