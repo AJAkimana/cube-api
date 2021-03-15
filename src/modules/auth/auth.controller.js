@@ -121,7 +121,14 @@ class AuthController {
       const user = await InstanceMaintain.findOneData(User, {
         email,
       });
-
+      if (user && user.role === 'visitor') {
+        await InstanceMaintain.findOneAndUpdateData(
+          User,
+          { email },
+          { role: 'client' },
+          { new: true },
+        );
+      }
       const updatedData = { ...user._doc };
       delete updatedData.password;
 
