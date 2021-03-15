@@ -1,4 +1,9 @@
-import { CREATED, NOT_FOUND } from 'http-status';
+import {
+  CREATED,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+  OK,
+} from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
@@ -33,6 +38,35 @@ class QuoteController {
         'Quote has been created successfully',
         quote,
       );
+      return ResponseUtil.send(res);
+    }
+  }
+
+  /**
+   * @description this function is invoked to update quote
+   * @param {object} req request
+   * @param {object} res response
+   * @return {object} returns an object containing quote updated
+   */
+  static async updateQuote(req, res) {
+    try {
+      const { id } = req.params;
+      const { amount } = req.body;
+      const updatedQuote = await InstanceMaintain.findByIdAndUpdateData(
+        Quote,
+        id,
+        { amount },
+      );
+      ResponseUtil.setSuccess(
+        OK,
+        'Quote has been updated successfully',
+        {
+          Quote: updatedQuote,
+        },
+      );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
       return ResponseUtil.send(res);
     }
   }
