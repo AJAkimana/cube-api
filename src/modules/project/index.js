@@ -1,11 +1,19 @@
 import { Router } from 'express';
 import project from './project.controller';
-import { validateProjectBody } from './project.validation';
-import { checkUserRole } from './project.middleware';
+import {
+  validateProjectBody,
+  updateProjectBody,
+  updateProjectStatus,
+} from './project.validation';
+import {
+  checkUserRole,
+  checkUserRoleAndProjectExists,
+  checkManagerRoleAndProjectExists,
+} from './project.middleware';
 import authorization from '../middleware/auth.middleware';
 import { uploadImage } from '../../utils/image.util';
 
-const { createProject } = project;
+const { createProject, updateProject } = project;
 const projectRouter = Router();
 
 projectRouter.post(
@@ -15,6 +23,22 @@ projectRouter.post(
   checkUserRole,
   uploadImage,
   createProject,
+);
+
+projectRouter.patch(
+  '/:id',
+  authorization,
+  updateProjectBody,
+  checkUserRoleAndProjectExists,
+  updateProject,
+);
+
+projectRouter.patch(
+  '/approve-project/:id',
+  authorization,
+  updateProjectStatus,
+  checkManagerRoleAndProjectExists,
+  updateProject,
 );
 
 export default projectRouter;
