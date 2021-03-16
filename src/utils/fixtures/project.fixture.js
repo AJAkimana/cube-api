@@ -1,4 +1,8 @@
 import faker from 'faker';
+import id from 'mongoose';
+import Project from '../../database/model/project.schema';
+
+const objectId = id.Types.ObjectId();
 
 export const fakeProject = {
   status: 'cancel',
@@ -18,4 +22,17 @@ export const newProject = {
 
 export const approveProject = {
   status: 'approved',
+};
+
+const project = {
+  _id: objectId,
+  userId: '5fff2a57ab5f62aef78fe0b7',
+  name: '3D Viewer',
+  description: faker.lorem.paragraph(),
+};
+
+export const projectId = project._id;
+
+export const createProject = async () => {
+  await Project.create(project);
 };
