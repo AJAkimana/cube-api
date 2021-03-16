@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import quote from './quote.controller';
 import authorization from '../middleware/auth.middleware';
-import { validateQuoteBody } from './quote.validation';
-import { checkUserRole } from './quote.middleware';
+import {
+  validateQuoteBody,
+  validateQuoteUpdate,
+} from './quote.validation';
+import {
+  checkUserRole,
+  checkUserRoleAndQuoteExists,
+} from './quote.middleware';
 
 const quoteRouter = Router();
-const { createQuote } = quote;
+const { createQuote, updateQuote } = quote;
 
 quoteRouter.post(
   '/',
@@ -13,6 +19,14 @@ quoteRouter.post(
   validateQuoteBody,
   checkUserRole,
   createQuote,
+);
+
+quoteRouter.patch(
+  '/:id',
+  authorization,
+  validateQuoteUpdate,
+  checkUserRoleAndQuoteExists,
+  updateQuote,
 );
 
 export default quoteRouter;

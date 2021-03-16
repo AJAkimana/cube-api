@@ -16,3 +16,17 @@ export const quoteSchema = Joi.object({
       'string.empty': 'amount is not allowed to be empty',
     }),
 }).options({ abortEarly: false });
+
+// ================ Quote update schema =========================
+
+export const quoteUpdateSchema = Joi.object({
+  amount: Joi.number()
+    .positive()
+    .integer()
+    .label('amount')
+    .required()
+    .messages({
+      'any.required': 'amount is required',
+      'string.empty': 'amount is not allowed to be empty',
+    }),
+}).options({ abortEarly: false });
