@@ -3,6 +3,7 @@ import {
   accountSchema,
   loginSchema,
   passwordSchema,
+  profileSchema,
 } from '../../utils/schema/user.schema';
 
 /**
@@ -36,4 +37,15 @@ export const validateLoginBody = (req, res, next) => {
  */
 export const validateSecurePassword = (req, res, next) => {
   return handleErrorsUtil(passwordSchema, req.body, res, next);
+};
+
+/**
+ * * Handle update profile validation.
+ * @param {object} req request
+ * @param {object} res response
+ * @param {object} next function
+ * @returns {object} Object
+ */
+export const validateUdateProfile = (req, res, next) => {
+  return handleErrorsUtil(profileSchema, req.body, res, next);
 };

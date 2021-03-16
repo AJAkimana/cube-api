@@ -57,6 +57,8 @@ export const updatedUserData = {
   password: 'Pass1234?',
 };
 
+export const userId = notManager._id;
+
 export const invalidUserData = {
   email: faker.internet.email(),
   password: 'Pass1234?',

@@ -6,6 +6,8 @@ import {
   createUser,
   user,
   subscriptionId,
+  userId,
+  // updatedUserProfile,
 } from '../../utils/fixtures/user.fixture';
 import {
   createService,
@@ -82,6 +84,49 @@ describe('/POST register', () => {
         res.body.message.should.equal(
           'User with this email already exist',
         );
+      });
+    done();
+  });
+  it('users should not be able to update their profile when Id is wrong', (done) => {
+    chai
+      .request(server)
+      .patch('/api/v1/user/edit-profile/1')
+      .send(user)
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.body.status.should.equal(400);
+        res.body.should.have.property('message');
+      });
+    done();
+  });
+  it('users should not be able to update their profile when body is wrong', (done) => {
+    chai
+      .request(server)
+      .patch(`/api/v1/user/edit-profile/${userId}`)
+      .send(user)
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.body.status.should.equal(400);
+        res.body.should.have.property('message');
+      });
+    done();
+  });
+  it('users should be able to update their profile', (done) => {
+    const updateProfile = {
+      fullName: user.fullName,
+      companyName: user.companyName,
+    };
+    chai
+      .request(server)
+      .patch(`/api/v1/user/edit-profile/${userId}`)
+      .send(updateProfile)
+      .end((err, res) => {
+        res.body.should.be.an('object');
+        res.body.should.have.property('status');
+        res.body.status.should.equal(200);
+        res.body.should.have.property('message');
       });
     done();
   });

@@ -6,5 +6,5 @@ coverage/
 routes.rest
 dist
 package-lock.json
-tmp
+tmp/
 invoice.pdf

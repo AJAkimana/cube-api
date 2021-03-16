@@ -4,8 +4,8 @@ import {
   validateUserBody,
   validateSecurePassword,
   validateLoginBody,
+  validateUdateProfile,
 } from './auth.validation';
-import editValidUser from '../account/helpers/validation';
 import {
   checkEmailExists,
   checkPasswordCredentials,
@@ -32,7 +32,11 @@ userRouter.patch(
   checkPasswordCredentials,
   AuthController.updatingPassword,
 );
-userRouter.patch('/:id', editValidUser, AuthController.editAccount);
+userRouter.patch(
+  '/edit-profile/:id',
+  validateUdateProfile,
+  AuthController.editAccount,
+);
 
 userRouter.post('/seed', AuthController.seed);
 
