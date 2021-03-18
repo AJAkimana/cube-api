@@ -9,11 +9,11 @@ import {
   userId,
   // updatedUserProfile,
 } from '../../utils/fixtures/user.fixture';
-import {
-  createService,
-  dummySubscriptionId,
-} from '../../utils/fixtures/service.fixture';
 import { subscription } from '../../utils/fixtures/subscription.fixture';
+import {
+  createQuote,
+  dummyQuoteId,
+} from '../../utils/fixtures/quote.fixture';
 import { createProject } from '../../utils/fixtures/project.fixture';
 
 chai.should();
@@ -23,7 +23,7 @@ describe('/POST register', () => {
   before(async () => {
     await cleanAllTables();
     await createUser();
-    await createService();
+    await createQuote();
     await createProject();
   });
   it('Should register a user', (done) => {
@@ -134,7 +134,7 @@ describe('/POST register', () => {
     chai
       .request(server)
       .patch(`/api/v1/user/subscription/${subscriptionId}`)
-      .send({ ...subscription, serviceId: dummySubscriptionId })
+      .send({ ...subscription, quoteId: dummyQuoteId })
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -163,8 +163,8 @@ describe('/POST register', () => {
   it('Should not create a subscription', (done) => {
     chai
       .request(server)
-      .patch(`/api/v1/user/subscription/${dummySubscriptionId}`)
-      .send({ ...subscription, serviceId: dummySubscriptionId })
+      .patch(`/api/v1/user/subscription/${dummyQuoteId}`)
+      .send({ ...subscription, quoteId: dummyQuoteId })
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');

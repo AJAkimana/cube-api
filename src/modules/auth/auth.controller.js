@@ -10,6 +10,7 @@ import BcryptUtil from '../../utils/Bcrypt.util';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import data from '../../database/seed/data';
 import TokenUtil from '../../utils/jwt.util';
+import { sendConfirmationEmail } from '../mail/mail.controller';
 
 /**
  * This class will contains all function to handle account
@@ -25,6 +26,7 @@ class AuthController {
   static async createAccount(req, res) {
     try {
       const user = await InstanceMaintain.createData(User, req.body);
+      await sendConfirmationEmail(user);
       return ResponseUtil.handleSuccessResponse(
         CREATED,
         'User account created successfully',
@@ -152,6 +154,30 @@ class AuthController {
     );
     ResponseUtil.setSuccess(201, 'Users seeded', userSeed);
     return ResponseUtil.send(res);
+  }
+
+  /**
+   * This function to handle all getting users.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status and some data of created account.
+   */
+  static async getUsers(req, res) {
+    try {
+      const users = await InstanceMaintain.findData(User);
+      return ResponseUtil.handleSuccessResponse(
+        OK,
+        'User accounts have been retrieved',
+        users,
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
   }
 }
 

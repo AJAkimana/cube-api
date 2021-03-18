@@ -7,7 +7,7 @@ import {
 } from './invoice.validation';
 import { checkInvoiceExists } from './invoice.middleware';
 
-const { paymentOfInvoice } = invoice;
+const { getAllInvoices, paymentOfInvoice } = invoice;
 const invoiceRouter = Router();
 
 invoiceRouter.post('/', validateInvoiceBody, invoice.generateInvoice);
@@ -18,5 +18,6 @@ invoiceRouter.patch(
   checkInvoiceExists,
   paymentOfInvoice,
 );
+invoiceRouter.get('/', authorization, getAllInvoices);
 
 export default invoiceRouter;

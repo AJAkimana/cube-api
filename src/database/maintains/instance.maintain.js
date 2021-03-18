@@ -53,6 +53,15 @@ class InstanceMaintain {
   static findByIdAndUpdateData(model, property, data) {
     return model.findByIdAndUpdate(property, data, { new: true });
   }
+
+  /**
+   * * Find all data
+   * @param  {object} model model
+   * @returns {object} object
+   */
+  static findData(model) {
+    return model.find({});
+  }
 }
 
 export default InstanceMaintain;

@@ -2,9 +2,9 @@
 import Joi from 'joi';
 
 export const subscriptionSchema = Joi.object({
-  serviceId: Joi.string().required().messages({
-    'any.required': 'serviceId is required',
-    'string.empty': 'serviceId is not allowed to be empty',
+  quoteId: Joi.string().required().messages({
+    'any.required': 'projectId is required',
+    'string.empty': 'projectId is not allowed to be empty',
   }),
   startDate: Joi.date()
     .min(new Date().toISOString().split('T')[0])

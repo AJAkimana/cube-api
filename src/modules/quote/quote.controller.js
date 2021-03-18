@@ -19,7 +19,7 @@ class QuoteController {
    * @returns {object} function to create a quote
    */
   static async createQuote(req, res) {
-    const { projectId, amount } = req.body;
+    const { projectId, billingCycle, amount } = req.body;
     const project = await InstanceMaintain.findDataId(Project, {
       _id: projectId,
     });
@@ -31,6 +31,7 @@ class QuoteController {
       const quote = await InstanceMaintain.createData(Quote, {
         userId: req.userData._id,
         projectId,
+        billingCycle,
         amount,
       });
       ResponseUtil.setSuccess(
@@ -68,6 +69,30 @@ class QuoteController {
     } catch (error) {
       ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
       return ResponseUtil.send(res);
+    }
+  }
+
+  /**
+   * This function to handle all getting quotes.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status of all quotes.
+   */
+  static async getAllQuotes(req, res) {
+    try {
+      const quotes = await InstanceMaintain.findData(Quote);
+      return ResponseUtil.handleSuccessResponse(
+        OK,
+        'All quotes have been retrieved',
+        quotes,
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
     }
   }
 }

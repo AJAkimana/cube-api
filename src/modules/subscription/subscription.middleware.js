@@ -1,11 +1,7 @@
 /* eslint-disable import/prefer-default-export */
-import {
-  NOT_FOUND,
-  BAD_REQUEST,
-  INTERNAL_SERVER_ERROR,
-} from 'http-status';
+import { NOT_FOUND, INTERNAL_SERVER_ERROR } from 'http-status';
 import User from '../../database/model/user.model';
-import Service from '../../database/model/service.model';
+import Quote from '../../database/model/quote.model';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 
@@ -17,18 +13,11 @@ export const checkSubscription = async (req, res, next) => {
       ResponseUtil.setError(NOT_FOUND, 'User was not found');
       return ResponseUtil.send(res);
     }
-    const serviceData = await InstanceMaintain.findOneData(Service, {
-      userId: id,
+    const quoteData = await InstanceMaintain.findOneData(Quote, {
+      _id: req.body.quoteId,
     });
-    if (!serviceData && serviceData === null) {
-      ResponseUtil.setError(NOT_FOUND, 'Service not found');
-      return ResponseUtil.send(res);
-    }
-    if (
-      serviceData.billingCycle !== 'Monthly' &&
-      serviceData.billingCycle !== 'Yearly'
-    ) {
-      ResponseUtil.setError(BAD_REQUEST, 'Invalid billing cycle');
+    if (!quoteData && quoteData === null) {
+      ResponseUtil.setError(NOT_FOUND, 'Quote not found');
       return ResponseUtil.send(res);
     }
   } catch (error) {

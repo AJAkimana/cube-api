@@ -63,6 +63,30 @@ class InvoiceController {
       return ResponseUtil.send(res);
     }
   }
+
+  /**
+   * This function to handle all getting invoices.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status of all invoices.
+   */
+  static async getAllInvoices(req, res) {
+    try {
+      const invoices = await InstanceMaintain.findData(Invoice);
+      return ResponseUtil.handleSuccessResponse(
+        OK,
+        'All invoices have been retrieved',
+        invoices,
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
+  }
 }
 
 export default InvoiceController;

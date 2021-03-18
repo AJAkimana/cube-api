@@ -6,6 +6,14 @@ export const quoteSchema = Joi.object({
     'any.required': 'projectId is required',
     'string.empty': 'projectId is not allowed to be empty',
   }),
+  billingCycle: Joi.string()
+    .valid('Monthly', 'Yearly')
+    .required()
+    .messages({
+      'any.required': 'Billing Cycle is required',
+      'string.empty': 'Billing Cycle is not allowed to be empty',
+      'any.only': 'Billing Cycle must be one of [Monthly, Yearly]',
+    }),
   amount: Joi.number()
     .positive()
     .integer()

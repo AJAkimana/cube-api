@@ -36,3 +36,5 @@ export const projectId = project._id;
 export const createProject = async () => {
   await Project.create(project);
 };
+
+export const dummySubscriptionId = project._id;

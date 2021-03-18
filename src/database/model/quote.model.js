@@ -7,6 +7,7 @@ const quoteSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true },
     projectId: { type: String, required: true },
+    billingCycle: { type: String, required: true },
     amount: { type: String, required: true },
   },
   {

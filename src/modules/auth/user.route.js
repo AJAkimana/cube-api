@@ -37,7 +37,7 @@ userRouter.patch(
   validateUdateProfile,
   AuthController.editAccount,
 );
-
+userRouter.get('/users', AuthController.getUsers);
 userRouter.post('/seed', AuthController.seed);
 
 export default userRouter;
