@@ -1,6 +1,6 @@
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
-import Service from '../../database/model/service.model';
+import Quote from '../../database/model/quote.model';
 import User from '../../database/model/user.model';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 
@@ -19,13 +19,10 @@ class SubscriptionController {
    */
   static async UserSubscription(req, res) {
     try {
-      const serviceData = await InstanceMaintain.findOneData(
-        Service,
-        {
-          userId: req.params.id,
-        },
-      );
-      if (serviceData.billingCycle === 'Monthly') {
+      const quoteData = await InstanceMaintain.findOneData(Quote, {
+        _id: req.body.quoteId,
+      });
+      if (quoteData.billingCycle === 'Monthly') {
         const today = new Date();
         const subscription = await InstanceMaintain.findByIdAndUpdateData(
           User,
@@ -33,7 +30,7 @@ class SubscriptionController {
           {
             $addToSet: {
               subscription: {
-                serviceId: req.body.serviceId,
+                quoteId: req.body.quoteId,
                 startDate: new Date(Date.now()).toISOString(),
                 expirationDate: new Date(
                   new Date().setDate(today.getDate() + 30),
@@ -52,7 +49,7 @@ class SubscriptionController {
         );
         return ResponseUtil.send(res);
       }
-      if (serviceData.billingCycle === 'Yearly') {
+      if (quoteData.billingCycle === 'Yearly') {
         const today = new Date();
         const subscription = await InstanceMaintain.findByIdAndUpdateData(
           User,
@@ -60,7 +57,7 @@ class SubscriptionController {
           {
             $addToSet: {
               subscription: {
-                serviceId: req.body.serviceId,
+                quoteId: req.body.quoteId,
                 startDate: new Date(Date.now()).toISOString(),
                 expirationDate: new Date(
                   new Date().setDate(today.getDate() + 365),

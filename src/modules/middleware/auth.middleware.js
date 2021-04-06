@@ -42,3 +42,21 @@ export default (req, res, next) => {
     return ResponseUtil.send(res);
   }
 };
+
+/**
+ * @param  {object} req
+ * @param  {object} res
+ * @param  {object} next
+ * @returns {object} protect route
+ */
+export const isManager = (req, res, next) => {
+  if (req.userData && req.userData.role === 'Manager') {
+    next();
+  } else {
+    ResponseUtil.setError(
+      UNAUTHORIZED,
+      'Unauthorized, Only a manager can access the dashboard',
+    );
+    return ResponseUtil.send(res);
+  }
+};

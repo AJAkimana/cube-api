@@ -11,7 +11,7 @@ import {
 } from './quote.middleware';
 
 const quoteRouter = Router();
-const { createQuote, updateQuote } = quote;
+const { createQuote, getAllQuotes, updateQuote } = quote;
 
 quoteRouter.post(
   '/',
@@ -28,5 +28,6 @@ quoteRouter.patch(
   checkUserRoleAndQuoteExists,
   updateQuote,
 );
+quoteRouter.get('/', getAllQuotes);
 
 export default quoteRouter;

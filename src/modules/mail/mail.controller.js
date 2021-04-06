@@ -7,6 +7,17 @@ const sendgridAPIKey =
   process.env.SENDGRID_API_KEY || config.sendgrid_api_key;
 sgMail.setApiKey(sendgridAPIKey);
 
+const sendConfirmationEmail = async (user) => {
+  const url = `${process.env.APP_URL}`;
+  const data = {
+    from: process.env.MAIL_FROM,
+    to: `${user.email}`,
+    subject: 'A.R.I Secure Password',
+    html: `Kindly secure your password using this link <a href=${url}>${url}</a>`,
+  };
+  await sgMail.send(data);
+};
+
 const mail = async (req, res) => {
   try {
     const {
@@ -51,11 +62,11 @@ const sendInvoice = async (email, message, attachments) => {
   const data = {
     from: process.env.MAIL_FROM,
     to: email,
-    subject: 'Kitech Invoice',
+    subject: 'A.R.I Invoice',
     attachments,
     html: `<div><p>${message}</p><p><b>Contact Email:</b> ${process.env.MAIL_FROM}<br/>`,
   };
   await sgMail.send(data);
 };
 
-export { mail, sendInvoice };
+export { sendConfirmationEmail, mail, sendInvoice };

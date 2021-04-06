@@ -10,21 +10,18 @@ import {
 } from 'http-status';
 import app from '../../app';
 import {
+  newQuote,
+  dummyQuoteId,
+} from '../../utils/fixtures/quote.fixture';
+import {
   loggedInToken,
   notManagerToken,
 } from '../../utils/fixtures/user.fixture';
-import { projectId } from '../../utils/fixtures/project.fixture';
 
 chai.should();
 chai.use(chaiHttp);
 
-let quoteId;
-
 describe('/POST manager creates a quote', () => {
-  const quote = {
-    projectId,
-    amount: 5000,
-  };
   const fakeQuote = {
     projectId: '603e79c5d78c16174e149647',
   };
@@ -36,7 +33,7 @@ describe('/POST manager creates a quote', () => {
       .request(app)
       .post('/api/v1/quote')
       .set('Authorization', `Bearer ${loggedInToken}`)
-      .send(quote)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -47,7 +44,6 @@ describe('/POST manager creates a quote', () => {
         );
         res.body.should.have.property('data');
         res.body.data.should.be.an('object');
-        quoteId = res.body.data._id;
       });
     done();
   });
@@ -56,7 +52,7 @@ describe('/POST manager creates a quote', () => {
     chai
       .request(app)
       .post('/api/v1/quote')
-      .send(quote)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -74,7 +70,7 @@ describe('/POST manager creates a quote', () => {
       .request(app)
       .post('/api/v1/quote')
       .set('Authorization', 'Bearer')
-      .send(quote)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -89,7 +85,7 @@ describe('/POST manager creates a quote', () => {
       .request(app)
       .post('/api/v1/quote')
       .set('Authorization', `Bearer ${notManagerToken}`)
-      .send(quote)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -101,7 +97,7 @@ describe('/POST manager creates a quote', () => {
       });
     done();
   });
-  it('Should create a quote', (done) => {
+  it('Should not create a quote', (done) => {
     chai
       .request(app)
       .post('/api/v1/quote')
@@ -118,7 +114,7 @@ describe('/POST manager creates a quote', () => {
   it('Should update a quote', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/quote/${quoteId}`)
+      .patch(`/api/v1/quote/${dummyQuoteId}`)
       .set('Authorization', `Bearer ${loggedInToken}`)
       .send(updatePrice)
       .end((err, res) => {
@@ -152,7 +148,7 @@ describe('/POST manager creates a quote', () => {
   it('Should check if a user is a manager', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/quote/${quoteId}`)
+      .patch(`/api/v1/quote/${dummyQuoteId}`)
       .set('Authorization', `Bearer ${notManagerToken}`)
       .send(updatePrice)
       .end((err, res) => {
@@ -169,8 +165,8 @@ describe('/POST manager creates a quote', () => {
   it('Should check if authorization has been set', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/quote/${quoteId}`)
-      .send(quote)
+      .patch(`/api/v1/quote/${dummyQuoteId}`)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');
@@ -186,9 +182,9 @@ describe('/POST manager creates a quote', () => {
   it('Should check if a token is valid', (done) => {
     chai
       .request(app)
-      .patch(`/api/v1/quote/${quoteId}`)
+      .patch(`/api/v1/quote/${dummyQuoteId}`)
       .set('Authorization', 'Bearer')
-      .send(quote)
+      .send(newQuote)
       .end((err, res) => {
         res.body.should.be.an('object');
         res.body.should.have.property('status');

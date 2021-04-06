@@ -5,10 +5,10 @@ import mongoose from 'mongoose';
  */
 const subscriptionSchema = new mongoose.Schema(
   {
-    serviceId: {
+    quoteId: {
       type: String,
       required: true,
-      ref: 'Service',
+      ref: 'Quote',
     },
     startDate: { type: String, required: true },
     expirationDate: { type: String, required: true },
