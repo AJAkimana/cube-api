@@ -5,6 +5,7 @@ import {
   validateSecurePassword,
   validateLoginBody,
   validateUdateProfile,
+  validateNewPassword,
 } from './auth.validation';
 import {
   checkEmailExists,
@@ -31,6 +32,11 @@ userRouter.patch(
   validateSecurePassword,
   checkPasswordCredentials,
   AuthController.updatingPassword,
+);
+userRouter.patch(
+  '/set-password',
+  validateNewPassword,
+  AuthController.setNewPassword,
 );
 userRouter.patch(
   '/edit-profile/:id',

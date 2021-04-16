@@ -4,6 +4,7 @@ import {
   OK,
   NOT_FOUND,
 } from 'http-status';
+import { randomBytes } from 'crypto';
 import ResponseUtil from '../../utils/response.util';
 import User from '../../database/model/user.model';
 import BcryptUtil from '../../utils/Bcrypt.util';
@@ -25,6 +26,7 @@ class AuthController {
    */
   static async createAccount(req, res) {
     try {
+      req.body.resetKey = randomBytes(40).toString('hex');
       const user = await InstanceMaintain.createData(User, req.body);
       await sendConfirmationEmail(user);
       return ResponseUtil.handleSuccessResponse(
@@ -139,6 +141,40 @@ class AuthController {
         'Successful updated your password',
         updatedData,
       );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
+      return ResponseUtil.send(res);
+    }
+  }
+
+  /**
+   * This function is for setting a new password user password.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status and some data of created account.
+   */
+  static async setNewPassword(req, res) {
+    const { token, password } = req.body;
+    try {
+      const user = await User.findOne({ resetKey: token });
+      if (user && user.role === 'visitor') {
+        user.password = BcryptUtil.hashPassword(password);
+        user.role = 'client';
+        user.resetKey = null;
+
+        await user.save();
+        const updatedData = { ...user._doc };
+        delete updatedData.password;
+
+        ResponseUtil.setSuccess(
+          OK,
+          'Successful set new password',
+          updatedData,
+        );
+        return ResponseUtil.send(res);
+      }
+      ResponseUtil.setError(NOT_FOUND, 'Token not found');
       return ResponseUtil.send(res);
     } catch (error) {
       ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());

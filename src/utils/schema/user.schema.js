@@ -76,6 +76,21 @@ export const passwordSchema = Joi.object({
     }),
 }).options({ abortEarly: false });
 
+// ================ Password scheama =========================
+export const newPasswordSchema = Joi.object({
+  token: Joi.string(),
+  password: Joi.string()
+    .required()
+    .regex(
+      /^(?=\S*[a-z])(?=\S*[A-Z])(?=\S*\d)(?=\S*[^\w\s])\S{8,30}$/,
+    )
+    .messages({
+      'any.required': 'Password is a required field',
+      'string.empty': 'Password is not allowed to be empty',
+      'string.pattern.base':
+        'Password must be at least 8 characters long with a number, Upper and lower cases, and a special character',
+    }),
+}).options({ abortEarly: false });
 // ================ Account scheama =========================
 export const profileSchema = Joi.object({
   fullName: Joi.string().trim().min(2).messages({
