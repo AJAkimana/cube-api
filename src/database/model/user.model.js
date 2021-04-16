@@ -46,6 +46,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    resetKey: {
+      type: String,
+    },
     role: {
       type: String,
       required: true,
