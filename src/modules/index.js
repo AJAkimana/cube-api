@@ -9,6 +9,8 @@ import orderRouter from './order';
 import subscriptionRouter from './subscription';
 import projectRouter from './project';
 import quoteRouter from './quote';
+import ResponseUtil from '../utils/response.util';
+import { NOT_FOUND } from 'http-status';
 
 const indexRouter = Router();
 
@@ -23,5 +25,9 @@ indexRouter.use('/order', authVerification, orderRouter);
 indexRouter.use('/user', subscriptionRouter);
 indexRouter.use('/project', projectRouter);
 indexRouter.use('/quote', quoteRouter);
+indexRouter.all('/*', (req, res) => {
+  ResponseUtil.setError(NOT_FOUND, 'Oops, you have lost');
+  return ResponseUtil.send(res);
+});
 
 export default indexRouter;
