@@ -13,7 +13,7 @@ import {
 import authorization from '../middleware/auth.middleware';
 import { uploadImage } from '../../utils/image.util';
 
-const { createProject, updateProject } = project;
+const { createProject, updateProject, getProjects } = project;
 const projectRouter = Router();
 
 projectRouter.post(
@@ -25,6 +25,7 @@ projectRouter.post(
   createProject,
 );
 
+projectRouter.get('/', authorization, getProjects);
 projectRouter.patch(
   '/:id',
   authorization,

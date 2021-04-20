@@ -32,6 +32,22 @@ class ProjectController {
   /**
    * @param  {object} req
    * @param  {object} res
+   * @returns {object} function to retrieve project proposals
+   */
+  static async getProjects(req, res) {
+    const { _id: userId, role } = req.userData;
+
+    let conditions = { userId };
+    if (role === 'Manager') {
+      conditions = {};
+    }
+    const projects = await Project.find(conditions);
+    ResponseUtil.setSuccess(OK, 'Success', projects);
+    return ResponseUtil.send(res);
+  }
+  /**
+   * @param  {object} req
+   * @param  {object} res
    * @returns {object} function to update a project proposal
    */
   static async updateProject(req, res) {
