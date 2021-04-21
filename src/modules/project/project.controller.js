@@ -36,10 +36,14 @@ class ProjectController {
    */
   static async getProjects(req, res) {
     const { _id: userId, role } = req.userData;
+    const { status } = req.query;
 
     let conditions = { userId };
     if (role === 'Manager') {
       conditions = {};
+    }
+    if (status) {
+      conditions = { ...conditions, status };
     }
     const projects = await Project.find(conditions);
     ResponseUtil.setSuccess(OK, 'Success', projects);

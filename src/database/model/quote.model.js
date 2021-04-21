@@ -5,10 +5,12 @@ import mongoose from 'mongoose';
  */
 const quoteSchema = new mongoose.Schema(
   {
-    userId: { type: String, required: true },
-    projectId: { type: String, required: true },
+    user: { type: String, required: true, ref: 'User' },
+    project: { type: String, required: true, ref: 'Project' },
     billingCycle: { type: String, required: true },
     amount: { type: String, required: true },
+    status: { type: String },
+    comment: { type: String },
   },
   {
     timestamps: true,

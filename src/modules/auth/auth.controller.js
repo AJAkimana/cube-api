@@ -160,7 +160,7 @@ class AuthController {
       const user = await User.findOne({ resetKey: token });
       if (user && user.role === 'visitor') {
         user.password = BcryptUtil.hashPassword(password);
-        user.role = 'client';
+        user.role = 'Client';
         user.resetKey = null;
 
         await user.save();

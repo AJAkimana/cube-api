@@ -28,6 +28,6 @@ quoteRouter.patch(
   checkUserRoleAndQuoteExists,
   updateQuote,
 );
-quoteRouter.get('/', getAllQuotes);
+quoteRouter.get('/', authorization, getAllQuotes);
 
 export default quoteRouter;

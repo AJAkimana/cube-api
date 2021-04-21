@@ -8,6 +8,7 @@ import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
+import User from '../../database/model/user.model';
 
 /**
  * Quote controller class
@@ -20,27 +21,26 @@ class QuoteController {
    */
   static async createQuote(req, res) {
     const { projectId, billingCycle, amount } = req.body;
-    const project = await InstanceMaintain.findDataId(Project, {
-      _id: projectId,
-    });
-    if (!project && project === null) {
+    const project = await Project.findById(projectId);
+    if (!project) {
       ResponseUtil.setError(NOT_FOUND, 'Project not found');
       return ResponseUtil.send(res);
     }
-    if (project) {
-      const quote = await InstanceMaintain.createData(Quote, {
-        userId: req.userData._id,
-        projectId,
-        billingCycle,
-        amount,
-      });
-      ResponseUtil.setSuccess(
-        CREATED,
-        'Quote has been created successfully',
-        quote,
-      );
-      return ResponseUtil.send(res);
-    }
+    const quote = await InstanceMaintain.createData(Quote, {
+      user: project.userId,
+      project: projectId,
+      billingCycle,
+      amount,
+    });
+    project.status = 'approved';
+    await project.save();
+
+    ResponseUtil.setSuccess(
+      CREATED,
+      'Quote has been created successfully',
+      quote,
+    );
+    return ResponseUtil.send(res);
   }
 
   /**
@@ -52,18 +52,21 @@ class QuoteController {
   static async updateQuote(req, res) {
     try {
       const { id } = req.params;
-      const { amount } = req.body;
-      const updatedQuote = await InstanceMaintain.findByIdAndUpdateData(
-        Quote,
-        id,
-        { amount },
-      );
+      const { amount, status, comment, billingCycle } = req.body;
+
+      const quote = await Quote.findById(id);
+      quote.amount = amount;
+      quote.billingCycle = billingCycle;
+      if (status) {
+        quote.status = status;
+        quote.comment = comment;
+      }
+      await quote.save();
+
       ResponseUtil.setSuccess(
         OK,
         'Quote has been updated successfully',
-        {
-          Quote: updatedQuote,
-        },
+        quote,
       );
       return ResponseUtil.send(res);
     } catch (error) {
@@ -80,7 +83,23 @@ class QuoteController {
    */
   static async getAllQuotes(req, res) {
     try {
-      const quotes = await InstanceMaintain.findData(Quote);
+      const { _id: userId, role } = req.userData;
+
+      let conditions = { user: userId };
+      if (role === 'Manager') {
+        conditions = {};
+      }
+      const quotes = await Quote.find(conditions)
+        .populate({
+          path: 'project',
+          select: 'name',
+          model: Project,
+        })
+        .populate({
+          path: 'user',
+          select: 'fullName',
+          model: User,
+        });
       return ResponseUtil.handleSuccessResponse(
         OK,
         'All quotes have been retrieved',
