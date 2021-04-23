@@ -5,10 +5,12 @@ import mongoose from 'mongoose';
  */
 const invoiceSchema = new mongoose.Schema(
   {
-    orderId: { type: String, required: true },
-    due_date: { type: String, required: true },
     amount: { type: String, required: true },
-    status: { type: String, required: true, default: 'pending' },
+    due_date: { type: Date, required: true },
+    order: { type: String, ref: 'Order' },
+    quote: { type: String, ref: 'Quote' },
+    user: { type: String, required: true, ref: 'User' },
+    status: { type: String, default: 'pending' },
   },
   {
     timestamps: true,

@@ -17,6 +17,7 @@ class InvoiceController {
    */
   static async generateInvoice(req, res) {
     try {
+      req.body.order = req.body.orderId;
       await invoiceHelper.generatePDF(req.body);
       const data = await InstanceMaintain.createData(
         Invoice,
@@ -72,7 +73,13 @@ class InvoiceController {
    */
   static async getAllInvoices(req, res) {
     try {
-      const invoices = await InstanceMaintain.findData(Invoice);
+      const { _id: userId, role } = req.userData;
+
+      let conditions = { user: userId };
+      if (role === 'Manager') {
+        conditions = {};
+      }
+      const invoices = await Invoice.find(conditions);
       return ResponseUtil.handleSuccessResponse(
         OK,
         'All invoices have been retrieved',

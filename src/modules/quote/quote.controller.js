@@ -9,6 +9,7 @@ import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
+import Invoice from '../../database/model/invoice.model';
 
 /**
  * Quote controller class
@@ -51,10 +52,10 @@ class QuoteController {
    */
   static async updateQuote(req, res) {
     try {
-      const { id } = req.params;
+      const { id: quoteId } = req.params;
       const { amount, status, comment, billingCycle } = req.body;
 
-      const quote = await Quote.findById(id);
+      const quote = await Quote.findById(quoteId);
       quote.amount = amount;
       quote.billingCycle = billingCycle;
       if (status) {
@@ -62,7 +63,17 @@ class QuoteController {
         quote.comment = comment;
       }
       await quote.save();
-
+      if (status && status === 'approved') {
+        let date = new Date();
+        date.setHours(date.getHours() + 24);
+        const invoice = {
+          quote: quoteId,
+          due_date: date,
+          amount,
+          user: quote.user,
+        };
+        await Invoice.create(invoice);
+      }
       ResponseUtil.setSuccess(
         OK,
         'Quote has been updated successfully',
