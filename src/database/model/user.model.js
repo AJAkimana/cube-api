@@ -1,30 +1,6 @@
 import mongoose from 'mongoose';
 
 /**
- * Subscription schema
- */
-const subscriptionSchema = new mongoose.Schema(
-  {
-    quoteId: {
-      type: String,
-      required: true,
-      ref: 'Quote',
-    },
-    startDate: { type: String, required: true },
-    expirationDate: { type: String, required: true },
-    status: { type: String, required: true },
-  },
-  {
-    timestamps: true,
-    writeConcern: {
-      w: 'majority',
-      j: true,
-      wtimeout: 1000,
-    },
-  },
-);
-
-/**
  * User Schema
  */
 const userSchema = new mongoose.Schema(
@@ -81,7 +57,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
-    subscription: [subscriptionSchema],
   },
   {
     timestamps: true,

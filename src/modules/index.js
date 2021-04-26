@@ -22,7 +22,7 @@ indexRouter.use('/invoice', invoiceRouter);
 indexRouter.use('/services', serviceRouter);
 indexRouter.use('/edit-profile', userRouter);
 indexRouter.use('/order', authVerification, orderRouter);
-indexRouter.use('/user', subscriptionRouter);
+indexRouter.use('/subscription', subscriptionRouter);
 indexRouter.use('/project', projectRouter);
 indexRouter.use('/quote', quoteRouter);
 indexRouter.all('/*', (req, res) => {

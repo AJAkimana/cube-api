@@ -2,6 +2,7 @@ import { INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import User from '../../database/model/user.model';
+import Subscription from '../../database/model/subscription.model';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 
 /**
@@ -79,6 +80,46 @@ class SubscriptionController {
     } catch (error) {
       ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
       return ResponseUtil.send(res);
+    }
+  }
+
+  /**
+   * This function to handle all getting subscriptions.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status of all subscriptions.
+   */
+  static async getAllSubscription(req, res) {
+    try {
+      const { _id: userId, role } = req.userData;
+
+      let conditions = { user: userId };
+      if (role === 'Manager') {
+        conditions = {};
+      }
+      const subscriptions = await Subscription.find(conditions)
+        .populate({
+          path: 'user',
+          select: 'fullName',
+          model: User,
+        })
+        .populate({
+          path: 'quote',
+          select: 'amount billingCycle',
+          model: Quote,
+        });
+      return ResponseUtil.handleSuccessResponse(
+        OK,
+        'Success',
+        subscriptions,
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
     }
   }
 }

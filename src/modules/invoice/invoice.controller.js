@@ -1,7 +1,14 @@
-import { INTERNAL_SERVER_ERROR, CREATED, OK } from 'http-status';
+import {
+  INTERNAL_SERVER_ERROR,
+  CREATED,
+  OK,
+  NOT_FOUND,
+} from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import Invoice from '../../database/model/invoice.model';
 import User from '../../database/model/user.model';
+import Quote from '../../database/model/quote.model';
+import Subscription from '../../database/model/subscription.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
 
@@ -47,19 +54,42 @@ class InvoiceController {
       const { id } = req.params;
       const { amount, status } = req.body;
       // get invoice id to be updated
-      const updateInvoice = await InstanceMaintain.findByIdAndUpdateData(
-        Invoice,
-        id,
-        { amount, status },
+      const invoice = await Invoice.findById(id).populate({
+        path: 'quote',
+        select: 'billingCycle',
+        model: Quote,
+      });
+      if (invoice && invoice.quote) {
+        invoice.amount = amount;
+        invoice.status = status;
+        await invoice.save();
+        if (status === 'paid') {
+          const date = new Date();
+          const period =
+            invoice.quote.billingCycle === 'Monthly' ? 30 : 365;
+          date.setDate(date.getDate() + period);
+
+          const newSubscription = {
+            quote: invoice.quote._id,
+            startDate: new Date(),
+            expirationDate: date,
+            status,
+            user: invoice.user,
+          };
+          await Subscription.create(newSubscription);
+        }
+        return ResponseUtil.handleSuccessResponse(
+          OK,
+          'Success',
+          invoice,
+          res,
+        );
+      }
+      return ResponseUtil.handleErrorResponse(
+        NOT_FOUND,
+        'Invoice not found',
+        res,
       );
-      ResponseUtil.setSuccess(
-        OK,
-        'Invoice has been updated successfully',
-        {
-          Invoice: updateInvoice,
-        },
-      );
-      return ResponseUtil.send(res);
     } catch (error) {
       ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
       return ResponseUtil.send(res);
