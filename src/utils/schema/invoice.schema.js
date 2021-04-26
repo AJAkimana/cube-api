@@ -47,7 +47,7 @@ export const invoiceUpdateSchema = Joi.object({
       'any.required': 'amount is required',
       'string.empty': 'amount is not allowed to be empty',
     }),
-  status: Joi.string().valid('pending', 'paid', 'canceled').messages({
+  status: Joi.string().valid('paid', 'canceled').messages({
     'any.required': 'status is required',
     'string.empty': 'status is not allowed to be empty',
     'any.only': 'status must be one of [pending, paid, canceled]',
