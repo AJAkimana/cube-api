@@ -41,10 +41,12 @@ export const projectSchema = Joi.object({
 // =========== Update project Schema =========================
 
 export const updateProjectSchema = Joi.object({
-  status: Joi.string().valid('pending', 'canceled').messages({
-    'string.empty': 'status is not allowed to be empty',
-    'any.only': 'status must be [pending, canceled]',
-  }),
+  status: Joi.string()
+    .valid('pending', 'approved', 'canceled')
+    .messages({
+      'string.empty': 'status is not allowed to be empty',
+      'any.only': 'status must be [pending,approved, canceled]',
+    }),
   description: Joi.string().min(10).messages({
     'string.empty': 'Descriptions is not allowed to be empty',
     'string.min':

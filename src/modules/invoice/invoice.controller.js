@@ -1,6 +1,7 @@
 import { INTERNAL_SERVER_ERROR, CREATED, OK } from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import Invoice from '../../database/model/invoice.model';
+import User from '../../database/model/user.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
 
@@ -79,7 +80,11 @@ class InvoiceController {
       if (role === 'Manager') {
         conditions = {};
       }
-      const invoices = await Invoice.find(conditions);
+      const invoices = await Invoice.find(conditions).populate({
+        path: 'user',
+        select: 'fullName',
+        model: User,
+      });
       return ResponseUtil.handleSuccessResponse(
         OK,
         'All invoices have been retrieved',
