@@ -1,4 +1,4 @@
-import { CREATED, OK } from 'http-status';
+import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
@@ -13,20 +13,24 @@ class ProjectController {
    * @returns {object} function to create a project proposal
    */
   static async createProject(req, res) {
-    const { name, description } = req.body;
-    const project = await InstanceMaintain.createData(Project, {
-      userId: req.userData._id,
-      name,
-      description,
-      image: req.image,
-      imageId: req.imageId,
-    });
-    ResponseUtil.setSuccess(
-      CREATED,
-      'Project proposal has been created successfully',
-      project,
-    );
-    return ResponseUtil.send(res);
+    req.body.user = req.userData._id;
+    req.body.image = req.image;
+    req.body.imageId = req.imageId;
+    try {
+      const project = await Project.create(req.body);
+      ResponseUtil.setSuccess(
+        CREATED,
+        'Project proposal has been created successfully',
+        project,
+      );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
   }
 
   /**
@@ -38,7 +42,7 @@ class ProjectController {
     const { _id: userId, role } = req.userData;
     const { status } = req.query;
 
-    let conditions = { userId };
+    let conditions = { user: userId };
     if (role === 'Manager') {
       conditions = {};
     }

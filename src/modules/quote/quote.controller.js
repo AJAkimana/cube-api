@@ -22,26 +22,31 @@ class QuoteController {
    */
   static async createQuote(req, res) {
     const { projectId, billingCycle, amount } = req.body;
-    const project = await Project.findById(projectId);
-    if (!project) {
-      ResponseUtil.setError(NOT_FOUND, 'Project not found');
+    try {
+      const project = await Project.findById(projectId);
+      if (!project) {
+        ResponseUtil.setError(NOT_FOUND, 'Project not found');
+        return ResponseUtil.send(res);
+      }
+      const quote = await InstanceMaintain.createData(Quote, {
+        user: project.user,
+        project: projectId,
+        billingCycle,
+        amount,
+      });
+      project.status = 'approved';
+      await project.save();
+
+      ResponseUtil.setSuccess(
+        CREATED,
+        'Quote has been created successfully',
+        quote,
+      );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
       return ResponseUtil.send(res);
     }
-    const quote = await InstanceMaintain.createData(Quote, {
-      user: project.userId,
-      project: projectId,
-      billingCycle,
-      amount,
-    });
-    project.status = 'approved';
-    await project.save();
-
-    ResponseUtil.setSuccess(
-      CREATED,
-      'Quote has been created successfully',
-      quote,
-    );
-    return ResponseUtil.send(res);
   }
 
   /**

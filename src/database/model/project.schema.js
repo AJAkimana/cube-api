@@ -2,12 +2,16 @@ import { Schema, model } from 'mongoose';
 
 const projectSchema = new Schema(
   {
-    userId: {
+    user: {
       type: String,
       required: true,
       ref: 'User',
     },
     name: {
+      type: String,
+      required: true,
+    },
+    type: {
       type: String,
       required: true,
     },

@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
  */
 const invoiceSchema = new mongoose.Schema(
   {
-    amount: { type: String, required: true },
+    amount: { type: Number, required: true },
     due_date: { type: Date, required: true },
     order: { type: String, ref: 'Order' },
     quote: { type: String, ref: 'Quote' },

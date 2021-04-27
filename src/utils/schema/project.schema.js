@@ -1,7 +1,12 @@
 import Joi from 'joi';
 
 export const projectSchema = Joi.object({
-  name: Joi.string()
+  name: Joi.string().required().min(10).messages({
+    'any.required': 'Name is required',
+    'string.empty': 'Name is not allowed to be empty',
+    'string.min': 'Name length must be at least 10 characters long',
+  }),
+  type: Joi.string()
     .required()
     .valid(
       'Cube Platform',
