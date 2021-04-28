@@ -6,6 +6,7 @@ export const projectSchema = Joi.object({
     'string.empty': 'Name is not allowed to be empty',
     'string.min': 'Name length must be at least 10 characters long',
   }),
+  userId: Joi.string(),
   type: Joi.string()
     .required()
     .valid(
@@ -46,6 +47,7 @@ export const projectSchema = Joi.object({
 // =========== Update project Schema =========================
 
 export const updateProjectSchema = Joi.object({
+  userId: Joi.string(),
   status: Joi.string()
     .valid('pending', 'approved', 'canceled')
     .messages({

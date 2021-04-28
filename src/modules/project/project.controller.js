@@ -1,4 +1,9 @@
-import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
+import {
+  BAD_REQUEST,
+  CREATED,
+  INTERNAL_SERVER_ERROR,
+  OK,
+} from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
@@ -13,9 +18,20 @@ class ProjectController {
    * @returns {object} function to create a project proposal
    */
   static async createProject(req, res) {
-    req.body.user = req.userData._id;
+    const { _id: userId, role } = req.userData;
     req.body.image = req.image;
     req.body.imageId = req.imageId;
+    req.body.user = userId;
+    if (role === 'Manager') {
+      if (!req.body.userId) {
+        return ResponseUtil.handleErrorResponse(
+          BAD_REQUEST,
+          'Select project ower',
+          res,
+        );
+      }
+      req.body.user = req.body.userId;
+    }
     try {
       const project = await Project.create(req.body);
       ResponseUtil.setSuccess(
