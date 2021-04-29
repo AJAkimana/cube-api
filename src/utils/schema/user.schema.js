@@ -26,6 +26,11 @@ export const accountSchema = Joi.object({
       'phoneNumber.invalid':
         'Phone Number did not seem to be a phone number',
     }),
+  role: Joi.string().required().valid('Client', 'Manager').messages({
+    'any.required': 'role is required',
+    'string.empty': 'role is not allowed to be empty',
+    'any.only': 'role must be [Client, Manager]',
+  }),
   companyName: Joi.string().trim().min(2).required().messages({
     'any.required': 'Company Name is required',
     'string.empty': 'Company Name is not allowed to be empty',
