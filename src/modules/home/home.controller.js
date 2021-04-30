@@ -41,7 +41,6 @@ class HomeController {
         subscriptions,
         quotes,
       };
-      console.log(invoices, conditions);
       ResponseUtil.setSuccess(OK, 'Success', counts);
       return ResponseUtil.send(res);
     } catch (error) {

@@ -63,8 +63,9 @@ class ProjectController {
       conditions = {};
     }
     if (status) {
-      conditions = { ...conditions, status };
+      conditions = { ...conditions, status: { $ne: status } };
     }
+    console.log(conditions);
     const projects = await Project.find(conditions);
     ResponseUtil.setSuccess(OK, 'Success', projects);
     return ResponseUtil.send(res);

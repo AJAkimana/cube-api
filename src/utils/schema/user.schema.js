@@ -16,6 +16,14 @@ export const accountSchema = Joi.object({
     'string.empty': 'Email is not allowed to be empty',
     'string.email': 'Email must be a valid email',
   }),
+  country: Joi.string().required().messages({
+    'any.required': 'Country is required',
+    'string.empty': 'Country is not allowed to be empty',
+  }),
+  city: Joi.string().required().messages({
+    'any.required': 'City is required',
+    'string.empty': 'City is not allowed to be empty',
+  }),
   phoneNumber: customJoi
     .string()
     .phoneNumber({ format: 'international', strict: true })
@@ -42,6 +50,8 @@ export const accountSchema = Joi.object({
     'string.empty': 'Address is not allowed to be empty',
     'string.min': 'Address length must be at least 2 characters long',
   }),
+  state: Joi.string().optional(),
+  postalCode: Joi.string().optional(),
   linkedin: Joi.string().optional(),
   twitter: Joi.string().optional(),
   instagram: Joi.string().optional(),

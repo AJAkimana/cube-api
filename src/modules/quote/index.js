@@ -25,7 +25,6 @@ quoteRouter.patch(
   '/:id',
   authorization,
   validateQuoteUpdate,
-  checkUserRoleAndQuoteExists,
   updateQuote,
 );
 quoteRouter.get('/', authorization, getAllQuotes);
