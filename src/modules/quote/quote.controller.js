@@ -79,6 +79,11 @@ class QuoteController {
         };
         await Invoice.create(invoice);
       }
+      if (status && status === 'declined') {
+        await Project.findByIdAndUpdate(quote.project, {
+          status: 'pending',
+        });
+      }
       ResponseUtil.setSuccess(
         OK,
         'Quote has been updated successfully',
