@@ -27,6 +27,9 @@ class AuthController {
   static async createAccount(req, res) {
     try {
       req.body.resetKey = randomBytes(40).toString('hex');
+      if(req.body.role.toLowerCase() === 'client') {
+        req.body.role = 'visitor';
+      }
       const user = await InstanceMaintain.createData(User, req.body);
       await sendConfirmationEmail(user);
       return ResponseUtil.handleSuccessResponse(
