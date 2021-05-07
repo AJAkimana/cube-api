@@ -5,24 +5,34 @@ const customJoi = Joi.extend(joiPhone);
 
 // ================ Account scheama =========================
 export const accountSchema = Joi.object({
-  fullName: Joi.string().trim().min(2).required().messages({
-    'any.required': 'Full Name is required',
-    'string.empty': 'Full Name is not allowed to be empty',
+  firstName: Joi.string().trim().min(2).required().messages({
+    'any.required': 'First Name is required',
+    'string.empty': 'First Name is not allowed to be empty',
     'string.min':
-      'Full Name length must be at least 2 characters long',
+      'First Name length must be at least 2 characters long',
+  }),
+  lastName: Joi.string().trim().min(2).required().messages({
+    'any.required': 'Last Name is required',
+    'string.empty': 'Last Name is not allowed to be empty',
+    'string.min':
+      'Last Name length must be at least 2 characters long',
+  }),
+  companyName: Joi.string().trim().min(2).required().messages({
+    'any.required': 'Company Name is required',
+    'string.empty': 'Company Name is not allowed to be empty',
+    'string.min':
+      'Company Name length must be at least 2 characters long',
+  }),
+  companyUrl: Joi.string().trim().min(2).required().messages({
+    'any.required': 'Company URL is required',
+    'string.empty': 'Company URL is not allowed to be empty',
+    'string.min':
+      'Company URL length must be at least 2 characters long',
   }),
   email: Joi.string().email().required().messages({
     'any.required': 'Email is required',
     'string.empty': 'Email is not allowed to be empty',
     'string.email': 'Email must be a valid email',
-  }),
-  country: Joi.string().required().messages({
-    'any.required': 'Country is required',
-    'string.empty': 'Country is not allowed to be empty',
-  }),
-  city: Joi.string().required().messages({
-    'any.required': 'City is required',
-    'string.empty': 'City is not allowed to be empty',
   }),
   phoneNumber: customJoi
     .string()
@@ -34,21 +44,23 @@ export const accountSchema = Joi.object({
       'phoneNumber.invalid':
         'Phone Number did not seem to be a phone number',
     }),
+  address: Joi.string().trim().min(2).required().messages({
+    'any.required': 'Address is required',
+    'string.empty': 'Address is not allowed to be empty',
+    'string.min': 'Address length must be at least 2 characters long',
+  }),
   role: Joi.string().required().valid('Client', 'Manager').messages({
     'any.required': 'role is required',
     'string.empty': 'role is not allowed to be empty',
     'any.only': 'role must be [Client, Manager]',
   }),
-  companyName: Joi.string().trim().min(2).required().messages({
-    'any.required': 'Company Name is required',
-    'string.empty': 'Company Name is not allowed to be empty',
-    'string.min':
-      'Company Name length must be at least 2 characters long',
+  country: Joi.string().required().messages({
+    'any.required': 'Country is required',
+    'string.empty': 'Country is not allowed to be empty',
   }),
-  address: Joi.string().trim().min(2).required().messages({
-    'any.required': 'Address is required',
-    'string.empty': 'Address is not allowed to be empty',
-    'string.min': 'Address length must be at least 2 characters long',
+  city: Joi.string().required().messages({
+    'any.required': 'City is required',
+    'string.empty': 'City is not allowed to be empty',
   }),
   state: Joi.string().optional(),
   postalCode: Joi.string().optional(),
