@@ -27,7 +27,7 @@ class AuthController {
   static async createAccount(req, res) {
     try {
       req.body.resetKey = randomBytes(40).toString('hex');
-      if(req.body.role.toLowerCase() === 'client') {
+      if (req.body.role.toLowerCase() === 'client') {
         req.body.role = 'visitor';
       }
       const user = await InstanceMaintain.createData(User, req.body);
@@ -203,7 +203,7 @@ class AuthController {
    */
   static async getUsers(req, res) {
     try {
-      const users = await InstanceMaintain.findData(User);
+      const users = await User.find().sort({ createdAt: -1 });
       return ResponseUtil.handleSuccessResponse(
         OK,
         'User accounts have been retrieved',
