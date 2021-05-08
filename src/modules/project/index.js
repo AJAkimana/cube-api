@@ -29,7 +29,7 @@ projectRouter.get('/', authorization, getProjects);
 projectRouter.patch(
   '/:id',
   authorization,
-  updateProjectBody,
+  validateProjectBody,
   checkUserRoleAndProjectExists,
   updateProject,
 );

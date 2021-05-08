@@ -22,6 +22,22 @@ export const projectSchema = Joi.object({
       'any.only':
         'name must be one the [Cube Platform, 3D modeling, 3D Viewer, 3D Configurator, AR]',
     }),
+  nOfItems: Joi.number().required().messages({
+    'any.required': 'N of items are required',
+    'number.empty': 'N of items are not allowed to be empty',
+  }),
+  startDate: Joi.date().required().messages({
+    'any.required': 'Start date is required',
+    'date.empty': 'Start date is not allowed to be empty',
+  }),
+  dueDate: Joi.date().required().messages({
+    'any.required': 'Due date is required',
+    'date.empty': 'Due date is not allowed to be empty',
+  }),
+  budget: Joi.number().required().messages({
+    'any.required': 'Budjet is required',
+    'number.empty': 'Budjet is not allowed to be empty',
+  }),
   status: Joi.string()
     .valid('pending', 'approved', 'canceled')
     .messages({
