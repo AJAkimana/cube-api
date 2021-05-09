@@ -7,7 +7,7 @@ import {
 } from './invoice.validation';
 import { checkInvoiceExists } from './invoice.middleware';
 
-const { getAllInvoices, paymentOfInvoice } = invoice;
+const { getAllInvoices, paymentOfInvoice, downloadInvoice } = invoice;
 const invoiceRouter = Router();
 
 invoiceRouter.post('/', validateInvoiceBody, invoice.generateInvoice);
@@ -19,5 +19,6 @@ invoiceRouter.patch(
   paymentOfInvoice,
 );
 invoiceRouter.get('/', authorization, getAllInvoices);
+invoiceRouter.get('/:invoiceId', downloadInvoice);
 
 export default invoiceRouter;

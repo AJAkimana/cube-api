@@ -10,6 +10,7 @@ import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
 import Invoice from '../../database/model/invoice.model';
+import invoiceHelper from '../invoice/invoice.helper';
 
 /**
  * Quote controller class
@@ -60,7 +61,11 @@ class QuoteController {
       const { id: quoteId } = req.params;
       const { amount, status, comment, billingCycle } = req.body;
 
-      const quote = await Quote.findById(quoteId);
+      const quote = await Quote.findById(quoteId).populate({
+        path: 'user',
+        select: 'email',
+        model: User,
+      });
       quote.amount = amount;
       quote.billingCycle = billingCycle;
       if (status) {
@@ -75,9 +80,17 @@ class QuoteController {
           quote: quoteId,
           due_date: date,
           amount,
-          user: quote.user,
+          user: quote.user._id,
         };
-        await Invoice.create(invoice);
+        const newInvoice = await Invoice.create(invoice);
+        const pdfBody = {
+          orderId: newInvoice._id,
+          due_date: date,
+          amount,
+          customerEmail: quote.user.email,
+          message: 'Pay the invoice within 24 hours',
+        };
+        await invoiceHelper.generatePDF(pdfBody);
       }
       if (status && status === 'declined') {
         await Project.findByIdAndUpdate(quote.project, {

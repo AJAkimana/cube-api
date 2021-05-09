@@ -74,7 +74,7 @@ class InvoiceController {
             startDate: new Date(),
             expirationDate: date,
             status,
-            user: invoice.user,
+            user: invoice.user._id,
           };
           await Subscription.create(newSubscription);
         }
@@ -121,6 +121,44 @@ class InvoiceController {
         invoices,
         res,
       );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
+  }
+
+  /**
+   * This function to handle download invoice.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} Invoice download.
+   */
+  static async downloadInvoice(req, res) {
+    try {
+      const { invoiceId } = req.params;
+
+      const invoice = await Invoice.findById(invoiceId).populate({
+        path: 'user',
+        select: 'fullName',
+        model: User,
+      });
+      if (!invoice) {
+        return ResponseUtil.handleErrorResponse(
+          INTERNAL_SERVER_ERROR,
+          'Sorry the invoice has not been generated',
+          res,
+        );
+      }
+      const pdfBody = {
+        orderId: invoice._id,
+        due_date: invoice.due_date,
+        amount: invoice.amount,
+      };
+      await invoiceHelper.generatePDF(pdfBody, true);
+      return res.download('./invoice.pdf');
     } catch (error) {
       return ResponseUtil.handleErrorResponse(
         INTERNAL_SERVER_ERROR,
