@@ -74,7 +74,7 @@ class InvoiceController {
             startDate: new Date(),
             expirationDate: date,
             status,
-            user: invoice.user._id,
+            user: invoice.user,
           };
           await Subscription.create(newSubscription);
         }
