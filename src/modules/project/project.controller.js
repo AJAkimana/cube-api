@@ -7,6 +7,7 @@ import {
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
+import User from '../../database/model/user.model';
 
 /**
  * Service controller class
@@ -66,9 +67,15 @@ class ProjectController {
       conditions = { ...conditions, status: { $ne: status } };
     }
     console.log(conditions);
-    const projects = await Project.find(conditions).sort({
-      createdAt: -1,
-    });
+    const projects = await Project.find(conditions)
+      .populate({
+        path: 'user',
+        select: 'firstName lastName',
+        model: User,
+      })
+      .sort({
+        createdAt: -1,
+      });
     ResponseUtil.setSuccess(OK, 'Success', projects);
     return ResponseUtil.send(res);
   }
