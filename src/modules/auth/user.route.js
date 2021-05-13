@@ -56,8 +56,9 @@ userRouter.patch(
   AuthController.setNewPassword,
 );
 userRouter.patch(
-  '/edit-profile/:id',
-  validateUdateProfile,
+  '/edit-profile',
+  authorization,
+  validateUserBody,
   AuthController.editAccount,
 );
 userRouter.get('/users', authorization, AuthController.getUsers);
