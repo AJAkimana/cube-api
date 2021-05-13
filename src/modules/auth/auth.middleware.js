@@ -1,9 +1,4 @@
-import {
-  BAD_REQUEST,
-  CONFLICT,
-  NOT_FOUND,
-  UNAUTHORIZED,
-} from 'http-status';
+import { CONFLICT, NOT_FOUND, UNAUTHORIZED } from 'http-status';
 import User from '../../database/model/user.model';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
