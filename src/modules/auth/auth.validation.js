@@ -15,7 +15,8 @@ import {
  * @returns {object} Object
  */
 export const validateUserBody = (req, res, next) => {
-  return handleErrorsUtil(accountSchema, req.body, res, next);
+  const { fullName, createdAt, updatedAt, __v, ...rest } = req.body;
+  return handleErrorsUtil(accountSchema, rest, res, next);
 };
 
 /**

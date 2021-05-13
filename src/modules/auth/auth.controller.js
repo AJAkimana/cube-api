@@ -48,6 +48,54 @@ class AuthController {
   }
 
   /**
+   * This function to handle update user request.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status and some data of updated account.
+   */
+  static async updateUserInfo(req, res) {
+    const { userId } = req.params;
+    try {
+      const user = await User.findByIdAndUpdate(userId, req.body);
+      return ResponseUtil.handleSuccessResponse(
+        CREATED,
+        'User account update successfully',
+        user,
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
+  }
+  /**
+   * This function to handle delete user request.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object} The status.
+   */
+  static async deleteUser(req, res) {
+    const { userId } = req.params;
+    try {
+      await User.findByIdAndRemove(userId);
+      return ResponseUtil.handleSuccessResponse(
+        CREATED,
+        'User account deleted successfully',
+        {},
+        res,
+      );
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
+  }
+  /**
    * @description this function is invoked to login
    * @param {object} req request
    * @param {object} res response

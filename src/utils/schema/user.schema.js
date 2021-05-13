@@ -62,12 +62,12 @@ export const accountSchema = Joi.object({
     'any.required': 'City is required',
     'string.empty': 'City is not allowed to be empty',
   }),
-  state: Joi.string().optional(),
-  postalCode: Joi.string().optional(),
-  linkedin: Joi.string().optional(),
-  twitter: Joi.string().optional(),
-  instagram: Joi.string().optional(),
-  facebook: Joi.string().optional(),
+  state: Joi.string().allow('').optional(),
+  postalCode: Joi.string().allow('').optional(),
+  linkedin: Joi.string().allow('').optional(),
+  twitter: Joi.string().allow('').optional(),
+  instagram: Joi.string().allow('').optional(),
+  facebook: Joi.string().allow('').optional(),
 }).options({ abortEarly: false });
 
 // ================ Login scheama =========================

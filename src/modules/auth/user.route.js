@@ -11,15 +11,32 @@ import {
   checkEmailExists,
   checkPasswordCredentials,
   checkUserCredential,
+  doesUserExist,
 } from './auth.middleware';
+import authorization from '../middleware/auth.middleware';
 
 const userRouter = Router();
 
 userRouter.post(
   '/register',
+  authorization,
   validateUserBody,
   checkEmailExists,
   AuthController.createAccount,
+);
+userRouter.patch(
+  '/users/:userId',
+  authorization,
+  doesUserExist,
+  validateUserBody,
+  checkEmailExists,
+  AuthController.updateUserInfo,
+);
+userRouter.delete(
+  '/users/:userId',
+  authorization,
+  doesUserExist,
+  AuthController.deleteUser,
 );
 userRouter.post(
   '/login',
@@ -43,7 +60,7 @@ userRouter.patch(
   validateUdateProfile,
   AuthController.editAccount,
 );
-userRouter.get('/users', AuthController.getUsers);
+userRouter.get('/users', authorization, AuthController.getUsers);
 userRouter.post('/seed', AuthController.seed);
 
 export default userRouter;
