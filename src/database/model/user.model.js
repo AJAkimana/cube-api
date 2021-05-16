@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    fullName: { type: String },
     companyName: { type: String, required: true },
     companyUrl: { type: String, required: true },
     email: { type: String, required: true, unique: true },
@@ -29,5 +30,11 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+userSchema.pre('save', function (next) {
+  const user = this;
+  // Save fullName if it has been modified (or is new)
+  user.fullName = `${user.firstName} ${user.lastName}`;
+  return next();
+});
 
 export default mongoose.model('User', userSchema);

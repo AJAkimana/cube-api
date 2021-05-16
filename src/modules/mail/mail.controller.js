@@ -1,5 +1,6 @@
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import config from '../../config/config';
+import { validationMail } from '../../utils/validationMail';
 
 const sgMail = require('@sendgrid/mail');
 
@@ -13,7 +14,7 @@ const sendConfirmationEmail = async (user) => {
     from: process.env.MAIL_FROM,
     to: `${user.email}`,
     subject: 'A.R.I Secure Password',
-    html: `Kindly secure your password using this link <a href=${url}>${url}</a>`,
+    html: validationMail(url),
   };
   await sgMail.send(data);
 };

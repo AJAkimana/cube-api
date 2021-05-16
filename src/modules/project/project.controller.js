@@ -66,7 +66,6 @@ class ProjectController {
     if (status) {
       conditions = { ...conditions, status: { $ne: status } };
     }
-    console.log(conditions);
     const projects = await Project.find(conditions)
       .populate({
         path: 'user',
