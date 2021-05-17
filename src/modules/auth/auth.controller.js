@@ -134,30 +134,29 @@ class AuthController {
       const { email, password } = req.body;
       const user = await User.findOne({ email });
       if (user) {
-        if (BcryptUtil.comparePassword(password, user.password)) {
-          user.firstName = req.body.firstName;
-          user.lastName = req.body.lastName;
-          user.companyName = req.body.companyName;
-          user.companyUrl = req.body.companyUrl;
-          user.phoneNumber = req.body.phoneNumber;
-          user.address = req.body.address;
-          user.country = req.body.country;
-          user.state = req.body.state;
-          user.city = req.body.city;
-          user.postalCode = req.body.postalCode;
-          await user.save();
-          return res.status(OK).json({
-            status: OK,
-            message: 'User account updated successfully',
-            data: user,
-          });
-        }
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+        user.companyName = req.body.companyName;
+        user.companyUrl = req.body.companyUrl;
+        user.phoneNumber = req.body.phoneNumber;
+        user.address = req.body.address;
+        user.country = req.body.country;
+        user.state = req.body.state;
+        user.city = req.body.city;
+        user.postalCode = req.body.postalCode;
+        await user.save();
+        return res.status(OK).json({
+          status: OK,
+          message: 'User account updated successfully',
+          data: user,
+        });
       }
       return res.status(NOT_FOUND).json({
         status: NOT_FOUND,
         message: 'You dont have permission to perform the actio',
       });
     } catch (error) {
+      // console.log(error.message);
       return res.status(INTERNAL_SERVER_ERROR).json({
         status: INTERNAL_SERVER_ERROR,
         message: 'Failed to update profile',
