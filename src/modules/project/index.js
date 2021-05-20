@@ -6,11 +6,13 @@ import {
   updateProjectStatus,
 } from './project.validation';
 import {
-  checkUserRole,
-  checkUserRoleAndProjectExists,
   checkManagerRoleAndProjectExists,
+  doesProjectExist,
 } from './project.middleware';
-import authorization from '../middleware/auth.middleware';
+import authorization, {
+  isClient,
+  isNotVisitor,
+} from '../middleware/auth.middleware';
 import { uploadImage } from '../../utils/image.util';
 
 const { createProject, updateProject, getProjects } = project;
@@ -19,8 +21,8 @@ const projectRouter = Router();
 projectRouter.post(
   '/',
   authorization,
+  isClient,
   validateProjectBody,
-  checkUserRole,
   uploadImage,
   createProject,
 );
@@ -29,8 +31,9 @@ projectRouter.get('/', authorization, getProjects);
 projectRouter.patch(
   '/:id',
   authorization,
+  isNotVisitor,
   validateProjectBody,
-  checkUserRoleAndProjectExists,
+  doesProjectExist,
   updateProject,
 );
 

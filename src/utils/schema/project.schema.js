@@ -6,7 +6,8 @@ export const projectSchema = Joi.object({
     'string.empty': 'Name is not allowed to be empty',
     'string.min': 'Name length must be at least 10 characters long',
   }),
-  userId: Joi.string(),
+  userId: Joi.string().allow('').optional(),
+  managerId: Joi.string().allow('').optional(),
   type: Joi.string()
     .required()
     .valid(

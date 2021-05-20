@@ -2,7 +2,6 @@ import { Schema, model } from 'mongoose';
 
 const projectSchema = new Schema(
   {
-    user: { type: String, required: true, ref: 'User' },
     name: { type: String, required: true },
     type: { type: String, required: true },
     nOfItems: { type: Number, required: true },
@@ -11,6 +10,8 @@ const projectSchema = new Schema(
     budget: { type: Number, required: true },
     status: { type: String, required: true, default: 'pending' },
     description: { type: String, required: true },
+    user: { type: String, required: true, ref: 'User' },
+    manager: { type: String, ref: 'User' },
     image: { type: String },
     imageId: { type: String },
   },

@@ -1,4 +1,8 @@
-import { NOT_FOUND, UNAUTHORIZED } from 'http-status';
+import {
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  UNAUTHORIZED,
+} from 'http-status';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
@@ -18,7 +22,23 @@ export const checkUserRole = async (req, res, next) => {
   }
   next();
 };
-
+export const doesProjectExist = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (project) return next();
+    return ResponseUtil.handleErrorResponse(
+      NOT_FOUND,
+      'Project not found',
+      res,
+    );
+  } catch (error) {
+    return ResponseUtil.handleErrorResponse(
+      INTERNAL_SERVER_ERROR,
+      error.toString(),
+      res,
+    );
+  }
+};
 export const checkUserRoleAndProjectExists = async (
   req,
   res,

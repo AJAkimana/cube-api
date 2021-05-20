@@ -33,7 +33,7 @@ export default (req, res, next) => {
       return ResponseUtil.send(res);
     }
     req.userData = TokenUtil.verifyToken(req.token);
-    next();
+    return next();
   } else {
     ResponseUtil.setError(
       FORBIDDEN,
@@ -42,7 +42,40 @@ export default (req, res, next) => {
     return ResponseUtil.send(res);
   }
 };
-
+/**
+ * @param  {object} req
+ * @param  {object} res
+ * @param  {object} next
+ * @returns {object} protect route
+ */
+export const isNotVisitor = (req, res, next) => {
+  if (req.userData && req.userData.role !== 'visitor') {
+    return next();
+  } else {
+    ResponseUtil.setError(
+      UNAUTHORIZED,
+      'Unauthorized, You cannot perform this action',
+    );
+    return ResponseUtil.send(res);
+  }
+};
+/**
+ * @param  {object} req
+ * @param  {object} res
+ * @param  {object} next
+ * @returns {object} protect route
+ */
+export const isClient = (req, res, next) => {
+  if (req.userData && req.userData.role === 'Client') {
+    return next();
+  } else {
+    ResponseUtil.setError(
+      UNAUTHORIZED,
+      'Unauthorized, The action is for clients',
+    );
+    return ResponseUtil.send(res);
+  }
+};
 /**
  * @param  {object} req
  * @param  {object} res
@@ -51,11 +84,28 @@ export default (req, res, next) => {
  */
 export const isManager = (req, res, next) => {
   if (req.userData && req.userData.role === 'Manager') {
-    next();
+    return next();
   } else {
     ResponseUtil.setError(
       UNAUTHORIZED,
-      'Unauthorized, Only a manager can access the dashboard',
+      'Unauthorized, The action is for managers',
+    );
+    return ResponseUtil.send(res);
+  }
+};
+/**
+ * @param  {object} req
+ * @param  {object} res
+ * @param  {object} next
+ * @returns {object} protect route
+ */
+export const isAdmin = (req, res, next) => {
+  if (req.userData && req.userData.role === 'Admin') {
+    return next();
+  } else {
+    ResponseUtil.setError(
+      UNAUTHORIZED,
+      'Unauthorized, The action is for admins',
     );
     return ResponseUtil.send(res);
   }

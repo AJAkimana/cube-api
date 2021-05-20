@@ -19,20 +19,10 @@ class ProjectController {
    * @returns {object} function to create a project proposal
    */
   static async createProject(req, res) {
-    const { _id: userId, role } = req.userData;
+    const { _id: userId } = req.userData;
     req.body.image = req.image;
     req.body.imageId = req.imageId;
     req.body.user = userId;
-    if (role === 'Manager') {
-      if (!req.body.userId) {
-        return ResponseUtil.handleErrorResponse(
-          BAD_REQUEST,
-          'Select project ower',
-          res,
-        );
-      }
-      req.body.user = req.body.userId;
-    }
     try {
       const project = await Project.create(req.body);
       ResponseUtil.setSuccess(
@@ -61,6 +51,9 @@ class ProjectController {
 
     let conditions = { user: userId };
     if (role === 'Manager') {
+      conditions = { manager: userId };
+    }
+    if (role === 'Admin') {
       conditions = {};
     }
     if (status) {
@@ -85,18 +78,33 @@ class ProjectController {
    */
   static async updateProject(req, res) {
     const { id } = req.params;
-    // const { status, descriptions } = req.body;
-    const project = await InstanceMaintain.findByIdAndUpdateData(
-      Project,
-      id,
-      req.body,
-    );
-    ResponseUtil.setSuccess(
-      OK,
-      'Project proposal has been updated successfully',
-      project,
-    );
-    return ResponseUtil.send(res);
+    const { role } = req.userData;
+    try {
+      const project = await Project.findById(id);
+      if (role === 'Admin') {
+        project.manager = req.body.managerId;
+        await project.save();
+      }
+      if (role === 'Manager') {
+        project.status = req.body.status;
+        await project.save();
+      }
+      if (role === 'Client') {
+        await project.update(req.body);
+      }
+      ResponseUtil.setSuccess(
+        OK,
+        'Project proposal has been updated successfully',
+        project,
+      );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      return ResponseUtil.handleErrorResponse(
+        INTERNAL_SERVER_ERROR,
+        error.toString(),
+        res,
+      );
+    }
   }
 }
 

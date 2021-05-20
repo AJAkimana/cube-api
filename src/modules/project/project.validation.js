@@ -14,6 +14,8 @@ import {
  * @returns {object} Object
  */
 export const validateProjectBody = (req, res, next) => {
+  const { role } = req.userData;
+  if (role !== 'Client') return next();
   return handleErrorsUtil(projectSchema, req.body, res, next);
 };
 

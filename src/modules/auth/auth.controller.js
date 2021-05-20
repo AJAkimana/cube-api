@@ -259,7 +259,12 @@ class AuthController {
    */
   static async getUsers(req, res) {
     try {
-      const users = await User.find()
+      const { role } = req.query;
+      let conditions = {};
+      if (role) {
+        conditions = { ...conditions, role };
+      }
+      const users = await User.find(conditions)
         .sort({ createdAt: -1 })
         .select({ password: 0, resetKey: 0 });
       return ResponseUtil.handleSuccessResponse(
