@@ -4,6 +4,7 @@ import {
   INTERNAL_SERVER_ERROR,
   OK,
 } from 'http-status';
+import moment from 'moment';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
@@ -61,11 +62,17 @@ class QuoteController {
       const { id: quoteId } = req.params;
       const { amount, status, comment, billingCycle } = req.body;
 
-      const quote = await Quote.findById(quoteId).populate({
-        path: 'user',
-        select: 'email',
-        model: User,
-      });
+      const quote = await Quote.findById(quoteId)
+        .populate({
+          path: 'user',
+          select: 'email',
+          model: User,
+        })
+        .populate({
+          path: 'project',
+          select: 'name type',
+          model: Project,
+        });
       quote.amount = amount;
       quote.billingCycle = billingCycle;
       if (status) {
@@ -85,8 +92,9 @@ class QuoteController {
         const newInvoice = await Invoice.create(invoice);
         const pdfBody = {
           orderId: newInvoice._id,
-          due_date: date,
+          due_date: moment(date).format('MMMM Do YYYY, HH:mm'),
           amount,
+          project: quote.project,
           customerEmail: quote.user.email,
           message: 'Pay the invoice within 24 hours',
         };

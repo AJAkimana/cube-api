@@ -1,27 +1,86 @@
 <!DOCTYPE html>
 <html>
+
     <head>
         <mate charest="utf-8" />
         <title>Hello world!</title>
     </head>
+
     <body>
-        <div style="margin: 00px;">
-            <img src="https://user-images.githubusercontent.com/69037813/109541196-353c6680-7acc-11eb-9ccf-c7101d358f39.png" style="width: 150px; margin-bottom: 80px;">
-            <div style="float: right; padding: 20px;  color: gray; font-weight: 500; text-align: justify">
+        <div style="margin: 00px">
+            <img src="https://user-images.githubusercontent.com/69037813/109541196-353c6680-7acc-11eb-9ccf-c7101d358f39.png"
+                style="width: 150px; margin-bottom: 80px" />
+            <div style="
+          float: right;
+          padding: 20px;
+          color: gray;
+          font-weight: 500;
+          text-align: justify;
+        ">
                 <div>Company: Time Capsule 3D</div>
                 <div>Email: info@timecapsule3d.com</div>
                 <div>Phone: +1 905-604-7855</div>
                 <div>Address: 80F Centurian Dr #10, Canada</div>
             </div>
         </div>
-        <h2 style="width: 70%;  margin: auto; text-align: center; background: #eee; border-bottom: 1px solid #ddd;">Invoice</h2>
-        <div style="padding: 20px; margin-bottom: 00px; padding-bottom: 00;" >
-            <table style="width: 70%; margin: auto;" border="3">
+        <h2 style="
+        width: 70%;
+        margin: auto;
+        text-align: center;
+        background: #eee;
+        border-bottom: 1px solid #ddd;
+      ">
+            Invoice
+        </h2>
+        <div style="padding: 20px; margin-bottom: 00px; padding-bottom: 00">
+            <table style="width: 70%; margin: auto" border="3">
                 <tbody>
                     <tr>
-                        <th style="background-image: linear-gradient(135deg, #fdfcfb 0%, #dcdcdc 100%);"> Order Id </th>
-                        <th style="background-image: linear-gradient(135deg, #fdfcfb 0%, #dcdcdc 100%);"> Due Date </th>
-                        <th style="background-image: linear-gradient(135deg, #fdfcfb 0%, #dcdcdc 100%);"> Amount </th>
+                        <th style="
+                background-image: linear-gradient(
+                  135deg,
+                  #fdfcfb 0%,
+                  #dcdcdc 100%
+                );
+              ">
+                            Order Id
+                        </th>
+                        <th style="
+                background-image: linear-gradient(
+                  135deg,
+                  #fdfcfb 0%,
+                  #dcdcdc 100%
+                );
+              ">
+                            Due Date
+                        </th>
+                        <th style="
+                background-image: linear-gradient(
+                  135deg,
+                  #fdfcfb 0%,
+                  #dcdcdc 100%
+                );
+              ">
+                            Amount
+                        </th>
+                        <th style="
+                background-image: linear-gradient(
+                  135deg,
+                  #fdfcfb 0%,
+                  #dcdcdc 100%
+                );
+              ">
+                            Project name
+                        </th>
+                        <th style="
+                background-image: linear-gradient(
+                  135deg,
+                  #fdfcfb 0%,
+                  #dcdcdc 100%
+                );
+              ">
+                            Project type
+                        </th>
                     </tr>
                 </tbody>
                 {{#each users}}
@@ -29,10 +88,12 @@
                         <td>{{this.orderId}}</td>
                         <td>{{this.due_date}}</td>
                         <td>{{this.amount}}</td>
+                        <td>{{this.projectName}}</td>
+                        <td>{{this.projectType}}</td>
                     </tr>
                 {{/each}}
             </table>
         </div>
-
     </body>
+
 </html>

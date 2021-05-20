@@ -42,6 +42,8 @@ class InvoiceHelpers {
         orderId: body.orderId,
         due_date: body.due_date,
         amount: `$${body.amount}`,
+        projectName: body.project?.name,
+        projectType: body.project?.type,
       },
     ];
     const invoiceFileName = './invoice.pdf';

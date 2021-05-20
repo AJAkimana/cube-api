@@ -4,10 +4,12 @@ import {
   OK,
   NOT_FOUND,
 } from 'http-status';
+import moment from 'moment';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 import Invoice from '../../database/model/invoice.model';
 import User from '../../database/model/user.model';
 import Quote from '../../database/model/quote.model';
+import Project from '../../database/model/project.schema';
 import Subscription from '../../database/model/subscription.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
@@ -110,11 +112,22 @@ class InvoiceController {
       if (role === 'Manager') {
         conditions = {};
       }
-      const invoices = await Invoice.find(conditions).populate({
-        path: 'user',
-        select: 'fullName',
-        model: User,
-      });
+      const invoices = await Invoice.find(conditions)
+        .populate({
+          path: 'user',
+          select: 'fullName',
+          model: User,
+        })
+        .populate({
+          path: 'quote',
+          select: 'project',
+          model: Quote,
+          populate: {
+            path: 'project',
+            select: 'name type',
+            model: Project,
+          },
+        });
       return ResponseUtil.handleSuccessResponse(
         OK,
         'All invoices have been retrieved',
@@ -140,11 +153,22 @@ class InvoiceController {
     try {
       const { invoiceId } = req.params;
 
-      const invoice = await Invoice.findById(invoiceId).populate({
-        path: 'user',
-        select: 'fullName',
-        model: User,
-      });
+      const invoice = await Invoice.findById(invoiceId)
+        .populate({
+          path: 'user',
+          select: 'fullName',
+          model: User,
+        })
+        .populate({
+          path: 'quote',
+          select: 'project',
+          model: Quote,
+          populate: {
+            path: 'project',
+            select: 'name type',
+            model: Project,
+          },
+        });
       if (!invoice) {
         return ResponseUtil.handleErrorResponse(
           INTERNAL_SERVER_ERROR,
@@ -154,8 +178,11 @@ class InvoiceController {
       }
       const pdfBody = {
         orderId: invoice._id,
-        due_date: invoice.due_date,
+        due_date: moment(invoice.due_date).format(
+          'MMMM Do YYYY, HH:mm',
+        ),
         amount: invoice.amount,
+        project: invoice.quote?.project,
       };
       await invoiceHelper.generatePDF(pdfBody, true);
       return res.download('./invoice.pdf');
