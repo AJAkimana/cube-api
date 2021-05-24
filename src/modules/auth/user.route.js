@@ -55,6 +55,12 @@ userRouter.patch(
   validateNewPassword,
   AuthController.setNewPassword,
 );
+userRouter.post('/send-reset-link', AuthController.sendResetPassword);
+userRouter.post(
+  '/reset-password',
+  validateNewPassword,
+  AuthController.resetPassword,
+);
 userRouter.patch(
   '/edit-profile',
   authorization,

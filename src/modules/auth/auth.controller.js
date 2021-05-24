@@ -31,7 +31,11 @@ class AuthController {
         req.body.role = 'visitor';
       }
       const user = await InstanceMaintain.createData(User, req.body);
-      await sendConfirmationEmail(user);
+      await sendConfirmationEmail(
+        user,
+        'A.R.I Secure Password',
+        'setPassword',
+      );
       return ResponseUtil.handleSuccessResponse(
         CREATED,
         'User account created successfully',
@@ -216,21 +220,84 @@ class AuthController {
   static async setNewPassword(req, res) {
     const { token, password } = req.body;
     try {
-      const user = await User.findOne({ resetKey: token });
+      const user = await User.findOne({ resetKey: token }).select({
+        password: 0,
+        resetKey: 0,
+      });
       if (user && user.role === 'visitor') {
         user.password = BcryptUtil.hashPassword(password);
         user.role = 'Client';
         user.resetKey = null;
 
         await user.save();
-        const updatedData = { ...user._doc };
-        delete updatedData.password;
 
+        ResponseUtil.setSuccess(OK, 'Successful set new password');
+        return ResponseUtil.send(res);
+      }
+      ResponseUtil.setError(NOT_FOUND, 'Token not found');
+      return ResponseUtil.send(res);
+    } catch (error) {
+      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
+      return ResponseUtil.send(res);
+    }
+  }
+  /**
+   * This function is for sending reset link email.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object}
+   */
+  static async sendResetPassword(req, res) {
+    const { email } = req.body;
+    try {
+      const user = await User.findOne({ email }).select({
+        password: 0,
+        resetKey: 0,
+      });
+      if (user && user.role !== 'visitor') {
+        user.resetKey = randomBytes(40).toString('hex');
+        await user.save();
+        await sendConfirmationEmail(
+          user,
+          'A.R.I reset password',
+          'resetPassword',
+        );
         ResponseUtil.setSuccess(
           OK,
-          'Successful set new password',
-          updatedData,
+          'Visit your email for the reset link',
         );
+        return ResponseUtil.send(res);
+      }
+      ResponseUtil.setError(
+        NOT_FOUND,
+        'No user found with the email',
+      );
+      return ResponseUtil.send(res);
+    } catch (error) {
+      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
+      return ResponseUtil.send(res);
+    }
+  }
+  /**
+   * This function is for resetting a user password.
+   * @param {object} req The http request.
+   * @param {object} res The response.
+   * @returns {object}
+   */
+  static async resetPassword(req, res) {
+    const { token, password } = req.body;
+    try {
+      const user = await User.findOne({ resetKey: token }).select({
+        password: 0,
+        resetKey: 0,
+      });
+      if (user && user.role !== 'visitor') {
+        user.password = BcryptUtil.hashPassword(password);
+        user.resetKey = null;
+
+        await user.save();
+
+        ResponseUtil.setSuccess(OK, 'Successful set new password');
         return ResponseUtil.send(res);
       }
       ResponseUtil.setError(NOT_FOUND, 'Token not found');

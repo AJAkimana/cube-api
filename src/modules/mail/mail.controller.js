@@ -8,13 +8,17 @@ const sendgridAPIKey =
   process.env.SENDGRID_API_KEY || config.sendgrid_api_key;
 sgMail.setApiKey(sendgridAPIKey);
 
-const sendConfirmationEmail = async (user) => {
+const sendConfirmationEmail = async (
+  user,
+  subject = '',
+  action = '',
+) => {
   const url = `${process.env.FRONTEND_URL}/set-password/${user.resetKey}`;
   const data = {
     from: process.env.MAIL_FROM,
     to: `${user.email}`,
-    subject: 'A.R.I Secure Password',
-    html: validationMail(url),
+    subject,
+    html: validationMail(url, action),
   };
   await sgMail.send(data);
 };
