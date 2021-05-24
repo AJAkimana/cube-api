@@ -60,6 +60,7 @@ class ProjectController {
       conditions = { ...conditions, status: { $ne: status } };
     }
     const projects = await Project.find(conditions)
+      .sort({ createdAt: -1 })
       .populate({
         path: 'user',
         select: 'firstName lastName',

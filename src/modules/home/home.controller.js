@@ -19,7 +19,7 @@ class HomeController {
     const { _id: userId, role } = req.userData;
     try {
       let conditions = { user: userId };
-      if (role === 'Manager') {
+      if (role !== 'Client') {
         conditions = {};
       }
 

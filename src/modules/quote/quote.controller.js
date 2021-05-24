@@ -128,10 +128,11 @@ class QuoteController {
       const { _id: userId, role } = req.userData;
 
       let conditions = { user: userId };
-      if (role === 'Manager') {
+      if (role !== 'Client') {
         conditions = {};
       }
       const quotes = await Quote.find(conditions)
+        .sort({ createdAt: -1 })
         .populate({
           path: 'project',
           select: 'name',
