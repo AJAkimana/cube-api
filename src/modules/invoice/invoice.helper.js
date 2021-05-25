@@ -41,7 +41,7 @@ class InvoiceHelpers {
       {
         orderId: body.orderId,
         due_date: body.due_date,
-        amount: `$${body.amount}`,
+        amount: `$${body.amount?.toLocaleString('en-US')}`,
         projectName: body.project?.name,
         projectType: body.project?.type,
       },

@@ -1,11 +1,12 @@
 import { Router } from 'express';
-import authorization from '../middleware/auth.middleware';
+import authorization, {
+  isAdminOrManager,
+} from '../middleware/auth.middleware';
 import invoice from './invoice.controller';
 import {
   validateInvoiceUpdate,
   validateInvoiceBody,
 } from './invoice.validation';
-import { checkInvoiceExists } from './invoice.middleware';
 
 const { getAllInvoices, paymentOfInvoice, downloadInvoice } = invoice;
 const invoiceRouter = Router();
@@ -15,7 +16,7 @@ invoiceRouter.patch(
   '/:id',
   authorization,
   validateInvoiceUpdate,
-  checkInvoiceExists,
+  isAdminOrManager,
   paymentOfInvoice,
 );
 invoiceRouter.get('/', authorization, getAllInvoices);

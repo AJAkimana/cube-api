@@ -70,11 +70,12 @@ class InvoiceController {
           const period =
             invoice.quote.billingCycle === 'Monthly' ? 30 : 365;
           date.setDate(date.getDate() + period);
-
+          const expirationDate =
+            invoice.quote.billingCycle === 'OneTime' ? null : date;
           const newSubscription = {
             quote: invoice.quote._id,
             startDate: new Date(),
-            expirationDate: date,
+            expirationDate,
             status,
             user: invoice.user,
           };

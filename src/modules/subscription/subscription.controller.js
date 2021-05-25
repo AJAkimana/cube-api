@@ -94,10 +94,11 @@ class SubscriptionController {
       const { _id: userId, role } = req.userData;
 
       let conditions = { user: userId };
-      if (role === 'Manager') {
+      if (role !== 'Client') {
         conditions = {};
       }
       const subscriptions = await Subscription.find(conditions)
+        .sort({ createdAt: -1 })
         .populate({
           path: 'user',
           select: 'fullName',

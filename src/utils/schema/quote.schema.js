@@ -7,12 +7,13 @@ export const quoteSchema = Joi.object({
     'string.empty': 'projectId is not allowed to be empty',
   }),
   billingCycle: Joi.string()
-    .valid('Monthly', 'Yearly')
+    .valid('Monthly', 'Yearly', 'OneTime')
     .required()
     .messages({
       'any.required': 'Billing Cycle is required',
       'string.empty': 'Billing Cycle is not allowed to be empty',
-      'any.only': 'Billing Cycle must be one of [Monthly, Yearly]',
+      'any.only':
+        'Billing Cycle must be one of [Monthly, Yearly, OneTime]',
     }),
   amount: Joi.number()
     .positive()
@@ -29,12 +30,13 @@ export const quoteSchema = Joi.object({
 
 export const quoteUpdateSchema = Joi.object({
   billingCycle: Joi.string()
-    .valid('Monthly', 'Yearly')
+    .valid('Monthly', 'Yearly', 'OneTime')
     .required()
     .messages({
       'any.required': 'Billing Cycle is required',
       'string.empty': 'Billing Cycle is not allowed to be empty',
-      'any.only': 'Billing Cycle must be one of [Monthly, Yearly]',
+      'any.only':
+        'Billing Cycle must be one of [Monthly, Yearly, OneTime]',
     }),
   amount: Joi.number()
     .positive()

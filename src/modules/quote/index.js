@@ -1,14 +1,14 @@
 import { Router } from 'express';
 import quote from './quote.controller';
-import authorization from '../middleware/auth.middleware';
+import authorization, {
+  isAdminOrManager,
+  isNotVisitor,
+} from '../middleware/auth.middleware';
 import {
   validateQuoteBody,
   validateQuoteUpdate,
 } from './quote.validation';
-import {
-  checkUserRole,
-  checkUserRoleAndQuoteExists,
-} from './quote.middleware';
+import { doesQuoteExist } from './quote.middleware';
 
 const quoteRouter = Router();
 const { createQuote, getAllQuotes, updateQuote } = quote;
@@ -16,8 +16,8 @@ const { createQuote, getAllQuotes, updateQuote } = quote;
 quoteRouter.post(
   '/',
   authorization,
+  isAdminOrManager,
   validateQuoteBody,
-  checkUserRole,
   createQuote,
 );
 
@@ -25,6 +25,8 @@ quoteRouter.patch(
   '/:id',
   authorization,
   validateQuoteUpdate,
+  isNotVisitor,
+  doesQuoteExist,
   updateQuote,
 );
 quoteRouter.get('/', authorization, getAllQuotes);
