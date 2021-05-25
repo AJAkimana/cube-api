@@ -5,18 +5,10 @@ import mongoose from 'mongoose';
  */
 const subscriptionSchema = new mongoose.Schema(
   {
-    quote: {
-      type: String,
-      required: true,
-      ref: 'Quote',
-    },
-    user: {
-      type: String,
-      required: true,
-      ref: 'User',
-    },
+    quote: { type: String, required: true, ref: 'Quote' },
+    user: { type: String, required: true, ref: 'User' },
     startDate: { type: Date, required: true },
-    expirationDate: { type: Date, required: true },
+    expirationDate: { type: Date },
     status: { type: String, required: true },
   },
   {
