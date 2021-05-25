@@ -22,6 +22,8 @@ export const validateUserBody = (req, res, next) => {
     _id,
     __v,
     password,
+    resetKey,
+    role,
     ...rest
   } = req.body;
   return handleErrorsUtil(accountSchema, rest, res, next);

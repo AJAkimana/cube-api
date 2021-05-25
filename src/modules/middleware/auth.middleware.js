@@ -51,13 +51,12 @@ export default (req, res, next) => {
 export const isNotVisitor = (req, res, next) => {
   if (req.userData && req.userData.role !== 'visitor') {
     return next();
-  } else {
-    ResponseUtil.setError(
-      UNAUTHORIZED,
-      'Unauthorized, You cannot perform this action',
-    );
-    return ResponseUtil.send(res);
   }
+  ResponseUtil.setError(
+    UNAUTHORIZED,
+    'Unauthorized, You cannot perform this action',
+  );
+  return ResponseUtil.send(res);
 };
 /**
  * @param  {object} req
@@ -68,13 +67,12 @@ export const isNotVisitor = (req, res, next) => {
 export const isClient = (req, res, next) => {
   if (req.userData && req.userData.role === 'Client') {
     return next();
-  } else {
-    ResponseUtil.setError(
-      UNAUTHORIZED,
-      'Unauthorized, The action is for clients',
-    );
-    return ResponseUtil.send(res);
   }
+  ResponseUtil.setError(
+    UNAUTHORIZED,
+    'Unauthorized, The action is for clients',
+  );
+  return ResponseUtil.send(res);
 };
 /**
  * @param  {object} req
@@ -85,13 +83,12 @@ export const isClient = (req, res, next) => {
 export const isManager = (req, res, next) => {
   if (req.userData && req.userData.role === 'Manager') {
     return next();
-  } else {
-    ResponseUtil.setError(
-      UNAUTHORIZED,
-      'Unauthorized, The action is for managers',
-    );
-    return ResponseUtil.send(res);
   }
+  ResponseUtil.setError(
+    UNAUTHORIZED,
+    'Unauthorized, The action is for managers',
+  );
+  return ResponseUtil.send(res);
 };
 /**
  * @param  {object} req
@@ -102,11 +99,27 @@ export const isManager = (req, res, next) => {
 export const isAdmin = (req, res, next) => {
   if (req.userData && req.userData.role === 'Admin') {
     return next();
-  } else {
-    ResponseUtil.setError(
-      UNAUTHORIZED,
-      'Unauthorized, The action is for admins',
-    );
-    return ResponseUtil.send(res);
   }
+  ResponseUtil.setError(
+    UNAUTHORIZED,
+    'Unauthorized, The action is for admins',
+  );
+  return ResponseUtil.send(res);
+};
+/**
+ * @param  {object} req
+ * @param  {object} res
+ * @param  {object} next
+ * @returns {object} protect route
+ */
+export const isAdminOrManager = (req, res, next) => {
+  const user = req.userData;
+  if (user && (user.role === 'Admin' || user.role === 'Manager')) {
+    return next();
+  }
+  ResponseUtil.setError(
+    UNAUTHORIZED,
+    'Unauthorized, The action is for admins',
+  );
+  return ResponseUtil.send(res);
 };

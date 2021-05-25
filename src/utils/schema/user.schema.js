@@ -49,11 +49,11 @@ export const accountSchema = Joi.object({
     'string.empty': 'Address is not allowed to be empty',
     'string.min': 'Address length must be at least 2 characters long',
   }),
-  role: Joi.string().required().valid('Client', 'Manager').messages({
-    'any.required': 'role is required',
-    'string.empty': 'role is not allowed to be empty',
-    'any.only': 'role must be [Client, Manager]',
-  }),
+  // role: Joi.string().required().valid('Client', 'Manager').messages({
+  //   'any.required': 'role is required',
+  //   'string.empty': 'role is not allowed to be empty',
+  //   'any.only': 'role must be [Client, Manager]',
+  // }),
   country: Joi.string().required().messages({
     'any.required': 'Country is required',
     'string.empty': 'Country is not allowed to be empty',

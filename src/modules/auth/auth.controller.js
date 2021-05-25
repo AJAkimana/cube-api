@@ -135,8 +135,11 @@ class AuthController {
 
   static async editAccount(req, res) {
     try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email });
+      const { email } = req.body;
+      const user = await User.findOne({ email }).select({
+        password: 0,
+        resetKey: 0,
+      });
       if (user) {
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
@@ -149,10 +152,14 @@ class AuthController {
         user.city = req.body.city;
         user.postalCode = req.body.postalCode;
         await user.save();
+        const userData = { ...user._doc };
         return res.status(OK).json({
           status: OK,
           message: 'User account updated successfully',
-          data: user,
+          data: {
+            user: userData,
+            token: TokenUtil.generateToken(userData),
+          },
         });
       }
       return res.status(NOT_FOUND).json({
