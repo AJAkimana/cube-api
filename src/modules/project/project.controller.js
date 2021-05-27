@@ -63,7 +63,7 @@ class ProjectController {
       .sort({ createdAt: -1 })
       .populate({
         path: 'user',
-        select: 'firstName lastName',
+        select: 'fullName firstName lastName',
         model: User,
       })
       .sort({

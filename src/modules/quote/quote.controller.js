@@ -135,7 +135,7 @@ class QuoteController {
         .sort({ createdAt: -1 })
         .populate({
           path: 'project',
-          select: 'name',
+          select: 'name type',
           model: Project,
         })
         .populate({

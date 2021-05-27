@@ -3,6 +3,7 @@ import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import User from '../../database/model/user.model';
 import Subscription from '../../database/model/subscription.model';
+import Project from '../../database/model/project.schema';
 import InstanceMaintain from '../../database/maintains/instance.maintain';
 
 /**
@@ -25,22 +26,23 @@ class SubscriptionController {
       });
       if (quoteData.billingCycle === 'Monthly') {
         const today = new Date();
-        const subscription = await InstanceMaintain.findByIdAndUpdateData(
-          User,
-          req.params.id,
-          {
-            $addToSet: {
-              subscription: {
-                quoteId: req.body.quoteId,
-                startDate: new Date(Date.now()).toISOString(),
-                expirationDate: new Date(
-                  new Date().setDate(today.getDate() + 30),
-                ).toISOString(),
-                status: req.body.status,
+        const subscription =
+          await InstanceMaintain.findByIdAndUpdateData(
+            User,
+            req.params.id,
+            {
+              $addToSet: {
+                subscription: {
+                  quoteId: req.body.quoteId,
+                  startDate: new Date(Date.now()).toISOString(),
+                  expirationDate: new Date(
+                    new Date().setDate(today.getDate() + 30),
+                  ).toISOString(),
+                  status: req.body.status,
+                },
               },
             },
-          },
-        );
+          );
         ResponseUtil.setSuccess(
           OK,
           'Subscription has been created successfully',
@@ -52,22 +54,23 @@ class SubscriptionController {
       }
       if (quoteData.billingCycle === 'Yearly') {
         const today = new Date();
-        const subscription = await InstanceMaintain.findByIdAndUpdateData(
-          User,
-          req.params.id,
-          {
-            $addToSet: {
-              subscription: {
-                quoteId: req.body.quoteId,
-                startDate: new Date(Date.now()).toISOString(),
-                expirationDate: new Date(
-                  new Date().setDate(today.getDate() + 365),
-                ).toISOString(),
-                status: req.body.status,
+        const subscription =
+          await InstanceMaintain.findByIdAndUpdateData(
+            User,
+            req.params.id,
+            {
+              $addToSet: {
+                subscription: {
+                  quoteId: req.body.quoteId,
+                  startDate: new Date(Date.now()).toISOString(),
+                  expirationDate: new Date(
+                    new Date().setDate(today.getDate() + 365),
+                  ).toISOString(),
+                  status: req.body.status,
+                },
               },
             },
-          },
-        );
+          );
         ResponseUtil.setSuccess(
           OK,
           'Subscription has been created successfully',
@@ -108,6 +111,11 @@ class SubscriptionController {
           path: 'quote',
           select: 'amount billingCycle',
           model: Quote,
+          populate: {
+            path: 'project',
+            select: 'name type',
+            model: Project,
+          },
         });
       return ResponseUtil.handleSuccessResponse(
         OK,
