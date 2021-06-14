@@ -34,9 +34,9 @@ export const logProject = async (
       logActions.indexOf(action) < 0 ? 'project_create' : action;
     await History.create({
       description: descriptions[logAction],
-      project: project.id,
-      user: user?.id,
-      manager: manager?.id,
+      project: project._id,
+      user: user?._id,
+      manager: manager?._id,
     });
   } catch (error) {
     throw new Error(error.message);
