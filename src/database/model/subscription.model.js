@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 const subscriptionSchema = new mongoose.Schema(
   {
     quote: { type: String, required: true, ref: 'Quote' },
+    project: { type: String, ref: 'Project' },
+    billingCycle: { type: String, required: true },
     user: { type: String, required: true, ref: 'User' },
     startDate: { type: Date, required: true },
     expirationDate: { type: Date },

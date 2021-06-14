@@ -9,6 +9,8 @@ const invoiceSchema = new mongoose.Schema(
     due_date: { type: Date, required: true },
     order: { type: String, ref: 'Order' },
     quote: { type: String, ref: 'Quote' },
+    project: { type: String, ref: 'Project' },
+    billingCycle: { type: String, required: true },
     user: { type: String, required: true, ref: 'User' },
     status: { type: String, default: 'pending' },
   },
