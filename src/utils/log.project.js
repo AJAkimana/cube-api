@@ -8,6 +8,7 @@ const logActions = [
   'quote_create',
   'quote_update',
   'quote_status',
+  'invoice_create',
   'invoice_approve',
   'subscription_create',
 ];
@@ -27,6 +28,7 @@ export const logProject = async (
       quote_create: `New quote created by ${user.fullName}`,
       quote_update: details || `Quote edited`,
       quote_status: details || `Quote status changed`,
+      invoice_create: `Invoice created`,
       invoice_approve: `Invoice approved`,
       subscription_create: `New subscription created`,
     };

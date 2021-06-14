@@ -12,6 +12,7 @@ import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
 import Invoice from '../../database/model/invoice.model';
 import invoiceHelper from '../invoice/invoice.helper';
+import { logProject } from '../../utils/log.project';
 
 /**
  * Quote controller class
@@ -25,7 +26,17 @@ class QuoteController {
   static async createQuote(req, res) {
     const { projectId, billingCycle, amount } = req.body;
     try {
-      const project = await Project.findById(projectId);
+      const project = await Project.findById(projectId)
+        .populate({
+          path: 'user',
+          select: 'fullName firstName lastName',
+          model: User,
+        })
+        .populate({
+          path: 'manager',
+          select: 'fullName firstName lastName',
+          model: User,
+        });
       if (!project) {
         ResponseUtil.setError(NOT_FOUND, 'Project not found');
         return ResponseUtil.send(res);
@@ -38,6 +49,12 @@ class QuoteController {
       });
       project.status = 'approved';
       await project.save();
+      const entities = {
+        project,
+        user: project.user,
+        manager: project.manager,
+      };
+      await logProject(entities, 'quote_create');
 
       ResponseUtil.setSuccess(
         CREATED,
@@ -61,18 +78,28 @@ class QuoteController {
     try {
       const { id: quoteId } = req.params;
       const { amount, status, comment, billingCycle } = req.body;
-
       const quote = await Quote.findById(quoteId)
         .populate({
           path: 'user',
-          select: 'email',
+          select: 'email fullName',
           model: User,
         })
         .populate({
           path: 'project',
           select: 'name type',
           model: Project,
+          populate: {
+            path: 'manager',
+            select: 'email fullName',
+            model: User,
+          },
         });
+      const entities = {
+        project: quote.project,
+        user: quote.user,
+        manager: quote.project.manager,
+      };
+
       quote.amount = amount;
       quote.billingCycle = billingCycle;
       if (status) {
@@ -80,6 +107,9 @@ class QuoteController {
         quote.comment = comment;
       }
       await quote.save();
+      if (!status) {
+        await logProject(entities, 'quote_update');
+      }
       if (status && status === 'approved') {
         let date = new Date();
         date.setHours(date.getHours() + 24);
@@ -99,11 +129,13 @@ class QuoteController {
           message: 'Pay the invoice within 24 hours',
         };
         await invoiceHelper.generatePDF(pdfBody);
+        await logProject(entities, 'invoice_create');
       }
       if (status && status === 'declined') {
-        await Project.findByIdAndUpdate(quote.project, {
+        await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
+        await logProject(entities, 'quote_status');
       }
       ResponseUtil.setSuccess(
         OK,
