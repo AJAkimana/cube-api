@@ -1,14 +1,22 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 /**
  * Subscription schema
  */
-const subscriptionSchema = new mongoose.Schema(
+const subscriptionSchema = new Schema(
   {
-    quote: { type: String, required: true, ref: 'Quote' },
-    project: { type: String, ref: 'Project' },
+    quote: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Quote',
+    },
+    project: { type: Schema.Types.ObjectId, ref: 'Project' },
     billingCycle: { type: String, required: true },
-    user: { type: String, required: true, ref: 'User' },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     startDate: { type: Date, required: true },
     expirationDate: { type: Date },
     status: { type: String, required: true },
@@ -22,5 +30,5 @@ const subscriptionSchema = new mongoose.Schema(
     },
   },
 );
-
-export default mongoose.model('Subscription', subscriptionSchema);
+const Subscription = model('Subscription', subscriptionSchema);
+export default Subscription;

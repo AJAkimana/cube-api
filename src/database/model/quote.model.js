@@ -1,12 +1,20 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 /**
  * Quote Schema
  */
-const quoteSchema = new mongoose.Schema(
+const QuoteSchema = new Schema(
   {
-    user: { type: String, required: true, ref: 'User' },
-    project: { type: String, required: true, ref: 'Project' },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    project: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Project',
+    },
     billingCycle: { type: String, required: true },
     amount: { type: Number, required: true },
     status: { type: String },
@@ -14,7 +22,8 @@ const quoteSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    writeConcern: { w: 'majority', j: true, wtimeout: 1000 },
   },
 );
-
-export default mongoose.model('Quote', quoteSchema);
+const Quote = model('Quote', QuoteSchema);
+export default Quote;
