@@ -19,18 +19,18 @@ export const logProject = async (
   details = null,
 ) => {
   try {
-    const { project, user, manager } = entities;
+    const { project = {}, user = {}, manager = {} } = entities;
     const descriptions = {
       project_create: `Project created`,
       project_edit: `Project edited`,
       project_status: `Project status changed`,
-      project_manager: `A new manager(${manager.fullName}) assigned`,
-      quote_create: `New quote created by ${user.fullName}`,
+      project_manager: `A new manager assigned`,
+      quote_create: `New quote created by the System`,
       quote_update: details || `Quote edited`,
       quote_status: details || `Quote status changed`,
       invoice_create: `Invoice created`,
-      invoice_approve: `Invoice approved`,
-      subscription_create: `New subscription created`,
+      invoice_approve: details || `Invoice approved`,
+      subscription_create: details || `New subscription created`,
     };
     const logAction =
       logActions.indexOf(action) < 0 ? 'project_create' : action;
