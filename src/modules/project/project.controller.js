@@ -9,6 +9,7 @@ import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
 import { logProject } from '../../utils/log.project';
+import History from '../../database/model/history.model';
 
 /**
  * Service controller class
@@ -63,7 +64,6 @@ class ProjectController {
       conditions = { ...conditions, status: { $ne: status } };
     }
     const projects = await Project.find(conditions)
-      .sort({ createdAt: -1 })
       .populate({
         path: 'user',
         select: 'fullName firstName lastName',
@@ -122,6 +122,22 @@ class ProjectController {
         res,
       );
     }
+  }
+  /**
+   * @param  {object} req
+   * @param  {object} res
+   * @returns {object} function to retrieve project conversations
+   */
+  static async getProjectHistoriess(req, res) {
+    const { projectId } = req.params;
+
+    let conditions = { project: projectId };
+
+    const histories = await History.find(conditions).sort({
+      createdAt: -1,
+    });
+    ResponseUtil.setSuccess(OK, 'Success', histories);
+    return ResponseUtil.send(res);
   }
 }
 
