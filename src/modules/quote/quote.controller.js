@@ -118,6 +118,8 @@ class QuoteController {
           due_date: date,
           amount,
           user: quote.user._id,
+          billingCycle,
+          project: quote.project._id,
         };
         const newInvoice = await Invoice.create(invoice);
         const pdfBody = {
@@ -163,6 +165,7 @@ class QuoteController {
       if (role !== 'Client') {
         conditions = {};
       }
+      console.log(conditions);
       const quotes = await Quote.find(conditions)
         .sort({ createdAt: -1 })
         .populate({
