@@ -34,6 +34,7 @@ class ProjectController {
       await logProject({ project, user: req.userData });
       return ResponseUtil.send(res);
     } catch (error) {
+      console.log(error);
       return ResponseUtil.handleErrorResponse(
         INTERNAL_SERVER_ERROR,
         error.toString(),
@@ -91,8 +92,8 @@ class ProjectController {
       let logAction = 'project_edit';
       let entities = { project };
       if (role === 'Admin') {
-        await project.save();
         project.manager = req.body.managerId;
+        await project.save();
         entities.manager = { _id: req.body.managerId };
         entities.user = project.user;
         logAction = 'project_manager';
