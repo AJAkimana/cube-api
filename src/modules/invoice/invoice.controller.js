@@ -13,6 +13,7 @@ import Project from '../../database/model/project.schema';
 import Subscription from '../../database/model/subscription.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
+import { logProject } from '../../utils/log.project';
 
 /**
  * This class will contains all function to handle account
@@ -55,12 +56,19 @@ class InvoiceController {
     try {
       const { id } = req.params;
       const { amount, status } = req.body;
+      const { role } = req.userData;
       // get invoice id to be updated
-      const invoice = await Invoice.findById(id).populate({
-        path: 'quote',
-        select: 'billingCycle',
-        model: Quote,
-      });
+      const invoice = await Invoice.findById(id)
+        .populate({
+          path: 'quote',
+          select: 'billingCycle',
+          model: Quote,
+        })
+        .populate({
+          path: 'project',
+          select: 'manger name type',
+          model: Project,
+        });
       if (invoice && invoice.quote) {
         invoice.amount = amount;
         invoice.status = status;
@@ -78,8 +86,20 @@ class InvoiceController {
             expirationDate,
             status,
             user: invoice.user,
+            project: invoice.project._id,
+            billingCycle: invoice.quote.billingCycle,
           };
           await Subscription.create(newSubscription);
+          await logProject(
+            {
+              project: invoice.project,
+              user: { _id: invoice.user },
+              manager: { _id: invoice.project.manager },
+            },
+            'subscription_create',
+            'Invoice status changed to PAID and subscription created',
+            role,
+          );
         }
         return ResponseUtil.handleSuccessResponse(
           OK,
@@ -124,11 +144,11 @@ class InvoiceController {
           path: 'quote',
           select: 'project',
           model: Quote,
-          populate: {
-            path: 'project',
-            select: 'name type',
-            model: Project,
-          },
+        })
+        .populate({
+          path: 'project',
+          select: 'name type',
+          model: Project,
         });
       return ResponseUtil.handleSuccessResponse(
         OK,

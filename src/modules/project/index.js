@@ -15,7 +15,12 @@ import authorization, {
 } from '../middleware/auth.middleware';
 import { uploadImage } from '../../utils/image.util';
 
-const { createProject, updateProject, getProjects } = project;
+const {
+  createProject,
+  updateProject,
+  getProjects,
+  getProjectHistories,
+} = project;
 const projectRouter = Router();
 
 projectRouter.post(
@@ -28,6 +33,12 @@ projectRouter.post(
 );
 
 projectRouter.get('/', authorization, getProjects);
+projectRouter.get(
+  '/:id/histories',
+  authorization,
+  doesProjectExist,
+  getProjectHistories,
+);
 projectRouter.patch(
   '/:id',
   authorization,

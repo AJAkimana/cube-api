@@ -111,11 +111,11 @@ class SubscriptionController {
           path: 'quote',
           select: 'amount billingCycle',
           model: Quote,
-          populate: {
-            path: 'project',
-            select: 'name type',
-            model: Project,
-          },
+        })
+        .populate({
+          path: 'project',
+          select: 'name type',
+          model: Project,
         });
       return ResponseUtil.handleSuccessResponse(
         OK,

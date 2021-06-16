@@ -1,15 +1,21 @@
-import mongoose from 'mongoose';
+import { Schema, model } from 'mongoose';
 
 /**
  * Invoice Schema
  */
-const invoiceSchema = new mongoose.Schema(
+const invoiceSchema = new Schema(
   {
     amount: { type: Number, required: true },
     due_date: { type: Date, required: true },
-    order: { type: String, ref: 'Order' },
-    quote: { type: String, ref: 'Quote' },
-    user: { type: String, required: true, ref: 'User' },
+    order: { type: Schema.Types.ObjectId, ref: 'Order' },
+    quote: { type: Schema.Types.ObjectId, ref: 'Quote' },
+    project: { type: Schema.Types.ObjectId, ref: 'Project' },
+    billingCycle: { type: String, required: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     status: { type: String, default: 'pending' },
   },
   {
@@ -21,5 +27,5 @@ const invoiceSchema = new mongoose.Schema(
     },
   },
 );
-
-export default mongoose.model('Invoice', invoiceSchema);
+const Invoice = model('Invoice', invoiceSchema);
+export default Invoice;
