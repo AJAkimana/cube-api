@@ -128,7 +128,7 @@ class ProjectController {
    * @param  {object} res
    * @returns {object} function to retrieve project conversations
    */
-  static async getProjectHistoriess(req, res) {
+  static async getProjectHistories(req, res) {
     const { projectId } = req.params;
 
     let conditions = { project: projectId };

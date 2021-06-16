@@ -19,7 +19,7 @@ const {
   createProject,
   updateProject,
   getProjects,
-  getProjectHistoriess,
+  getProjectHistories,
 } = project;
 const projectRouter = Router();
 
@@ -37,7 +37,7 @@ projectRouter.get(
   '/:id/histories',
   authorization,
   doesProjectExist,
-  getProjectHistoriess,
+  getProjectHistories,
 );
 projectRouter.patch(
   '/:id',
