@@ -108,7 +108,7 @@ class ProjectController {
       if (role === 'Client') {
         await project.update(req.body);
       }
-      await logProject(entities, logAction);
+      await logProject(entities, logAction, null, role);
       ResponseUtil.setSuccess(
         OK,
         'Project proposal has been updated successfully',
@@ -129,7 +129,7 @@ class ProjectController {
    * @returns {object} function to retrieve project conversations
    */
   static async getProjectHistories(req, res) {
-    const { projectId } = req.params;
+    const { id: projectId } = req.params;
 
     let conditions = { project: projectId };
 

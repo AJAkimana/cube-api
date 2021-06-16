@@ -25,6 +25,7 @@ class QuoteController {
    */
   static async createQuote(req, res) {
     const { projectId, billingCycle, amount } = req.body;
+    const { role } = req.userData;
     try {
       const project = await Project.findById(projectId)
         .populate({
@@ -54,7 +55,7 @@ class QuoteController {
         user: project.user,
         manager: project.manager,
       };
-      await logProject(entities, 'quote_create');
+      await logProject(entities, 'quote_create', null, role);
 
       ResponseUtil.setSuccess(
         CREATED,
@@ -77,6 +78,7 @@ class QuoteController {
   static async updateQuote(req, res) {
     try {
       const { id: quoteId } = req.params;
+      const { role } = req.userData;
       const { amount, status, comment, billingCycle } = req.body;
       const quote = await Quote.findById(quoteId)
         .populate({
@@ -108,7 +110,7 @@ class QuoteController {
       }
       await quote.save();
       if (!status) {
-        await logProject(entities, 'quote_update');
+        await logProject(entities, 'quote_update', null, role);
       }
       if (status && status === 'approved') {
         let date = new Date();
@@ -131,13 +133,23 @@ class QuoteController {
           message: 'Pay the invoice within 24 hours',
         };
         await invoiceHelper.generatePDF(pdfBody);
-        await logProject(entities, 'invoice_create');
+        await logProject(
+          entities,
+          'invoice_create',
+          'Quote approved and invoice created',
+          role,
+        );
       }
       if (status && status === 'declined') {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
-        await logProject(entities, 'quote_status');
+        await logProject(
+          entities,
+          'quote_status',
+          'Quote declined and project set to PENDING',
+          role,
+        );
       }
       ResponseUtil.setSuccess(
         OK,
@@ -165,7 +177,6 @@ class QuoteController {
       if (role !== 'Client') {
         conditions = {};
       }
-      console.log(conditions);
       const quotes = await Quote.find(conditions)
         .sort({ createdAt: -1 })
         .populate({

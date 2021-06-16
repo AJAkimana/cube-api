@@ -22,14 +22,14 @@ export const logProject = async (
   try {
     const { project = {}, user = {}, manager = {} } = entities;
     const descriptions = {
-      project_create: `Project created`,
-      project_edit: `Project edited`,
-      project_status: `Project status changed`,
-      project_manager: `A new manager assigned`,
-      quote_create: `New quote created by the System`,
+      project_create: details || `Project created`,
+      project_edit: details || `Project edited`,
+      project_status: details || `Project status changed`,
+      project_manager: details || `A new manager assigned`,
+      quote_create: details || `New quote created`,
       quote_update: details || `Quote edited`,
       quote_status: details || `Quote status changed`,
-      invoice_create: `Invoice created`,
+      invoice_create: details || `Invoice created`,
       invoice_approve: details || `Invoice approved`,
       subscription_create: details || `New subscription created`,
     };

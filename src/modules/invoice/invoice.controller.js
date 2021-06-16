@@ -56,6 +56,7 @@ class InvoiceController {
     try {
       const { id } = req.params;
       const { amount, status } = req.body;
+      const { role } = req.userData;
       // get invoice id to be updated
       const invoice = await Invoice.findById(id)
         .populate({
@@ -96,7 +97,8 @@ class InvoiceController {
               manager: { _id: invoice.project.manager },
             },
             'subscription_create',
-            'Invoice paid and subscription created',
+            'Invoice status changed to PAID and subscription created',
+            role,
           );
         }
         return ResponseUtil.handleSuccessResponse(
