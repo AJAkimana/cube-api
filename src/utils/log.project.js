@@ -17,6 +17,7 @@ export const logProject = async (
   entities = {},
   action = 'project_create',
   details = null,
+  userRole = 'Client',
 ) => {
   try {
     const { project = {}, user = {}, manager = {} } = entities;
@@ -39,6 +40,7 @@ export const logProject = async (
       project: project._id,
       user: user?._id,
       manager: manager?._id,
+      userRole,
     });
   } catch (error) {
     throw new Error(error.message);

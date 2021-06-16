@@ -10,6 +10,7 @@ const HistorySchema = new Schema(
     },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     manager: { type: Schema.Types.ObjectId, ref: 'User' },
+    userRole: { type: String, required: true, default: 'Client' },
     reads: { type: [Schema.Types.ObjectId] },
   },
   {
