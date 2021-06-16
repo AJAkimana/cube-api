@@ -71,7 +71,9 @@ const sendInvoice = async (email, message, attachments) => {
     attachments,
     html: `<div><p>${message}</p><p><b>Contact Email:</b> ${process.env.MAIL_FROM}<br/>`,
   };
-  await sgMail.send(data);
+  if (process.env.NODE_ENV === 'production') {
+    await sgMail.send(data);
+  }
 };
 
 export { sendConfirmationEmail, mail, sendInvoice };
