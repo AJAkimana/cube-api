@@ -54,11 +54,11 @@ class InvoiceController {
    */
   static async paymentOfInvoice(req, res) {
     try {
-      const { id } = req.params;
+      const { id: invoiceId } = req.params;
       const { amount, status } = req.body;
       const { role } = req.userData;
       // get invoice id to be updated
-      const invoice = await Invoice.findById(id)
+      const invoice = await Invoice.findById(invoiceId)
         .populate({
           path: 'quote',
           select: 'billingCycle',
@@ -99,6 +99,7 @@ class InvoiceController {
             'subscription_create',
             'Invoice status changed to PAID and subscription created',
             role,
+            invoiceId,
           );
         }
         return ResponseUtil.handleSuccessResponse(
@@ -139,11 +140,6 @@ class InvoiceController {
           path: 'user',
           select: 'fullName',
           model: User,
-        })
-        .populate({
-          path: 'quote',
-          select: 'project',
-          model: Quote,
         })
         .populate({
           path: 'project',

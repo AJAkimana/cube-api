@@ -138,6 +138,7 @@ class QuoteController {
           'invoice_create',
           'Quote approved and invoice created',
           role,
+          newInvoice._id,
         );
       }
       if (status && status === 'declined') {
