@@ -9,12 +9,7 @@ homeRouter.get('/dashboard', authorization, Home.getDashboardCounts);
 homeRouter.get(
   '/notifications',
   authorization,
-  Home.getDashboardCounts,
-);
-homeRouter.get(
-  '/notifications/count',
-  authorization,
-  Home.getDashboardCounts,
+  Home.getNotifications,
 );
 
 export default homeRouter;

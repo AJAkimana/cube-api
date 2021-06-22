@@ -9,7 +9,7 @@ import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
 import { logProject } from '../../utils/log.project';
-import History from '../../database/model/history.model';
+import Notification from '../../database/model/notification.model';
 
 /**
  * Service controller class
@@ -133,7 +133,7 @@ class ProjectController {
 
     let conditions = { project: projectId };
 
-    const histories = await History.find(conditions).sort({
+    const histories = await Notification.find(conditions).sort({
       createdAt: -1,
     });
     ResponseUtil.setSuccess(OK, 'Success', histories);

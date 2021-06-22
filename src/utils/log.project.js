@@ -1,4 +1,4 @@
-import History from '../database/model/history.model';
+import Notification from '../database/model/notification.model';
 
 const logActions = [
   'project_create',
@@ -36,7 +36,7 @@ export const logProject = async (
     };
     const logAction =
       logActions.indexOf(action) < 0 ? 'project_create' : action;
-    await History.create({
+    await Notification.create({
       description: descriptions[logAction],
       project: project._id,
       user: user?._id,

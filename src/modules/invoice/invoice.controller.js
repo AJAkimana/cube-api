@@ -66,7 +66,7 @@ class InvoiceController {
         })
         .populate({
           path: 'project',
-          select: 'manger name type',
+          select: 'manager name type',
           model: Project,
         });
       if (invoice && invoice.quote) {
