@@ -55,7 +55,7 @@ class QuoteController {
         user: project.user,
         manager: project.manager,
       };
-      await logProject(entities, 'quote_create', null, role);
+      await logProject(entities, null, 'quote_create', role);
 
       ResponseUtil.setSuccess(
         CREATED,
@@ -101,16 +101,19 @@ class QuoteController {
         user: quote.user,
         manager: quote.project.manager,
       };
+      let content = {};
 
       quote.amount = amount;
       quote.billingCycle = billingCycle;
       if (status) {
         quote.status = status;
         quote.comment = comment;
+
+        content.info = comment;
       }
       await quote.save();
       if (!status) {
-        await logProject(entities, 'quote_update', null, role);
+        await logProject(entities, content, 'quote_update', role);
       }
       if (status && status === 'approved') {
         let date = new Date();
@@ -133,24 +136,16 @@ class QuoteController {
           message: 'Pay the invoice within 24 hours',
         };
         await invoiceHelper.generatePDF(pdfBody);
-        await logProject(
-          entities,
-          'invoice_create',
-          'Quote approved and invoice created',
-          role,
-          newInvoice._id,
-        );
+        content.details = 'Quote approved and invoice created';
+        content.invoiceId = newInvoice._id;
+        await logProject(entities, content, 'invoice_create', role);
       }
       if (status && status === 'declined') {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
-        await logProject(
-          entities,
-          'quote_status',
-          'Quote declined and project set to PENDING',
-          role,
-        );
+        content.details = 'Quote declined and project set to PENDING';
+        await logProject(entities, content, 'quote_status', role);
       }
       ResponseUtil.setSuccess(
         OK,

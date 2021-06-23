@@ -90,16 +90,21 @@ class InvoiceController {
             billingCycle: invoice.quote.billingCycle,
           };
           await Subscription.create(newSubscription);
-          await logProject(
-            {
-              project: invoice.project,
-              user: { _id: invoice.user },
-              manager: { _id: invoice.project.manager },
-            },
-            'subscription_create',
-            'Invoice status changed to PAID and subscription created',
-            role,
+          const entities = {
+            project: invoice.project,
+            user: { _id: invoice.user },
+            manager: { _id: invoice.project.manager },
+          };
+          const content = {
+            details:
+              'Invoice status changed to PAID and subscription created',
             invoiceId,
+          };
+          await logProject(
+            entities,
+            content,
+            'subscription_create',
+            role,
           );
         }
         return ResponseUtil.handleSuccessResponse(

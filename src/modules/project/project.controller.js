@@ -32,7 +32,8 @@ class ProjectController {
         'Project proposal has been created successfully',
         project,
       );
-      await logProject({ project, user: req.userData });
+      const content = { info: req.body.description };
+      await logProject({ project, user: req.userData }, content);
       return ResponseUtil.send(res);
     } catch (error) {
       console.log(error);
@@ -91,6 +92,7 @@ class ProjectController {
       });
       let logAction = 'project_edit';
       let entities = { project };
+      let content = { info: null };
       if (role === 'Admin') {
         project.manager = req.body.managerId;
         await project.save();
@@ -107,8 +109,9 @@ class ProjectController {
       }
       if (role === 'Client') {
         await project.update(req.body);
+        content.info = req.body.description;
       }
-      await logProject(entities, logAction, null, role);
+      await logProject(entities, content, logAction, role);
       ResponseUtil.setSuccess(
         OK,
         'Project proposal has been updated successfully',

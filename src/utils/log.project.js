@@ -15,13 +15,13 @@ const logActions = [
 
 export const logProject = async (
   entities = {},
+  content = {},
   action = 'project_create',
-  details = null,
   userRole = 'Client',
-  invoiceId = null,
 ) => {
   try {
     const { project = {}, user = {}, manager = {} } = entities;
+    const { details = null, invoiceId = null, info = null } = content;
     const descriptions = {
       project_create: details || `Project created`,
       project_edit: details || `Project edited`,
@@ -38,6 +38,7 @@ export const logProject = async (
       logActions.indexOf(action) < 0 ? 'project_create' : action;
     await Notification.create({
       description: descriptions[logAction],
+      content: info,
       project: project._id,
       user: user?._id,
       manager: manager?._id,

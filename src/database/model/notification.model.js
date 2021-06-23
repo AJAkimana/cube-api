@@ -3,6 +3,7 @@ import { Schema, model } from 'mongoose';
 const NotificationSchema = new Schema(
   {
     description: { type: String, required: true },
+    content: { type: String, default: null },
     project: {
       type: Schema.Types.ObjectId,
       required: true,
