@@ -59,7 +59,8 @@ class HomeController {
    */
   static async getNotifications(req, res) {
     const { _id: userId, role } = req.userData;
-    const { hasRead = null } = req.query;
+    const { type = null } = req.query;
+    let notifications;
     try {
       let conditions = { user: userId };
       if (role === 'Manager') {
@@ -68,12 +69,19 @@ class HomeController {
       if (role === 'Admin') {
         conditions = {};
       }
-      if (hasRead) {
-        conditions = { ...conditions, reads: { $ne: userId } };
+      if (type === 'count') {
+        notifications = await Notification.countDocuments({
+          ...conditions,
+          reads: { $ne: userId },
+        });
+      } else {
+        notifications = await Notification.find(conditions).sort({
+          createdAt: -1,
+        });
+        await Notification.updateMany(conditions, {
+          $addToSet: { reads: userId },
+        });
       }
-      const notifications = await Notification.find(conditions).sort({
-        createdAt: -1,
-      });
 
       ResponseUtil.setSuccess(OK, 'Success', notifications);
       return ResponseUtil.send(res);
