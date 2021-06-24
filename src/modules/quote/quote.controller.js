@@ -55,7 +55,7 @@ class QuoteController {
         user: project.user,
         manager: project.manager,
       };
-      await logProject(entities, null, 'quote_create', role);
+      await logProject(entities, {}, 'quote_create', role);
 
       ResponseUtil.setSuccess(
         CREATED,
