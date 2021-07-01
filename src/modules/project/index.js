@@ -2,7 +2,6 @@ import { Router } from 'express';
 import project from './project.controller';
 import {
   validateProjectBody,
-  updateProjectBody,
   updateProjectStatus,
 } from './project.validation';
 import {
