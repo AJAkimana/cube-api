@@ -20,6 +20,7 @@ const {
   getProjects,
   getProjectHistories,
   getProjectDetail,
+  createNewLog,
 } = project;
 const projectRouter = Router();
 
@@ -60,6 +61,12 @@ projectRouter.patch(
   updateProjectStatus,
   checkManagerRoleAndProjectExists,
   updateProject,
+);
+projectRouter.post(
+  '/:id/histories',
+  authorization,
+  doesProjectExist,
+  createNewLog,
 );
 
 export default projectRouter;

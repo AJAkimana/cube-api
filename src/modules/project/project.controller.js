@@ -4,6 +4,7 @@ import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
 import { logProject } from '../../utils/log.project';
 import Notification from '../../database/model/notification.model';
+import { serverResponse } from '../../utils/response';
 
 /**
  * Service controller class
@@ -156,6 +157,43 @@ class ProjectController {
     });
     ResponseUtil.setSuccess(OK, 'Success', histories);
     return ResponseUtil.send(res);
+  }
+  /**
+   * @param  {object} req
+   * @param  {object} res
+   * @returns {object} function to create new project log
+   */
+  static async createNewLog(req, res) {
+    const { id: projectId } = req.params;
+    const { _id: userId, role } = req.userData;
+    const { description, content = null } = req.body;
+    if (!description) {
+      return serverResponse(
+        res,
+        400,
+        'Sorry type at least a description',
+      );
+    }
+    const project = Project.findById(projectId);
+
+    const conditions = {
+      project: projectId,
+      createdBy: userId,
+      isCustom: true,
+    };
+    const toUpdate = {
+      description,
+      content,
+      user: project.user,
+      manager: project.manager,
+      userRole: role,
+    };
+
+    await Notification.findOneAndUpdate(conditions, toUpdate, {
+      new: true,
+      upsert: true,
+    });
+    return serverResponse(res, 200, 'Success');
   }
 }
 
