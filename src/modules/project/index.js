@@ -19,6 +19,7 @@ const {
   updateProject,
   getProjects,
   getProjectHistories,
+  getProjectDetail,
 } = project;
 const projectRouter = Router();
 
@@ -32,6 +33,12 @@ projectRouter.post(
 );
 
 projectRouter.get('/', authorization, getProjects);
+projectRouter.get(
+  '/:id',
+  authorization,
+  doesProjectExist,
+  getProjectDetail,
+);
 projectRouter.get(
   '/:id/histories',
   authorization,

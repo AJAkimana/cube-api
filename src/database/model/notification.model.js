@@ -23,6 +23,7 @@ const NotificationSchema = new Schema(
     },
     userRole: { type: String, required: true, default: 'Client' },
     reads: { type: [Schema.Types.ObjectId] },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

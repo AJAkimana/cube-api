@@ -94,6 +94,7 @@ class InvoiceController {
             project: invoice.project,
             user: { _id: invoice.user },
             manager: { _id: invoice.project.manager },
+            createdBy: req.userData,
           };
           const content = {
             details:

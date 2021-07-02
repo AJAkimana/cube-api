@@ -20,7 +20,12 @@ export const logProject = async (
   userRole = 'Client',
 ) => {
   try {
-    const { project = {}, user = {}, manager = {} } = entities;
+    const {
+      project = {},
+      user = {},
+      manager = {},
+      createdBy = {},
+    } = entities;
     const {
       details = null,
       invoiceId = null,
@@ -49,6 +54,7 @@ export const logProject = async (
       manager: manager?._id,
       quote: quoteId,
       invoice: invoiceId,
+      createtBy: createdBy._id,
       userRole,
     });
   } catch (error) {

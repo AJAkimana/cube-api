@@ -1,10 +1,4 @@
-import {
-  BAD_REQUEST,
-  CREATED,
-  INTERNAL_SERVER_ERROR,
-  OK,
-} from 'http-status';
-import InstanceMaintain from '../../database/maintains/instance.maintain';
+import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
@@ -33,7 +27,12 @@ class ProjectController {
         project,
       );
       const content = { info: req.body.description };
-      await logProject({ project, user: req.userData }, content);
+      const entities = {
+        project,
+        user: req.userData,
+        createdBy: req.userData,
+      };
+      await logProject(entities, content);
       return ResponseUtil.send(res);
     } catch (error) {
       console.log(error);
@@ -79,6 +78,22 @@ class ProjectController {
   /**
    * @param  {object} req
    * @param  {object} res
+   * @returns {object} function to retrieve project proposal
+   */
+  static async getProjectDetail(req, res) {
+    const { id: projectId } = req.params;
+
+    const projects = await Project.findById(projectId).populate({
+      path: 'user',
+      select: 'fullName firstName lastName',
+      model: User,
+    });
+    ResponseUtil.setSuccess(OK, 'Success', projects);
+    return ResponseUtil.send(res);
+  }
+  /**
+   * @param  {object} req
+   * @param  {object} res
    * @returns {object} function to update a project proposal
    */
   static async updateProject(req, res) {
@@ -91,7 +106,7 @@ class ProjectController {
         model: User,
       });
       let logAction = 'project_edit';
-      let entities = { project };
+      let entities = { project, createdBy: req.userData };
       let content = { info: null };
       if (role === 'Admin') {
         project.manager = req.body.managerId;

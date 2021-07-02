@@ -53,6 +53,7 @@ class QuoteController {
         project,
         user: project.user,
         manager: project.manager,
+        createdBy: req.userData,
       };
       await logProject(
         entities,
@@ -104,6 +105,7 @@ class QuoteController {
         project: quote.project,
         user: quote.user,
         manager: quote.project.manager,
+        createdBy: req.userData,
       };
       let content = {};
 
