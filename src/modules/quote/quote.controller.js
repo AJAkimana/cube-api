@@ -5,7 +5,6 @@ import {
   OK,
 } from 'http-status';
 import moment from 'moment';
-import InstanceMaintain from '../../database/maintains/instance.maintain';
 import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
@@ -42,7 +41,7 @@ class QuoteController {
         ResponseUtil.setError(NOT_FOUND, 'Project not found');
         return ResponseUtil.send(res);
       }
-      const quote = await InstanceMaintain.createData(Quote, {
+      const quote = await Quote.create({
         user: project.user,
         project: projectId,
         billingCycle,
@@ -55,7 +54,12 @@ class QuoteController {
         user: project.user,
         manager: project.manager,
       };
-      await logProject(entities, {}, 'quote_create', role);
+      await logProject(
+        entities,
+        { quoteId: quote._id },
+        'quote_create',
+        role,
+      );
 
       ResponseUtil.setSuccess(
         CREATED,
@@ -109,10 +113,11 @@ class QuoteController {
         quote.status = status;
         quote.comment = comment;
 
-        content.info = comment;
+        content = comment;
       }
       await quote.save();
       if (!status) {
+        content.quoteId = quoteId;
         await logProject(entities, content, 'quote_update', role);
       }
       if (status && status === 'approved') {

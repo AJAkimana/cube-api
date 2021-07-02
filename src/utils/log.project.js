@@ -21,7 +21,12 @@ export const logProject = async (
 ) => {
   try {
     const { project = {}, user = {}, manager = {} } = entities;
-    const { details = null, invoiceId = null, info = null } = content;
+    const {
+      details = null,
+      invoiceId = null,
+      info = null,
+      quoteId = null,
+    } = content;
     const descriptions = {
       project_create: details || `Project created`,
       project_edit: details || `Project edited`,
@@ -42,6 +47,7 @@ export const logProject = async (
       project: project._id,
       user: user?._id,
       manager: manager?._id,
+      quote: quoteId,
       invoice: invoiceId,
       userRole,
     });

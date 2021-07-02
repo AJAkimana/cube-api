@@ -11,6 +11,11 @@ const NotificationSchema = new Schema(
     },
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     manager: { type: Schema.Types.ObjectId, ref: 'User' },
+    quote: {
+      type: Schema.Types.ObjectId,
+      ref: 'Quote',
+      default: null,
+    },
     invoice: {
       type: Schema.Types.ObjectId,
       ref: 'Invoice',

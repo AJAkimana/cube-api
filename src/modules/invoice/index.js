@@ -20,6 +20,6 @@ invoiceRouter.patch(
   paymentOfInvoice,
 );
 invoiceRouter.get('/', authorization, getAllInvoices);
-invoiceRouter.get('/:invoiceId', downloadInvoice);
+invoiceRouter.get('/:downloadId', downloadInvoice);
 
 export default invoiceRouter;

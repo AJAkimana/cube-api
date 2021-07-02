@@ -174,25 +174,21 @@ class InvoiceController {
    */
   static async downloadInvoice(req, res) {
     try {
-      const { invoiceId } = req.params;
+      const { downloadId } = req.params;
+      const { downloadType = 'invoice' } = req.query;
+      let DownloadModel = Invoice;
+      if (downloadType === 'quote') {
+        DownloadModel = Quote;
+      }
 
-      const invoice = await Invoice.findById(invoiceId)
-        .populate({
-          path: 'user',
-          select: 'fullName',
-          model: User,
-        })
-        .populate({
-          path: 'quote',
-          select: 'project',
-          model: Quote,
-          populate: {
-            path: 'project',
-            select: 'name type',
-            model: Project,
-          },
-        });
-      if (!invoice) {
+      const download = await DownloadModel.findById(
+        downloadId,
+      ).populate({
+        path: 'project',
+        select: 'name type',
+        model: Project,
+      });
+      if (!download) {
         return ResponseUtil.handleErrorResponse(
           INTERNAL_SERVER_ERROR,
           'Sorry the invoice has not been generated',
@@ -200,12 +196,12 @@ class InvoiceController {
         );
       }
       const pdfBody = {
-        orderId: invoice._id,
-        due_date: moment(invoice.due_date).format(
+        orderId: download._id,
+        due_date: moment(download.due_date).format(
           'MMMM Do YYYY, HH:mm',
         ),
-        amount: invoice.amount,
-        project: invoice.quote?.project,
+        amount: download.amount,
+        project: download.project,
       };
       await invoiceHelper.generatePDF(pdfBody, true);
       return res.download('./invoice.pdf');
