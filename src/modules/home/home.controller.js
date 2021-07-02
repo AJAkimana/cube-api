@@ -75,9 +75,15 @@ class HomeController {
           reads: { $ne: userId },
         });
       } else {
-        notifications = await Notification.find(conditions).sort({
-          createdAt: -1,
-        });
+        notifications = await Notification.find(conditions)
+          .populate({
+            path: 'createdBy',
+            select: 'fullName',
+            model: User,
+          })
+          .sort({
+            createdAt: -1,
+          });
         await Notification.updateMany(conditions, {
           $addToSet: { reads: userId },
         });

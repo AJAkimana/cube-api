@@ -36,5 +36,6 @@ userSchema.pre('save', function (next) {
   user.fullName = `${user.firstName} ${user.lastName}`;
   return next();
 });
+const User = mongoose.model('User', userSchema);
 
-export default mongoose.model('User', userSchema);
+export default User;
