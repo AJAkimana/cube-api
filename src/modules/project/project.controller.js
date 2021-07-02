@@ -171,7 +171,7 @@ class ProjectController {
       return serverResponse(
         res,
         400,
-        'Sorry type at least a description',
+        'Description should not be empty',
       );
     }
     const project = Project.findById(projectId);
