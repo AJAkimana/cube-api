@@ -54,7 +54,7 @@ export const logProject = async (
       manager: manager?._id,
       quote: quoteId,
       invoice: invoiceId,
-      createtBy: createdBy._id,
+      createdBy: createdBy._id,
       userRole,
     });
   } catch (error) {
