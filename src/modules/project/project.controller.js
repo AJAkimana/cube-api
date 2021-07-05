@@ -152,9 +152,15 @@ class ProjectController {
 
     let conditions = { project: projectId };
 
-    const histories = await Notification.find(conditions).sort({
-      createdAt: -1,
-    });
+    const histories = await Notification.find(conditions)
+      .populate({
+        path: 'createdBy',
+        select: 'fullName firstName lastName',
+        model: User,
+      })
+      .sort({
+        createdAt: -1,
+      });
     ResponseUtil.setSuccess(OK, 'Success', histories);
     return ResponseUtil.send(res);
   }
@@ -166,8 +172,8 @@ class ProjectController {
   static async createNewLog(req, res) {
     const { id: projectId } = req.params;
     const { _id: userId, role } = req.userData;
-    const { description, content = null } = req.body;
-    if (!description) {
+    const { title, description = null } = req.body;
+    if (!title) {
       return serverResponse(
         res,
         400,
@@ -182,8 +188,8 @@ class ProjectController {
       isCustom: true,
     };
     const toUpdate = {
-      description,
-      content,
+      description: title,
+      content: description,
       user: project.user,
       manager: project.manager,
       userRole: role,
