@@ -1,17 +1,14 @@
 import { Router } from 'express';
 import { uploadFiles } from '../../utils/file.uploader';
-import {
-  getProducts,
-  addNewProduct,
-  editProduct,
-  deleteProduct,
-} from './product.controller';
+import { ProductController } from './product.controller';
 import {
   doesProductExist,
   isProductValid,
 } from './product.middleware';
 
 const productRouter = Router();
+const { getProducts, addNewProduct, editProduct, deleteProduct } =
+  ProductController;
 
 productRouter.post('/', isProductValid, addNewProduct);
 productRouter.get('/', getProducts);
