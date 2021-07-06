@@ -4,7 +4,7 @@ import path, { resolve } from 'path';
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
   // Allowed exts
-  const allowedImages = /jpeg|jpg|png/;
+  const allowedImages = /glb|usdz/;
   // Check ext
   let extname = false;
   // Check mime
@@ -21,7 +21,7 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
   if (mimetype && extname) {
     return fileCallBack(null, true);
   } else {
-    fileCallBack(errorMessage);
+    return fileCallBack(errorMessage);
   }
 };
 const MB = 1024 * 1024;

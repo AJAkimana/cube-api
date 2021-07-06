@@ -19,6 +19,6 @@ productRouter.patch(
   editProduct,
 );
 productRouter.delete('/:productId', doesProductExist, deleteProduct);
-productRouter.post('/upload', uploadFiles);
+productRouter.post('/upload/:fileType', uploadFiles);
 
 export default productRouter;
