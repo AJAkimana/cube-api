@@ -7,5 +7,6 @@ routes.rest
 dist
 package-lock.json
 tmp/
+public/
 invoice.pdf
 package-lock.json
