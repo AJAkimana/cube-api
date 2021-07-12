@@ -8,8 +8,13 @@ import {
 } from './product.middleware';
 
 const productRouter = Router();
-const { getProducts, addNewProduct, editProduct, deleteProduct } =
-  ProductController;
+const {
+  getProducts,
+  addNewProduct,
+  editProduct,
+  deleteProduct,
+  getProductImages,
+} = ProductController;
 
 productRouter.post('/', authorization, isProductValid, addNewProduct);
 productRouter.get('/', getProducts);
@@ -21,5 +26,10 @@ productRouter.patch(
 );
 productRouter.delete('/:productId', doesProductExist, deleteProduct);
 productRouter.post('/upload/:fileType', uploadFiles);
+productRouter.get(
+  '/files/:productId',
+  doesProductExist,
+  getProductImages,
+);
 
 export default productRouter;

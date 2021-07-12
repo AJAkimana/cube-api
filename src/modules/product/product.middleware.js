@@ -7,7 +7,10 @@ export const doesProductExist = async (req, res, next) => {
   const { productId } = req.params;
   try {
     const product = await Product.findById(productId);
-    if (product) return next();
+    if (product) {
+      req.body.fileName = product.image.src;
+      return next();
+    }
     return serverResponse(res, 400, 'Product not found');
   } catch (error) {
     return serverResponse(res, 500, error.message);

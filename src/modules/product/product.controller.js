@@ -1,3 +1,4 @@
+import { readdirSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
 
@@ -25,6 +26,25 @@ export class ProductController {
     try {
       await Product.remove({ _id: productId });
       return serverResponse(res);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
+  static async getProductImages(req, res) {
+    const { fileName } = req.body;
+    const imagesStorage = process.env.IMAGES_ZONE;
+    try {
+      const images = {};
+      readdirSync(imagesStorage)
+        .filter((file) => file.includes(fileName))
+        .map((img) => {
+          if (img.endsWith('.glb')) {
+            images.glb = img;
+          } else {
+            images.usdz = img;
+          }
+        });
+      return serverResponse(res, 200, 'success', images);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }
