@@ -35,5 +35,5 @@ export const productSchema = Joi.object({
     'any.required': 'Project is required',
     'string.empty': 'Project is not allowed to be empty',
   }),
-  image: Joi.object({}).optional(),
+  image: Joi.string().optional(),
 }).options({ abortEarly: false });

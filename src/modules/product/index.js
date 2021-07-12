@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { uploadFiles } from '../../utils/file.uploader';
 import { ProductController } from './product.controller';
+import authorization from '../middleware/auth.middleware';
 import {
   doesProductExist,
   isProductValid,
@@ -10,7 +11,7 @@ const productRouter = Router();
 const { getProducts, addNewProduct, editProduct, deleteProduct } =
   ProductController;
 
-productRouter.post('/', isProductValid, addNewProduct);
+productRouter.post('/', authorization, isProductValid, addNewProduct);
 productRouter.get('/', getProducts);
 productRouter.patch(
   '/:productId',
@@ -19,6 +20,6 @@ productRouter.patch(
   editProduct,
 );
 productRouter.delete('/:productId', doesProductExist, deleteProduct);
-productRouter.post('/upload', uploadFiles);
+productRouter.post('/upload/:fileType', uploadFiles);
 
 export default productRouter;

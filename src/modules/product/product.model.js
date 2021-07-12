@@ -1,5 +1,7 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
+import MongoSequence from 'mongoose-sequence';
 
+const AutoIncreament = MongoSequence(mongoose);
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -42,22 +44,22 @@ const productSchema = new Schema(
       enum: ['QA', 'COMPLETED'],
       required: true,
     },
-    itemNumber: { type: Number, required: true },
+    itemNumber: { type: Number },
     bgColor: { type: String, required: true },
     customer: { type: String, required: true },
     description: { type: String, required: true },
-    project: {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: 'Project',
-    },
   },
   {
     timestamps: true,
     writeConcern: { w: 'majority', j: true, wtimeout: 1000 },
   },
 );
-
+productSchema.plugin(AutoIncreament, { inc_field: 'itemNumber' });
+productSchema.pre('save', function (next) {
+  const product = this;
+  product.image.alt = product.name;
+  return next();
+});
 const Product = model('Product', productSchema);
 
 export default Product;

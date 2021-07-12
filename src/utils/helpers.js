@@ -4,7 +4,7 @@ import path, { resolve } from 'path';
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
   // Allowed exts
-  const allowedImages = /jpeg|jpg|png/;
+  const allowedImages = /glb|usdz/;
   // Check ext
   let extname = false;
   // Check mime
@@ -14,18 +14,18 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
     extname = allowedImages.test(
       path.extname(file.originalname).toLowerCase(),
     );
-    mimetype = allowedImages.test(file.mimetype);
-    errorMessage = 'Error: only (jpeg, jpg or png) images allowed';
+    mimetype = file.mimetype === 'application/octet-stream';
+    errorMessage = 'Error: only (glb or usdz) files allowed';
   }
 
   if (mimetype && extname) {
     return fileCallBack(null, true);
   } else {
-    fileCallBack(errorMessage);
+    return fileCallBack(errorMessage);
   }
 };
 const MB = 1024 * 1024;
-export const ACCEPTED_FILE_SIZE = 100 * MB; //100 mbs
+export const ACCEPTED_FILE_SIZE = 5 * MB; //5 mbs
 
 export const deleteDirFilesUsingPattern = (
   pattern = 'dssd',

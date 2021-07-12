@@ -3,9 +3,8 @@ import Product from './product.model';
 
 export class ProductController {
   static async addNewProduct(req, res) {
-    const { _id: userId } = req.userData;
-    req.body.user = userId;
     try {
+      req.body.image = { src: req.body.image };
       const newProduct = await Product.create(req.body);
       return serverResponse(res, 201, 'Created', newProduct);
     } catch (error) {
