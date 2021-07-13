@@ -16,7 +16,7 @@ export class ProductController {
     const { productId } = req.params;
     try {
       await Product.updateOne({ _id: productId }, req.body);
-      return serverResponse(res);
+      return serverResponse(res, 200, 'Updated');
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }

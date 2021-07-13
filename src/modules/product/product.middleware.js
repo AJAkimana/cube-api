@@ -8,7 +8,9 @@ export const doesProductExist = async (req, res, next) => {
   try {
     const product = await Product.findById(productId);
     if (product) {
-      req.body.fileName = product.image.src;
+      if (req.method !== 'PATCH') {
+        req.body.fileName = product.image.src;
+      }
       return next();
     }
     return serverResponse(res, 400, 'Product not found');
