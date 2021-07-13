@@ -115,7 +115,7 @@ class QuoteController {
         quote.status = status;
         quote.comment = comment;
 
-        content = comment;
+        content.info = comment;
       }
       await quote.save();
       if (!status) {
