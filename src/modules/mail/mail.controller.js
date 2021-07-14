@@ -87,7 +87,6 @@ const sendUserEmail = async (
     subject,
     html: content,
   };
-  console.log('executed', process.env.NODE_ENV);
   if (process.env.NODE_ENV === 'production') {
     await sgMail.send(data);
   }
