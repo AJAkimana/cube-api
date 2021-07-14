@@ -119,3 +119,39 @@ export const validationMail = (link = '', action = 'setPassword') => {
   };
   return emailsTempletes[action];
 };
+export const emailTemplate = (user = {}, content = '') => {
+  return `<body style="margin: 0; padding: 0;">
+<table border="0" cellpadding="0" cellspacing="0" width="900px" style="padding: 0 40px 0 40px; background-color:#f1f2f3;">
+  <tr>
+    <td align = "center" style="padding: 0 50px 0 50px;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color:#ffffff; padding: 0 0 0 20px;">
+        <tr>
+          <td>
+            [Logo]
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 0 50px 0 50px;">
+            <p>Dear ${user.fullName},</p>
+            <br/>
+            ${content}
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding: 30px 30px 30px 30px; color: rgb(124, 121, 121)">
+            &copy; ${new Date().getFullYear()} Augmented Reality Innovations. All rights reserved.
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding: 30px 30px 30px 30px; color: rgb(124, 121, 121)">
+            Augmented Reality Innovations <br>
+            80F Centurian Dr. Suite 10, Markham, ON L3R-8C1
+          </td>
+        </tr>
+      </table>
+    </td>
+    </tr>
+  </table>
+</body>
+`;
+};

@@ -1,4 +1,7 @@
 import Notification from '../database/model/notification.model';
+import User from '../database/model/user.model';
+import { sendUserEmail } from '../modules/mail/mail.controller';
+import { emailTemplate } from './validationMail';
 
 const logActions = [
   'project_create',
@@ -12,7 +15,49 @@ const logActions = [
   'invoice_approve',
   'subscription_create',
 ];
-
+const actionsToNotifyUser = [
+  'project_create',
+  'project_manager',
+  'quote_create',
+  'quote_status',
+  'invoice_create',
+  'invoice_approve',
+];
+const sendEmailNotification = async (
+  action = '',
+  project = {},
+  msgContent = {},
+) => {
+  try {
+    const managerId = project?.manager?._id || project?.manager;
+    const userId = project?.user?._id || project?.user;
+    if (actionsToNotifyUser.indexOf(action) !== -1) {
+      const notifiedUser = {
+        project_create: 'admin',
+        project_manager: managerId,
+        quote_create: userId,
+        quote_status: managerId,
+        invoice_create: userId,
+        invoice_approve: userId,
+      };
+      const receiverId = notifiedUser[action];
+      let condition = { _id: receiverId };
+      if (receiverId === 'admin') {
+        condition = { role: 'Admin' };
+      }
+      const user = await User.findOne(condition);
+      const subject = 'A.R.I project update';
+      if (user) {
+        let tempMail = `<b>${msgContent.title}</b></br>`;
+        tempMail += `${msgContent.info || ''}`;
+        const content = emailTemplate(user, tempMail);
+        await sendUserEmail(user, subject, content);
+      }
+    }
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 export const logProject = async (
   entities = {},
   content = {},
@@ -46,8 +91,9 @@ export const logProject = async (
     };
     const logAction =
       logActions.indexOf(action) < 0 ? 'project_create' : action;
+    content.title = descriptions[logAction];
     await Notification.create({
-      description: descriptions[logAction],
+      description: content.title,
       content: info,
       project: project._id,
       user: user?._id,
@@ -57,6 +103,8 @@ export const logProject = async (
       createdBy: createdBy._id,
       userRole,
     });
+
+    await sendEmailNotification(logAction, project, content);
   } catch (error) {
     throw new Error(error.message);
   }

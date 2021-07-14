@@ -93,7 +93,7 @@ class QuoteController {
         })
         .populate({
           path: 'project',
-          select: 'name type',
+          select: 'user name type',
           model: Project,
           populate: {
             path: 'manager',

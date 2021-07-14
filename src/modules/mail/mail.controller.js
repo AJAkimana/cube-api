@@ -12,13 +12,14 @@ const sendConfirmationEmail = async (
   user,
   subject = '',
   action = '',
+  content = '',
 ) => {
   const url = `${process.env.FRONTEND_URL}/set-password/${user.resetKey}`;
   const data = {
     from: process.env.MAIL_FROM,
     to: `${user.email}`,
     subject,
-    html: validationMail(url, action),
+    html: validationMail(url, action, content),
   };
   await sgMail.send(data);
 };
@@ -75,5 +76,20 @@ const sendInvoice = async (email, message, attachments) => {
     await sgMail.send(data);
   }
 };
-
-export { sendConfirmationEmail, mail, sendInvoice };
+const sendUserEmail = async (
+  user = {},
+  subject = '',
+  content = '',
+) => {
+  const data = {
+    from: process.env.MAIL_FROM,
+    to: `${user.email}`,
+    subject,
+    html: content,
+  };
+  console.log('executed', process.env.NODE_ENV);
+  if (process.env.NODE_ENV === 'production') {
+    await sgMail.send(data);
+  }
+};
+export { sendConfirmationEmail, mail, sendInvoice, sendUserEmail };
