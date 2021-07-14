@@ -78,7 +78,7 @@ class HomeController {
         notifications = await Notification.find(conditions)
           .populate({
             path: 'createdBy',
-            select: 'fullName',
+            select: 'fullName companyName',
             model: User,
           })
           .sort({
