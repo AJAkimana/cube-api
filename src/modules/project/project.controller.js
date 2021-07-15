@@ -2,7 +2,10 @@ import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
-import { logProject } from '../../utils/log.project';
+import {
+  logProject,
+  sendEmailNotification,
+} from '../../utils/log.project';
 import Notification from '../../database/model/notification.model';
 import { serverResponse } from '../../utils/response';
 
@@ -199,6 +202,8 @@ class ProjectController {
       new: true,
       upsert: true,
     });
+    const msgContent = { title, info: description };
+    await sendEmailNotification('custom_log', project, msgContent);
     return serverResponse(res, 200, 'Success');
   }
 }

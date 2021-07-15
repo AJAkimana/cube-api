@@ -22,8 +22,9 @@ const actionsToNotifyUser = [
   'quote_status',
   'invoice_create',
   'invoice_approve',
+  'custom_log',
 ];
-const sendEmailNotification = async (
+export const sendEmailNotification = async (
   action = '',
   project = {},
   msgContent = {},
