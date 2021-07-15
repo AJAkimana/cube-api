@@ -155,7 +155,7 @@ class ProjectController {
     const histories = await Notification.find(conditions)
       .populate({
         path: 'createdBy',
-        select: 'fullName firstName lastName',
+        select: 'fullName companyName',
         model: User,
       })
       .sort({
