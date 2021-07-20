@@ -22,7 +22,6 @@ const actionsToNotifyUser = [
   'quote_status',
   'invoice_create',
   'invoice_approve',
-  'custom_log',
 ];
 export const sendEmailNotification = async (
   action = '',
@@ -49,7 +48,7 @@ export const sendEmailNotification = async (
       const user = await User.findOne(condition);
       const subject = 'A.R.I project update';
       if (user) {
-        let tempMail = `<b>${msgContent.title}</b></br>`;
+        let tempMail = `<b>${msgContent.title}</b><br/>`;
         tempMail += `${msgContent.info || ''}`;
         const content = emailTemplate(user, tempMail);
         await sendUserEmail(user, subject, content);

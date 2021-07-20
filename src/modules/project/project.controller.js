@@ -8,6 +8,8 @@ import {
 } from '../../utils/log.project';
 import Notification from '../../database/model/notification.model';
 import { serverResponse } from '../../utils/response';
+import { sendUserEmail } from '../mail/mail.controller';
+import { emailTemplate } from '../../utils/validationMail';
 
 /**
  * Service controller class
@@ -183,28 +185,45 @@ class ProjectController {
         'Description should not be empty',
       );
     }
-    const project = Project.findById(projectId);
+    const project = await Project.findById(projectId);
 
-    const conditions = {
-      project: projectId,
-      createdBy: userId,
-      isCustom: true,
-    };
-    const toUpdate = {
+    const newLog = {
       description: title,
       content: description,
       user: project.user,
       manager: project.manager,
       userRole: role,
+      project: projectId,
+      createdBy: userId,
+      isCustom: true,
     };
 
-    await Notification.findOneAndUpdate(conditions, toUpdate, {
-      new: true,
-      upsert: true,
-    });
-    const msgContent = { title, info: description };
-    await sendEmailNotification('custom_log', project, msgContent);
-    return serverResponse(res, 200, 'Success');
+    await Notification.create(newLog);
+    let notifierIds = [project.user];
+    if (role !== 'Manager') {
+      notifierIds.push(project.manager);
+    }
+
+    const subject = 'A.R.I project update';
+    let tempMail = `<b>${title}</b><br/>`;
+    tempMail += `${description || ''}`;
+
+    Promise.all(
+      notifierIds.map(async (thisId) => {
+        const user = await User.findById(thisId);
+        if (user) {
+          const content = emailTemplate(user, tempMail);
+          await sendUserEmail(user, subject, content);
+        }
+      }),
+    )
+      .then(() => {
+        return serverResponse(res, 200, 'Success');
+      })
+      .catch(() => {
+        const msg = 'Log saved, but notification not sent';
+        return serverResponse(res, 200, msg);
+      });
   }
 }
 

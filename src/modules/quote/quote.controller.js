@@ -12,6 +12,8 @@ import User from '../../database/model/user.model';
 import Invoice from '../../database/model/invoice.model';
 import invoiceHelper from '../invoice/invoice.helper';
 import { logProject } from '../../utils/log.project';
+import { emailTemplate } from '../../utils/validationMail';
+import { sendUserEmail } from '../mail/mail.controller';
 
 /**
  * Quote controller class
@@ -146,6 +148,16 @@ class QuoteController {
         content.details = 'Quote approved and invoice created';
         content.invoiceId = newInvoice._id;
         await logProject(entities, content, 'invoice_create', role);
+
+        //Notify admin
+        const subject = 'A.R.I project update';
+        let tempMail = `<b>${content.details}</b><br/>`;
+        tempMail += comment || '';
+        const user = await User.findOne({ role: 'Admin' });
+        if (user) {
+          const content = emailTemplate(user, tempMail);
+          await sendUserEmail(user, subject, content);
+        }
       }
       if (status && status === 'declined') {
         await Project.findByIdAndUpdate(quote.project._id, {
