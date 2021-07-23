@@ -15,22 +15,22 @@ const productSchema = new Schema(
       backgroundColor: { type: String, default: '#ffffff' },
       cameraOrbit: {
         custom: { type: Schema.Types.Mixed },
-        useCustom: { type: Boolean, default: false },
+        useDefault: { type: Boolean, default: false },
         default: { type: String, default: '0deg 75deg 105%' },
       },
       minCameraOrbit: {
         custom: { type: Schema.Types.Mixed },
-        useCustom: { type: Boolean, default: false },
+        useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'Infinity 22.5deg auto' },
       },
       maxCameraOrbit: {
         custom: { type: Schema.Types.Mixed },
-        useCustom: { type: Boolean, default: false },
+        useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'Infinity 157.5deg auto' },
       },
       cameraTarget: {
         custom: { type: Schema.Types.Mixed },
-        useCustom: { type: Boolean, default: false },
+        useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'auto auto auto' },
       },
       fieldOfView: { type: Number, default: 10 },
@@ -69,7 +69,7 @@ const productSchema = new Schema(
 productSchema.plugin(AutoIncreament, { inc_field: 'itemNumber' });
 productSchema.pre('save', function (next) {
   const product = this;
-  product.image.alt = product.name;
+  product.image.alt = product.image.alt || product.name;
   return next();
 });
 const Product = model('Product', productSchema);

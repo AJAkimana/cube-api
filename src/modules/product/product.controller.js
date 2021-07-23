@@ -49,6 +49,30 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+  static async getProductDetails(req, res) {
+    const { productId } = req.params;
+    const imagesStorage = process.env.IMAGES_ZONE;
+    try {
+      const product = await Product.findById(productId);
+      const fileName = product.image.src;
+      const images = {};
+      readdirSync(imagesStorage)
+        .filter((file) => file.includes(fileName))
+        .map((img) => {
+          if (img.endsWith('.glb')) {
+            images.glb = img;
+          } else {
+            images.usdz = img;
+          }
+        });
+      const productObj = product.toObject();
+      productObj.imagesSrc = images;
+
+      return serverResponse(res, 200, 'success', productObj);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
   static async getProducts(req, res) {
     const { _id: userId, role } = req.userData || {};
 
@@ -62,6 +86,20 @@ export class ProductController {
     try {
       const products = await Product.find(conditions);
       return serverResponse(res, 200, 'Success', products);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
+  static async updateAttributes(req, res) {
+    try {
+      const { productId } = req.params;
+      const product = await Product.findById(productId);
+
+      req.body.src = product.image.src;
+      product.image = req.body;
+      await product.save();
+      const mesg = 'Successfully updated';
+      return serverResponse(res, 200, 'Success', mesg);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }
