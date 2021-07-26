@@ -25,7 +25,7 @@ export const uploadFiles = (req, res) => {
    */
   if (prevFile) {
     const prevFileName = prevFile.split('@')[0];
-    deleteDirFilesUsingPattern(prevFileName, fileStorage);
+    // deleteDirFilesUsingPattern(prevFileName, fileStorage);
   }
   const storage = multer.diskStorage({
     destination: (req, file, callBack) => {

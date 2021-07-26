@@ -13,16 +13,26 @@ const productSchema = new Schema(
       autoRotate: { type: Boolean, default: true },
       autoRotateDelay: { type: Number, default: 3000 },
       backgroundColor: { type: String, default: '#ffffff' },
-      cameraOrbit: { type: String, default: '0deg 75deg 105%' },
+      cameraOrbit: {
+        custom: { type: Schema.Types.Mixed },
+        useDefault: { type: Boolean, default: false },
+        default: { type: String, default: '0deg 75deg 105%' },
+      },
       minCameraOrbit: {
-        type: String,
-        default: 'Infinity 22.5deg auto',
+        custom: { type: Schema.Types.Mixed },
+        useDefault: { type: Boolean, default: false },
+        default: { type: String, default: 'Infinity 22.5deg auto' },
       },
       maxCameraOrbit: {
-        type: String,
-        default: 'Infinity 157.5deg auto',
+        custom: { type: Schema.Types.Mixed },
+        useDefault: { type: Boolean, default: false },
+        default: { type: String, default: 'Infinity 157.5deg auto' },
       },
-      cameraTarget: { type: String, default: ' auto auto auto' },
+      cameraTarget: {
+        custom: { type: Schema.Types.Mixed },
+        useDefault: { type: Boolean, default: false },
+        default: { type: String, default: 'auto auto auto' },
+      },
       fieldOfView: { type: Number, default: 10 },
       exposure: { type: Number, default: 1 },
       shadowIntensity: { type: Number, default: 0 },
@@ -38,6 +48,8 @@ const productSchema = new Schema(
         enum: ['floor', 'wall'],
         default: 'floor',
       },
+      metalness: { type: Number, default: 0 },
+      roughness: { type: Number, default: 0 },
     },
     status: {
       type: String,
@@ -57,7 +69,7 @@ const productSchema = new Schema(
 productSchema.plugin(AutoIncreament, { inc_field: 'itemNumber' });
 productSchema.pre('save', function (next) {
   const product = this;
-  product.image.alt = product.name;
+  product.image.alt = product.image.alt || product.name;
   return next();
 });
 const Product = model('Product', productSchema);
