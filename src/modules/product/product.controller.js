@@ -1,4 +1,4 @@
-import { readdirSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
 
@@ -34,6 +34,9 @@ export class ProductController {
     const { fileName } = req.body;
     const imagesStorage = process.env.IMAGES_ZONE;
     try {
+      if (!existsSync(fileStorage)) {
+        mkdirSync(fileStorage, { recursive: true });
+      }
       const images = {};
       readdirSync(imagesStorage)
         .filter((file) => file.includes(fileName))
