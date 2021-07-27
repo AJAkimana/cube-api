@@ -200,17 +200,22 @@ class ProjectController {
 
     await Notification.create(newLog);
     let notifierIds = [];
+    let toBeNotified = '';
     if (role === 'Manager') {
       notifierIds = [project.user];
+      toBeNotified = 'User';
     }
     if (role === 'Admin') {
       notifierIds = [project.user, project.manager];
+      toBeNotified = 'User and Manager';
     }
     if (role === 'Client') {
       notifierIds = [project.manager];
+      toBeNotified = 'Manager';
       if (!project.manager) {
         const admin = await User.findOne({ role: 'Admin' });
         notifierIds = [admin._id];
+        toBeNotified = 'Admin';
       }
     }
 
@@ -224,6 +229,10 @@ class ProjectController {
         if (user) {
           const content = emailTemplate(user, tempMail);
           await sendUserEmail(user, subject, content);
+          // console.log(
+          //   '=>Receiver to be notified:====>',
+          //   toBeNotified,
+          // );
         }
       }),
     )

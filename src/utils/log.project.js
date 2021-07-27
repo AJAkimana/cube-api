@@ -55,6 +55,7 @@ export const sendEmailNotification = async (
         tempMail += `${msgContent.info || ''}`;
         const content = emailTemplate(user, tempMail);
         await sendUserEmail(user, subject, content);
+        // console.log('=>Action to be notified:====>', action);
       }
     }
   } catch (error) {
