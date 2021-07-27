@@ -42,7 +42,10 @@ export const sendEmailNotification = async (
       };
       const receiverId = notifiedUser[action];
       let condition = { _id: receiverId };
-      if (receiverId === 'admin') {
+      if (
+        receiverId === 'admin' ||
+        (!receiverId && action === 'quote_status')
+      ) {
         condition = { role: 'Admin' };
       }
       const user = await User.findOne(condition);

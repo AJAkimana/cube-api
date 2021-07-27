@@ -199,9 +199,19 @@ class ProjectController {
     };
 
     await Notification.create(newLog);
-    let notifierIds = [project.user];
-    if (role !== 'Manager') {
-      notifierIds.push(project.manager);
+    let notifierIds = [];
+    if (role === 'Manager') {
+      notifierIds = [project.user];
+    }
+    if (role === 'Admin') {
+      notifierIds = [project.user, project.manager];
+    }
+    if (role === 'Client') {
+      notifierIds = [project.manager];
+      if (!project.manager) {
+        const admin = await User.findOne({ role: 'Admin' });
+        notifierIds = [admin._id];
+      }
     }
 
     const subject = 'A.R.I project update';
