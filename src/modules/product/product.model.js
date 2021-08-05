@@ -5,8 +5,8 @@ const AutoIncreament = MongoSequence(mongoose);
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
-    price: { type: Number, required: true },
-    sku: { type: String, required: true },
+    price: { type: Number },
+    sku: { type: String },
     image: {
       src: { type: String },
       disableZoom: { type: Boolean, default: false },
@@ -51,11 +51,7 @@ const productSchema = new Schema(
       metalness: { type: Number, default: 0 },
       roughness: { type: Number, default: 0 },
     },
-    status: {
-      type: String,
-      enum: ['QA', 'COMPLETED'],
-      required: true,
-    },
+    status: { type: String, enum: ['', 'QA', 'COMPLETED'] },
     itemNumber: { type: Number },
     bgColor: { type: String, required: true },
     customer: {
@@ -63,7 +59,7 @@ const productSchema = new Schema(
       required: true,
       ref: 'User',
     },
-    description: { type: String, required: true },
+    description: { type: String },
   },
   {
     timestamps: true,
