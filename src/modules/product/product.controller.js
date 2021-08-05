@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readdirSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
+import User from '../../database/model/user.model';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -87,7 +88,11 @@ export class ProductController {
       conditions = {};
     }
     try {
-      const products = await Product.find(conditions);
+      const products = await Product.find(conditions).populate({
+        path: 'customer',
+        select: 'fullName companyName',
+        model: User,
+      });
       return serverResponse(res, 200, 'Success', products);
     } catch (error) {
       return serverResponse(res, 500, error.message);

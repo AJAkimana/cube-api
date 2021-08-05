@@ -58,7 +58,11 @@ const productSchema = new Schema(
     },
     itemNumber: { type: Number },
     bgColor: { type: String, required: true },
-    customer: { type: String, required: true },
+    customer: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
     description: { type: String, required: true },
   },
   {
