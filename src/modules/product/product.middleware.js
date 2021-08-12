@@ -19,6 +19,13 @@ export const doesProductExist = async (req, res, next) => {
   }
 };
 export const isProductValid = (req, res, next) => {
+  const { sku, price, status, description, ...rest } = req.body;
+  const reqBody = rest;
+  if (sku) reqBody.sku = sku;
+  if (price) reqBody.price = price;
+  if (status) reqBody.status = status;
+  if (description) reqBody.description = description;
+
   const errors = schemaErrors(productSchema, req.body);
   if (errors) {
     return serverResponse(res, 400, errors[0]);
