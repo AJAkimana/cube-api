@@ -21,7 +21,7 @@ app.use(
 );
 // app.use(uploader({ useTempFiles: true }));
 app.use(bodyParser.json({ limit: '1mb' }));
-app.use('/images', express.static('public/images'));
+app.use('/images', express.static(process.env.IMAGES_ZONE));
 app.use('/api/v1', indexRouter);
 
 export default app;
