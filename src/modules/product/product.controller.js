@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readdirSync } from 'fs';
+import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
 import User from '../../database/model/user.model';
@@ -108,6 +108,26 @@ export class ProductController {
       await product.save();
       const mesg = 'Successfully updated';
       return serverResponse(res, 200, 'Success', mesg);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
+  static async deleteAttrImage(req, res) {
+    try {
+      const { productId, imageFileName } = req.params;
+      await Product.updateOne(
+        { _id: productId },
+        { $pull: { 'image.imageFiles': { imageFileName } } },
+      );
+      /**
+       * Delete the file frm the directory
+       */
+      const { IMAGES_ZONE } = process.env;
+      unlinkSync(`${IMAGES_ZONE}/${imageFileName}`);
+
+      const msg = 'Image deleted';
+
+      return serverResponse(res, 200, msg, imageFileName);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }

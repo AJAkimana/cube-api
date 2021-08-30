@@ -19,6 +19,7 @@ const {
   getProductImages,
   updateAttributes,
   getProductDetails,
+  deleteAttrImage,
 } = ProductController;
 
 productRouter.post(
@@ -62,6 +63,12 @@ productRouter.patch(
   // isAdmin,
   doesProductExist,
   updateAttributes,
+);
+productRouter.delete(
+  '/:productId/image/:imageFileName',
+  authorization,
+  doesProductExist,
+  deleteAttrImage,
 );
 
 export default productRouter;
