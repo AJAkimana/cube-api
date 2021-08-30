@@ -55,6 +55,14 @@ const productSchema = new Schema(
       },
       metalness: { type: Number, default: 0 },
       roughness: { type: Number, default: 0 },
+      skyboxImage: {
+        active: { type: Boolean, default: false },
+        image: { type: String },
+      },
+      environmentImage: {
+        active: { type: Boolean, default: false },
+        image: { type: String },
+      },
       imageFiles: [
         {
           imageType: { type: String },
