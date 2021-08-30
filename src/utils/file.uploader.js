@@ -8,13 +8,18 @@ import {
   isFileAllowed,
 } from './helpers';
 import { serverResponse } from './response';
+import Product from '../modules/product/product.model';
 
 export const uploadFiles = (req, res) => {
   let fileStorage = null;
   const { fileType } = req.params;
-  const { prevFile } = req.query;
+  const { prevFile, productId, imgType } = req.query;
   const randStr = randomBytes(10).toString('hex');
-  if (fileType === 'image') {
+  let numberOfFiles = 1;
+  if (fileType === 'image3d') {
+    fileStorage = process.env.IMAGES_3D_ZONE;
+    numberOfFiles = 2;
+  } else if (fileType === 'attr-image') {
     fileStorage = process.env.IMAGES_ZONE;
   } else return serverResponse(res, 400, 'Unknown file upload');
   if (!existsSync(fileStorage)) {
@@ -34,7 +39,10 @@ export const uploadFiles = (req, res) => {
     filename: (req, file, callBack) => {
       let ext = path.extname(file.originalname).split('.')[1];
       let fileName = file.originalname.split('.')[0];
-      let mediaLink = `${fileName}-${randStr}@${Date.now()}.${ext}`;
+      let mediaLink = `${fileName}-${Date.now()}.${ext}`;
+      if (fileStorage === process.env.IMAGES_3D_ZONE) {
+        mediaLink = `${fileName}-${randStr}@${Date.now()}.${ext}`;
+      }
       return callBack(null, mediaLink);
     },
   });
@@ -46,9 +54,9 @@ export const uploadFiles = (req, res) => {
         return filterCallBack(error, allowed);
       });
     },
-  }).array('productFiles', 2);
+  }).array('productFiles', numberOfFiles);
 
-  upload(req, res, (uploadError) => {
+  upload(req, res, async (uploadError) => {
     if (uploadError instanceof multer.MulterError || uploadError) {
       const errorMsg = uploadError.message || uploadError;
       return serverResponse(res, 500, errorMsg);
@@ -56,7 +64,23 @@ export const uploadFiles = (req, res) => {
     if (!req.files?.length) {
       return serverResponse(res, 400, 'No file selected');
     }
-    const fileName = req.files[0].filename.split('@')[0];
+    let fileName = req.files[0].filename;
+    if (productId && fileStorage === process.env.IMAGES_ZONE) {
+      await Product.updateOne(
+        { _id: productId },
+        {
+          $addToSet: {
+            'image.imageFiles': {
+              imageType: imgType,
+              imageFileName: fileName,
+            },
+          },
+        },
+      );
+    }
+    if (fileStorage === process.env.IMAGES_3D_ZONE) {
+      fileName = req.files[0].filename.split('@')[0];
+    }
     return serverResponse(res, 200, 'Files uploaded', fileName);
   });
 };
