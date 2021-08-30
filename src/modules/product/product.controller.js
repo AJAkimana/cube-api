@@ -55,12 +55,12 @@ export class ProductController {
   }
   static async getProductDetails(req, res) {
     const { productId } = req.params;
-    const imagesStorage = process.env.IMAGES_ZONE;
+    const images3DStorage = process.env.IMAGES_3D_ZONE;
     try {
       const product = await Product.findById(productId);
       const fileName = product.image.src;
       const images = {};
-      readdirSync(imagesStorage)
+      readdirSync(images3DStorage)
         .filter((file) => file.includes(fileName))
         .map((img) => {
           if (img.endsWith('.glb')) {
