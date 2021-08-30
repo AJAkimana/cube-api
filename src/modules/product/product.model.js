@@ -2,6 +2,11 @@ import mongoose, { Schema, model } from 'mongoose';
 import MongoSequence from 'mongoose-sequence';
 
 const AutoIncreament = MongoSequence(mongoose);
+const orbits = {
+  side: { type: Number, default: 50 },
+  ud: { type: Number, default: 50 },
+  io: { type: Number, default: 50 },
+};
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -14,22 +19,22 @@ const productSchema = new Schema(
       autoRotateDelay: { type: Number, default: 3000 },
       backgroundColor: { type: String, default: '#ffffff' },
       cameraOrbit: {
-        custom: { type: Schema.Types.Mixed },
+        custom: orbits,
         useDefault: { type: Boolean, default: false },
         default: { type: String, default: '0deg 75deg 105%' },
       },
       minCameraOrbit: {
-        custom: { type: Schema.Types.Mixed },
+        custom: orbits,
         useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'Infinity 22.5deg auto' },
       },
       maxCameraOrbit: {
-        custom: { type: Schema.Types.Mixed },
+        custom: orbits,
         useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'Infinity 157.5deg auto' },
       },
       cameraTarget: {
-        custom: { type: Schema.Types.Mixed },
+        custom: orbits,
         useDefault: { type: Boolean, default: false },
         default: { type: String, default: 'auto auto auto' },
       },
@@ -50,6 +55,12 @@ const productSchema = new Schema(
       },
       metalness: { type: Number, default: 0 },
       roughness: { type: Number, default: 0 },
+      imageFiles: [
+        {
+          imageType: { type: String },
+          imageFileName: { type: String },
+        },
+      ],
     },
     status: { type: String, enum: ['', 'QA', 'COMPLETED'] },
     itemNumber: { type: Number },
