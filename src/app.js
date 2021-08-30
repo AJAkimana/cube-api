@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 // import uploader from 'express-fileupload';
-import indexRouter from './modules';
+import router from './modules';
 
 const app = express();
 
@@ -21,6 +21,6 @@ app.use(
 );
 // app.use(uploader({ useTempFiles: true }));
 app.use(bodyParser.json({ limit: '1mb' }));
-app.use('/api/v1', indexRouter);
+app.use('/api/v1', router);
 
 export default app;
