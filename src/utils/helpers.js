@@ -3,8 +3,10 @@ import path, { resolve } from 'path';
 
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
+  const images3D = process.env.IMAGES_3D_ZONE;
   // Allowed exts
-  const allowedImages = /glb|usdz/;
+  const allowed3DImages = /glb|usdz/;
+  const allowedImages = /jpeg|jpg|png/;
   // Check ext
   let extname = false;
   // Check mime
@@ -12,6 +14,13 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
   let errorMessage = '';
   if (filePath === images) {
     extname = allowedImages.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
+    mimetype = allowedImages.test(file.mimetype);
+    errorMessage = 'Error: only (jpeg, jpg or png) images allowed';
+  }
+  if (filePath === images3D) {
+    extname = allowed3DImages.test(
       path.extname(file.originalname).toLowerCase(),
     );
     mimetype = file.mimetype === 'application/octet-stream';
