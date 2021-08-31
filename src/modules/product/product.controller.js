@@ -64,8 +64,10 @@ export class ProductController {
         .filter((file) => file.includes(fileName))
         .map((img) => {
           if (img.endsWith('.glb')) {
+            console.log('glb::', emg);
             images.glb = img;
           } else {
+            console.log('usdz::', emg);
             images.usdz = img;
           }
         });
