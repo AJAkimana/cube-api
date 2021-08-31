@@ -70,6 +70,13 @@ const productSchema = new Schema(
           imageFileName: { type: String },
         },
       ],
+      hotspots: [
+        {
+          dataPosition: { type: String },
+          dataNormal: { type: String },
+          dataText: { type: String },
+        },
+      ],
     },
     status: { type: String, enum: ['', 'QA', 'COMPLETED'] },
     itemNumber: { type: Number },
