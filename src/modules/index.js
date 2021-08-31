@@ -28,7 +28,7 @@ router.use('/quote', quoteRouter);
 router.use('/products', productRouter);
 
 router.use('/images', express.static(process.env.IMAGES_ZONE));
-router.use('/images-3d', express.static(process.env.IMAGES_3D_ZONE));
+router.use('/images3d', express.static(process.env.IMAGES_3D_ZONE));
 router.all('/*', (_req, res) => {
   return serverResponse(res, 404, 'Oops, you have lost');
 });
