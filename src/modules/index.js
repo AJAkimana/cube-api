@@ -27,10 +27,14 @@ router.use('/project', projectRouter);
 router.use('/quote', quoteRouter);
 router.use('/products', productRouter);
 
-// router.use('/images', express.static(process.env.IMAGES_ZONE));
-// router.use('/images3d', express.static(process.env.IMAGES_3D_ZONE));
+router.use('/images', express.static(process.env.IMAGES_ZONE));
+router.use('/files', express.static(process.env.IMAGES_3D_ZONE));
 router.all('/*', (_req, res) => {
-  return serverResponse(res, 404, 'Oops, you have lost');
+  return serverResponse(
+    res,
+    404,
+    'Oops, you have lost,' + process.env.IMAGES_3D_ZONE,
+  );
 });
 
 export default router;
