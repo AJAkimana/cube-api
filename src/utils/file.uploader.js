@@ -16,13 +16,12 @@ export const uploadFiles = (req, res) => {
   const { prevFile, productId, imgType } = req.query;
   const randStr = randomBytes(10).toString('hex');
   let numberOfFiles = 1;
-  const errMsg = `Unknown file uploades,${fileType}`;
   if (fileType === 'image3d') {
     fileStorage = process.env.IMAGES_3D_ZONE;
     numberOfFiles = 2;
   } else if (fileType === 'attr-image') {
     fileStorage = process.env.IMAGES_ZONE;
-  } else return serverResponse(res, 400, errMsg);
+  } else return serverResponse(res, 400, 'Unknown file upload');
   if (!existsSync(fileStorage)) {
     mkdirSync(fileStorage, { recursive: true });
   }

@@ -60,11 +60,9 @@ export class ProductController {
       const product = await Product.findById(productId);
       const fileName = product.image.src;
       const images = {};
-      console.log('images3DStorage', fileName);
       readdirSync(images3DStorage)
         .filter((file) => file.includes(fileName))
         .map((img) => {
-          console.log('img::', img);
           if (img.endsWith('.glb')) {
             images.glb = img;
           } else {
