@@ -55,6 +55,7 @@ const productSchema = new Schema(
       },
       metalness: { type: Number, default: 0 },
       roughness: { type: Number, default: 0 },
+      arButtonImage: { type: String },
       skyboxImage: {
         active: { type: Boolean, default: false },
         image: { type: String },
