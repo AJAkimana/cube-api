@@ -34,7 +34,7 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
   }
 };
 const MB = 1024 * 1024;
-export const ACCEPTED_FILE_SIZE = 5 * MB; //5 mbs
+export const ACCEPTED_FILE_SIZE = 50 * MB; //50 mbs
 
 export const deleteDirFilesUsingPattern = (
   pattern = 'dssd',
