@@ -15,12 +15,12 @@ app.use(morgan('dev'));
 app.use(
   bodyParser.urlencoded({
     extended: false,
-    limit: '1mb',
+    limit: '50mb',
     parameterLimit: 500,
   }),
 );
 // app.use(uploader({ useTempFiles: true }));
-app.use(bodyParser.json({ limit: '1mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use('/api/v1', router);
 
 export default app;
