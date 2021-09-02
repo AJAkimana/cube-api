@@ -75,6 +75,7 @@ const productSchema = new Schema(
           dataPosition: { type: String },
           dataNormal: { type: String },
           dataText: { type: String },
+          hotspotNum: { type: Number },
         },
       ],
     },
