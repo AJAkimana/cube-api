@@ -76,6 +76,7 @@ const productSchema = new Schema(
           dataNormal: { type: String },
           dataText: { type: String },
           hotspotNum: { type: Number },
+          bgColor: { type: String },
         },
       ],
     },
