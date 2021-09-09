@@ -88,11 +88,15 @@ export class ProductController {
       conditions = {};
     }
     try {
-      const products = await Product.find(conditions).populate({
-        path: 'customer',
-        select: 'fullName companyName',
-        model: User,
-      });
+      const products = await Product.find(conditions)
+        .populate({
+          path: 'customer',
+          select: 'fullName companyName',
+          model: User,
+        })
+        .sort({
+          createdAt: -1,
+        });
       return serverResponse(res, 200, 'Success', products);
     } catch (error) {
       return serverResponse(res, 500, error.message);
