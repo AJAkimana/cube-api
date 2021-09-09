@@ -27,10 +27,10 @@ class AuthController {
   static async createAccount(req, res) {
     try {
       req.body.resetKey = randomBytes(40).toString('hex');
-      if (req.body.role.toLowerCase() === 'client') {
-        req.body.role = 'visitor';
-      }
-      const user = await InstanceMaintain.createData(User, req.body);
+      // if (req.body.role.toLowerCase() === 'client') {
+      //   req.body.role = 'visitor';
+      // }
+      const user = await User.create(req.body);
       await sendConfirmationEmail(
         user,
         'A.R.I Secure Password',
@@ -43,6 +43,7 @@ class AuthController {
         res,
       );
     } catch (error) {
+      // console.log(error.stack);
       return ResponseUtil.handleErrorResponse(
         INTERNAL_SERVER_ERROR,
         error.toString(),

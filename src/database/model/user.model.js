@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
     postalCode: { type: String },
     password: { type: String, default: '' },
     resetKey: { type: String },
-    role: { type: String, required: true, default: 'visitor' },
+    role: { type: String, required: true, default: 'Client' },
     website: { type: String },
     linkedin: { type: String, default: '' },
     twitter: { type: String, default: '' },
