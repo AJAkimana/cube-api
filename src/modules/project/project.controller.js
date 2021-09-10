@@ -258,6 +258,30 @@ class ProjectController {
       return serverResponse(res, 500, 'Something went wrong');
     }
   }
+  static async getProductProjects(req, res) {
+    const { id } = req.params;
+    const { type } = req.query;
+    try {
+      let conditions = { project: id };
+      if (type === 'product') {
+        conditions = { product: id };
+      }
+      const projProducts = await ProjectProduct.find(conditions)
+        .populate({
+          path: 'product',
+          select: 'name',
+          model: Product,
+        })
+        .populate({
+          path: 'project',
+          select: 'name',
+          model: Project,
+        });
+      return serverResponse(res, 200, 'Success', projProducts);
+    } catch (error) {
+      return serverResponse(res, 500, 'Something went wrong');
+    }
+  }
 }
 
 export default ProjectController;
