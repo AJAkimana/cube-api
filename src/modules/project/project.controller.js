@@ -2,14 +2,13 @@ import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
-import {
-  logProject,
-  sendEmailNotification,
-} from '../../utils/log.project';
+import { logProject } from '../../utils/log.project';
 import Notification from '../../database/model/notification.model';
 import { serverResponse } from '../../utils/response';
 import { sendUserEmail } from '../mail/mail.controller';
 import { emailTemplate } from '../../utils/validationMail';
+import Product from '../product/product.model';
+import ProjectProduct from '../product/projectProduct.model';
 
 /**
  * Service controller class
@@ -243,6 +242,21 @@ class ProjectController {
         const msg = 'Log saved, but notification not sent';
         return serverResponse(res, 200, msg);
       });
+  }
+
+  static async addProductToProject(req, res) {
+    const { id: projectId } = req.params;
+    const { product, website } = req.body;
+    try {
+      await ProjectProduct.findOneAndUpdate(
+        { project: projectId, product },
+        { website },
+        { upsert: true },
+      );
+      return serverResponse(res, 201, 'Product added');
+    } catch (error) {
+      return serverResponse(res, 500, 'Something went wrong');
+    }
   }
 }
 

@@ -7,6 +7,7 @@ import {
 import {
   checkManagerRoleAndProjectExists,
   doesProjectExist,
+  isAddProductValid,
 } from './project.middleware';
 import authorization, {
   isClient,
@@ -21,6 +22,7 @@ const {
   getProjectHistories,
   getProjectDetail,
   createNewLog,
+  addProductToProject,
 } = project;
 const projectRouter = Router();
 
@@ -67,6 +69,13 @@ projectRouter.post(
   authorization,
   doesProjectExist,
   createNewLog,
+);
+projectRouter.post(
+  '/:id/products',
+  authorization,
+  doesProjectExist,
+  isAddProductValid,
+  addProductToProject,
 );
 
 export default projectRouter;
