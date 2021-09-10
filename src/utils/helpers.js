@@ -1,5 +1,6 @@
 import { readdir, unlink } from 'fs';
 import path, { resolve } from 'path';
+import { Types } from 'mongoose';
 
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
@@ -66,6 +67,13 @@ export const schemaErrors = (schema, body) => {
   if (error) {
     const errors = error.details.map((err) => err.message);
     return errors;
+  }
+  return false;
+};
+export const isValidObjectId = (id) => {
+  if (Types.ObjectId.isValid(id)) {
+    if (String(new Types.ObjectId(id)) === id) return true;
+    return false;
   }
   return false;
 };
