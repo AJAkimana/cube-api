@@ -7,7 +7,10 @@ import InstanceMaintain from '../../database/maintains/instance.maintain';
 import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ResponseUtil from '../../utils/response.util';
-import { isValidObjectId } from '../../utils/helpers';
+import {
+  getDomainFromUrl,
+  isValidObjectId,
+} from '../../utils/helpers';
 import { serverResponse } from '../../utils/response';
 
 export const checkUserRole = async (req, res, next) => {
@@ -106,8 +109,10 @@ export const isAddProductValid = (req, res, next) => {
   if (!webRegex.test(website)) {
     errors.push('Enter a valid website url');
   }
+
   if (errors.length) {
     return serverResponse(res, 400, errors[0]);
   }
+  req.body.website = getDomainFromUrl(website);
   return next();
 };

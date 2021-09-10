@@ -77,3 +77,16 @@ export const isValidObjectId = (id) => {
   }
   return false;
 };
+export const getDomainFromUrl = (url) => {
+  let result = null;
+  let match = null;
+  const urlRegex =
+    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im;
+  if ((match = url.match(urlRegex))) {
+    result = match[1];
+    if ((match = result.match(/^[^\.]+\.(.+\..+)$/))) {
+      result = match[1];
+    }
+  }
+  return result;
+};
