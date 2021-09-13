@@ -23,6 +23,7 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
     extname = allowed3DImages.test(
       path.extname(file.originalname).toLowerCase(),
     );
+    console.log('Extreme', path.extname(file.originalname));
     mimetype =
       file.mimetype === 'application/octet-stream' ||
       file.mimetype === 'model/vnd.usdz+zip';
