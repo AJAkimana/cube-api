@@ -51,6 +51,7 @@ export const uploadFiles = (req, res) => {
     limits: { fileSize: ACCEPTED_FILE_SIZE },
     fileFilter: (req, file, filterCallBack) => {
       isFileAllowed(file, fileStorage, (error, allowed) => {
+        console.log('File type', file.mimetype);
         return filterCallBack(error, allowed);
       });
     },
