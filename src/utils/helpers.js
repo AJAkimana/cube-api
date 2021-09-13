@@ -23,7 +23,9 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
     extname = allowed3DImages.test(
       path.extname(file.originalname).toLowerCase(),
     );
-    mimetype = file.mimetype === 'application/octet-stream';
+    mimetype =
+      file.mimetype === 'application/octet-stream' ||
+      file.mimetype === 'model/vnd.usdz+zip';
     errorMessage = 'Error: only (glb or usdz) files allowed';
   }
 
