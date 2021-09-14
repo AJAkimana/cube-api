@@ -246,11 +246,11 @@ class ProjectController {
 
   static async addProductToProject(req, res) {
     const { id: projectId } = req.params;
-    const { product, website } = req.body;
+    const { product, website, domainName } = req.body;
     try {
       await ProjectProduct.findOneAndUpdate(
         { project: projectId, product },
-        { website },
+        { website, domainName },
         { upsert: true },
       );
       return serverResponse(res, 201, 'Product added');

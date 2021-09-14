@@ -13,6 +13,7 @@ const projectProductSchema = new Schema(
       required: true,
     },
     website: { type: String, required: true },
+    domainName: { type: String, required: true },
     isActive: { type: Boolean, default: true },
   },
   {

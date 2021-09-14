@@ -113,6 +113,7 @@ export const isAddProductValid = (req, res, next) => {
   if (errors.length) {
     return serverResponse(res, 400, errors[0]);
   }
-  req.body.website = getDomainFromUrl(website);
+  req.body.website = website;
+  req.body.domainName = getDomainFromUrl(website);
   return next();
 };
