@@ -7,6 +7,11 @@ import InstanceMaintain from '../../database/maintains/instance.maintain';
 import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ResponseUtil from '../../utils/response.util';
+import {
+  getDomainFromUrl,
+  isValidObjectId,
+} from '../../utils/helpers';
+import { serverResponse } from '../../utils/response';
 
 export const checkUserRole = async (req, res, next) => {
   const user = await InstanceMaintain.findOneData(User, {
@@ -91,4 +96,24 @@ export const checkManagerRoleAndProjectExists = async (
     return ResponseUtil.send(res);
   }
   next();
+};
+export const isAddProductValid = (req, res, next) => {
+  const { product, website } = req.body;
+
+  const webRegex =
+    /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/gi;
+  let errors = [];
+  if (!isValidObjectId(product)) {
+    errors.push('Please select a product');
+  }
+  if (!webRegex.test(website)) {
+    errors.push('Enter a valid website url');
+  }
+
+  if (errors.length) {
+    return serverResponse(res, 400, errors[0]);
+  }
+  req.body.website = website;
+  req.body.domainName = getDomainFromUrl(website);
+  return next();
 };

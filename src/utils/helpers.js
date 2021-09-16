@@ -1,5 +1,6 @@
 import { readdir, unlink } from 'fs';
 import path, { resolve } from 'path';
+import { Types } from 'mongoose';
 
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
@@ -70,4 +71,24 @@ export const schemaErrors = (schema, body) => {
     return errors;
   }
   return false;
+};
+export const isValidObjectId = (id) => {
+  if (Types.ObjectId.isValid(id)) {
+    if (String(new Types.ObjectId(id)) === id) return true;
+    return false;
+  }
+  return false;
+};
+export const getDomainFromUrl = (url) => {
+  let result = null;
+  let match = null;
+  const urlRegex =
+    /^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n\?\=]+)/im;
+  if ((match = url.match(urlRegex))) {
+    result = match[1];
+    if ((match = result.match(/^[^\.]+\.(.+\..+)$/))) {
+      result = match[1];
+    }
+  }
+  return result;
 };

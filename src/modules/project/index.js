@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import project from './project.controller';
+import ProjectCtrl from './project.controller';
 import {
   validateProjectBody,
   updateProjectStatus,
@@ -7,6 +7,7 @@ import {
 import {
   checkManagerRoleAndProjectExists,
   doesProjectExist,
+  isAddProductValid,
 } from './project.middleware';
 import authorization, {
   isClient,
@@ -21,7 +22,9 @@ const {
   getProjectHistories,
   getProjectDetail,
   createNewLog,
-} = project;
+  addProductToProject,
+  getProductProjects,
+} = ProjectCtrl;
 const projectRouter = Router();
 
 projectRouter.post(
@@ -68,5 +71,13 @@ projectRouter.post(
   doesProjectExist,
   createNewLog,
 );
+projectRouter.post(
+  '/:id/products',
+  authorization,
+  doesProjectExist,
+  isAddProductValid,
+  addProductToProject,
+);
+projectRouter.get('/:id/products', authorization, getProductProjects);
 
 export default projectRouter;
