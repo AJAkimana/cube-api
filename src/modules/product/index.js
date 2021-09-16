@@ -8,6 +8,7 @@ import authorization, {
 import {
   doesProductExist,
   isProductValid,
+  isSiteAllowed,
 } from './product.middleware';
 
 const productRouter = Router();
@@ -25,16 +26,21 @@ const {
 productRouter.post(
   '/',
   authorization,
-  isAdmin,
+  isAdminOrManager,
   isProductValid,
   addNewProduct,
 );
 productRouter.get('/', getProducts);
-productRouter.get('/:productId', getProductDetails);
+productRouter.get(
+  '/:productId',
+  isSiteAllowed,
+  doesProductExist,
+  getProductDetails,
+);
 productRouter.patch(
   '/:productId',
   authorization,
-  isAdmin,
+  isAdminOrManager,
   doesProductExist,
   isProductValid,
   editProduct,
@@ -49,7 +55,7 @@ productRouter.delete(
 productRouter.post(
   '/upload/:fileType',
   authorization,
-  isAdmin,
+  isAdminOrManager,
   uploadFiles,
 );
 productRouter.get(
@@ -60,13 +66,14 @@ productRouter.get(
 productRouter.patch(
   '/attributes/:productId',
   authorization,
-  // isAdmin,
+  isAdminOrManager,
   doesProductExist,
   updateAttributes,
 );
 productRouter.delete(
   '/:productId/image/:imageFileName',
   authorization,
+  isAdminOrManager,
   doesProductExist,
   deleteAttrImage,
 );
