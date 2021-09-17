@@ -1,4 +1,4 @@
-import { schemaErrors } from '../../utils/helpers';
+import { getDomainFromUrl, schemaErrors } from '../../utils/helpers';
 import { serverResponse } from '../../utils/response';
 import { productSchema } from '../../utils/schema/product.schema';
 import Product from './product.model';
@@ -35,16 +35,22 @@ export const isProductValid = (req, res, next) => {
 };
 export const isSiteAllowed = async (req, res, next) => {
   try {
-    if (req.hostname === 'localhost') {
+    if (
+      req.hostname === 'localhost' ||
+      req.hostname === process.env.DOMAIN_NAME
+    ) {
       return next();
     }
     const { productId } = req.params;
-    const ancOrigin = req.headers['ancestor-origin'];
+    const ancOrigin = getDomainFromUrl(
+      req.headers['ancestor-origin'],
+    );
 
     const product = await ProjectProduct.findOne({
       product: productId,
+      domainName: ancOrigin,
     });
-    if (product && product.domainName === req.hostname) {
+    if (product) {
       return next();
     }
     const resMsg = 'Not allowed to access the product';
