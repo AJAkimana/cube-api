@@ -42,13 +42,15 @@ export const isSiteAllowed = async (req, res, next) => {
       return next();
     }
     const { productId } = req.params;
-    const ancOrigin = getDomainFromUrl(
-      req.headers['ancestor-origin'],
-    );
+    let domainName = '';
+    const ancOrigin = req.headers['ancestor-origin'];
+    if (ancOrigin) {
+      domainName = getDomainFromUrl(ancOrigin);
+    }
 
     const product = await ProjectProduct.findOne({
       product: productId,
-      domainName: ancOrigin,
+      domainName,
     });
     if (product) {
       return next();
