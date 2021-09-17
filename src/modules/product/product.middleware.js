@@ -35,6 +35,7 @@ export const isProductValid = (req, res, next) => {
 };
 export const isSiteAllowed = async (req, res, next) => {
   try {
+    console.log('===>hostname', req.hostname);
     if (
       req.hostname === 'localhost' ||
       req.hostname === process.env.DOMAIN_NAME
