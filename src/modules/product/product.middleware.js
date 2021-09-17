@@ -35,16 +35,15 @@ export const isProductValid = (req, res, next) => {
 };
 export const isSiteAllowed = async (req, res, next) => {
   try {
-    console.log('===>hostname', req.hostname);
+    const ancOrigin = req.headers['ancestor-origin'];
     if (
       req.hostname === 'localhost' ||
-      req.hostname === process.env.DOMAIN_NAME
+      (req.hostname === process.env.DOMAIN_NAME && !ancOrigin)
     ) {
       return next();
     }
     const { productId } = req.params;
     let domainName = '';
-    const ancOrigin = req.headers['ancestor-origin'];
     if (ancOrigin) {
       domainName = getDomainFromUrl(ancOrigin);
     }
