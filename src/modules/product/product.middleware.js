@@ -49,7 +49,6 @@ export const isSiteAllowed = async (req, res, next) => {
     if (ancOrigin) {
       domainName = getDomainFromUrl(ancOrigin);
     }
-
     const product = await ProjectProduct.findOne({
       product: productId,
       domainName,
