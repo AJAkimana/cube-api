@@ -36,6 +36,8 @@ export const isProductValid = (req, res, next) => {
 export const isSiteAllowed = async (req, res, next) => {
   try {
     const ancOrigin = req.headers['ancestor-origin'];
+    console.log('===>hostname', req.hostname);
+    console.log('===>aOrgin', ancOrigin);
     if (
       req.hostname === 'localhost' ||
       (req.hostname === process.env.DOMAIN_NAME && !ancOrigin)
