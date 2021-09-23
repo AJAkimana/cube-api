@@ -276,7 +276,8 @@ class ProjectController {
           path: 'project',
           select: 'name',
           model: Project,
-        });
+        })
+        .sort({ createdAt: -1 });
       return serverResponse(res, 200, 'Success', projProducts);
     } catch (error) {
       return serverResponse(res, 500, 'Something went wrong');
