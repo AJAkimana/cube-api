@@ -16,10 +16,10 @@ export const productSchema = Joi.object({
     'any.required': 'Customer is required',
     'string.empty': 'Customer is not allowed to be empty',
   }),
-  description: Joi.string().allow('').optional(),
-  project: Joi.string().optional().messages({
+  project: Joi.string().required().messages({
     'any.required': 'Project is required',
     'string.empty': 'Project is not allowed to be empty',
   }),
+  description: Joi.string().allow('').optional(),
   image: Joi.string().optional(),
 }).options({ abortEarly: false });

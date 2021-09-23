@@ -81,12 +81,16 @@ const productSchema = new Schema(
       ],
     },
     status: { type: String, enum: ['', 'QA', 'COMPLETED'] },
-    itemNumber: { type: Number },
     bgColor: { type: String, required: true },
     customer: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'User',
+    },
+    project: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Project',
     },
     description: { type: String },
   },

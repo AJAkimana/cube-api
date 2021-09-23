@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
 import User from '../../database/model/user.model';
+import Project from '../../database/model/project.schema';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -79,6 +80,7 @@ export class ProductController {
   }
   static async getProducts(req, res) {
     const { _id: userId, role } = req.userData || {};
+    const { project } = req.query;
 
     let conditions = { user: userId };
     if (role === 'Manager') {
@@ -87,12 +89,22 @@ export class ProductController {
     if (role === 'Admin') {
       conditions = {};
     }
+    if (project) {
+      conditions = { ...conditions, project };
+    }
     try {
+      const sortOptions = { sort: [['project.name', 'asc']] };
       const products = await Product.find(conditions)
         .populate({
           path: 'customer',
           select: 'fullName companyName',
           model: User,
+        })
+        .populate({
+          path: 'project',
+          select: 'name',
+          model: Project,
+          sortOptions,
         })
         .sort({
           createdAt: -1,
