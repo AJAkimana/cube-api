@@ -56,7 +56,7 @@ class ProjectController {
    */
   static async getProjects(req, res) {
     const { _id: userId, role } = req.userData;
-    const { status } = req.query;
+    const { status, client } = req.query;
 
     let conditions = { user: userId };
     if (role === 'Manager') {
@@ -67,6 +67,9 @@ class ProjectController {
     }
     if (status) {
       conditions = { ...conditions, status: { $ne: status } };
+    }
+    if (client) {
+      conditions = { ...conditions, user: client };
     }
     const projects = await Project.find(conditions)
       .populate({
