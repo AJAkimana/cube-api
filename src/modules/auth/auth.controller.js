@@ -12,6 +12,7 @@ import InstanceMaintain from '../../database/maintains/instance.maintain';
 import data from '../../database/seed/data';
 import TokenUtil from '../../utils/jwt.util';
 import { sendConfirmationEmail } from '../mail/mail.controller';
+import { serverResponse } from '../../utils/response';
 
 /**
  * This class will contains all function to handle account
@@ -61,19 +62,15 @@ class AuthController {
   static async updateUserInfo(req, res) {
     const { userId } = req.params;
     try {
-      const user = await User.findByIdAndUpdate(userId, req.body);
-      return ResponseUtil.handleSuccessResponse(
-        CREATED,
-        'User account update successfully',
-        user,
-        res,
-      );
+      const user = await User.findById(userId);
+      const { firstName, lastName } = req.body;
+      req.body.fullName = firstName + ' ' + lastName;
+      await user.updateOne(req.body);
+
+      const resMsg = 'User account update successfully';
+      return serverResponse(res, 200, resMsg);
     } catch (error) {
-      return ResponseUtil.handleErrorResponse(
-        INTERNAL_SERVER_ERROR,
-        error.toString(),
-        res,
-      );
+      return serverResponse(res, 500, error.toString());
     }
   }
   /**

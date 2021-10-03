@@ -33,9 +33,17 @@ const userSchema = new mongoose.Schema(
 userSchema.pre('save', function (next) {
   const user = this;
   // Save fullName if it has been modified (or is new)
-  user.fullName = `${user.firstName} ${user.lastName}`;
-  return next();
+  if (!user.isModified('firstName') || !user.isModified('lastName')) {
+    return next();
+  }
+
+  user.fullName = user.firstName + ' ' + user.lastName;
+  next();
 });
+userSchema.methods.generateFullName = function (fName, lName, cb) {
+  const fullName = `${fName} ${lName}`;
+  cb(null, fullName);
+};
 const User = mongoose.model('User', userSchema);
 
 export default User;

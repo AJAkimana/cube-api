@@ -3,12 +3,20 @@ import { serverResponse } from '../../utils/response';
 import Product from './product.model';
 import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
+import ProjectProduct from './projectProduct.model';
 
 export class ProductController {
   static async addNewProduct(req, res) {
+    const { project, website, domainName } = req.body;
     try {
       req.body.image = { src: req.body.image };
       const newProduct = await Product.create(req.body);
+      await ProjectProduct.create({
+        project,
+        website,
+        domainName,
+        product: newProduct._id,
+      });
       return serverResponse(res, 201, 'Created', newProduct);
     } catch (error) {
       return serverResponse(res, 500, error.message);
@@ -16,8 +24,30 @@ export class ProductController {
   }
   static async editProduct(req, res) {
     const { productId } = req.params;
+    const { website, domainName, project } = req.body;
     try {
-      await Product.updateOne({ _id: productId }, req.body);
+      const product = await Product.findById(productId);
+      const projProduct = await ProjectProduct.findOne({
+        product: productId,
+      });
+
+      await product.updateOne(req.body);
+      if (projProduct?.project !== project) {
+        if (projProduct) {
+          await projProduct.updateOne({
+            project,
+            website,
+            domainName,
+          });
+        } else {
+          await ProjectProduct.create({
+            project,
+            website,
+            domainName,
+            product: productId,
+          });
+        }
+      }
       return serverResponse(res, 200, 'Updated');
     } catch (error) {
       return serverResponse(res, 500, error.message);
