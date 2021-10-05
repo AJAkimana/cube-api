@@ -13,13 +13,17 @@ import {
   checkUserCredential,
   doesUserExist,
 } from './auth.middleware';
-import authorization from '../middleware/auth.middleware';
+import authorization, {
+  isAdmin,
+  isAdminOrManager,
+} from '../middleware/auth.middleware';
 
 const userRouter = Router();
 
 userRouter.post(
   '/register',
   authorization,
+  isAdminOrManager,
   validateUserBody,
   checkEmailExists,
   AuthController.createAccount,
@@ -27,6 +31,7 @@ userRouter.post(
 userRouter.patch(
   '/users/:userId',
   authorization,
+  isAdminOrManager,
   doesUserExist,
   validateUserBody,
   checkEmailExists,
@@ -35,6 +40,7 @@ userRouter.patch(
 userRouter.delete(
   '/users/:userId',
   authorization,
+  isAdmin,
   doesUserExist,
   AuthController.deleteUser,
 );
@@ -68,6 +74,11 @@ userRouter.patch(
   AuthController.editAccount,
 );
 userRouter.get('/users', authorization, AuthController.getUsers);
-userRouter.post('/seed', AuthController.seed);
+userRouter.post(
+  '/seed',
+  authorization,
+  isAdminOrManager,
+  AuthController.seed,
+);
 
 export default userRouter;

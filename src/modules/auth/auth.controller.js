@@ -332,9 +332,13 @@ class AuthController {
   static async getUsers(req, res) {
     try {
       const { role } = req.query;
+      const { _id: userId, role: userRole } = req.userData || {};
       let conditions = {};
       if (role) {
         conditions = { ...conditions, role };
+      }
+      if (userRole === 'Client') {
+        conditions = { _id: userId };
       }
       const users = await User.find(conditions)
         .sort({ createdAt: -1 })

@@ -24,9 +24,15 @@ export class ProductController {
   }
   static async editProduct(req, res) {
     const { productId } = req.params;
+    const { _id: userId, role } = req.userData || {};
     const { website, domainName, project } = req.body;
+    const isAdmin = role === 'Admin' || role === 'Manager';
     try {
       const product = await Product.findById(productId);
+      if (!isAdmin || product.customer !== userId) {
+        const errorMsg = 'You are not allowed to perform the action';
+        return serverResponse(res, 403, errorMsg);
+      }
       const projProduct = await ProjectProduct.findOne({
         product: productId,
       });
@@ -111,17 +117,14 @@ export class ProductController {
   static async getProducts(req, res) {
     const { _id: userId, role } = req.userData || {};
     const { project } = req.query;
-
-    let conditions = { user: userId };
-    if (role === 'Manager') {
+    let conditions = { customer: userId };
+    if (role === 'Manager' || role === 'Admin') {
       conditions = { manager: userId };
-    }
-    if (role === 'Admin') {
-      conditions = {};
     }
     if (project) {
       conditions = { ...conditions, project };
     }
+
     try {
       const sortOptions = { sort: [['project.name', 'asc']] };
       const products = await Product.find(conditions)

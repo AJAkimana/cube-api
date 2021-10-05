@@ -30,7 +30,7 @@ productRouter.post(
   isProductValid,
   addNewProduct,
 );
-productRouter.get('/', getProducts);
+productRouter.get('/', authorization, getProducts);
 productRouter.get(
   '/:productId',
   isSiteAllowed,
@@ -40,7 +40,6 @@ productRouter.get(
 productRouter.patch(
   '/:productId',
   authorization,
-  isAdminOrManager,
   doesProductExist,
   isProductValid,
   editProduct,
