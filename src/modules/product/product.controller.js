@@ -119,7 +119,7 @@ export class ProductController {
     const { project } = req.query;
     let conditions = { customer: userId };
     if (role === 'Manager' || role === 'Admin') {
-      conditions = { manager: userId };
+      conditions = {};
     }
     if (project) {
       conditions = { ...conditions, project };
