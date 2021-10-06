@@ -14,6 +14,7 @@ const logActions = [
   'invoice_create',
   'invoice_approve',
   'subscription_create',
+  'asset_add',
 ];
 const actionsToNotifyUser = [
   'project_create',
@@ -92,6 +93,7 @@ export const logProject = async (
       invoice_create: details || `Invoice created`,
       invoice_approve: details || `Invoice approved`,
       subscription_create: details || `New subscription created`,
+      asset_add: details || `A 3D asset has added`,
     };
     const logAction =
       logActions.indexOf(action) < 0 ? 'project_create' : action;

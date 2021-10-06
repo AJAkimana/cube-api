@@ -4,9 +4,11 @@ import Product from './product.model';
 import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ProjectProduct from './projectProduct.model';
+import { logProject } from '../../utils/log.project';
 
 export class ProductController {
   static async addNewProduct(req, res) {
+    const { role } = req.userData || {};
     const { project, website, domainName } = req.body;
     try {
       req.body.image = { src: req.body.image };
@@ -17,6 +19,19 @@ export class ProductController {
         domainName,
         product: newProduct._id,
       });
+      const theProject = await Project.findById(project);
+      let logAction = 'asset_add';
+      let entities = {
+        project: theProject,
+        createdBy: req.userData,
+        manager: { _id: theProject.manager },
+        user: { _id: theProject.user },
+      };
+      let content = {
+        title: '3D asset added',
+        info: '3D asset added',
+      };
+      await logProject(entities, content, logAction, role);
       return serverResponse(res, 201, 'Created', newProduct);
     } catch (error) {
       return serverResponse(res, 500, error.message);
@@ -29,7 +44,7 @@ export class ProductController {
     const isAdmin = role === 'Admin' || role === 'Manager';
     try {
       const product = await Product.findById(productId);
-      if (!isAdmin || product.customer !== userId) {
+      if (!isAdmin && product.customer.toString() !== userId) {
         const errorMsg = 'You are not allowed to perform the action';
         return serverResponse(res, 403, errorMsg);
       }
@@ -52,6 +67,19 @@ export class ProductController {
             domainName,
             product: productId,
           });
+          const theProject = await Project.findById(project);
+          let logAction = 'asset_add';
+          let entities = {
+            project: theProject,
+            createdBy: req.userData,
+            manager: { _id: theProject.manager },
+            user: { _id: theProject.user },
+          };
+          let content = {
+            title: '3D asset added',
+            info: '3D asset added',
+          };
+          await logProject(entities, content, logAction, role);
         }
       }
       return serverResponse(res, 200, 'Updated');
