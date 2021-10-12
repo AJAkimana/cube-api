@@ -14,6 +14,7 @@ import invoiceHelper from '../invoice/invoice.helper';
 import { logProject } from '../../utils/log.project';
 import { emailTemplate } from '../../utils/validationMail';
 import { sendUserEmail } from '../mail/mail.controller';
+import { serverResponse } from '../../utils/response';
 
 /**
  * Quote controller class
@@ -25,7 +26,7 @@ class QuoteController {
    * @returns {object} function to create a quote
    */
   static async createQuote(req, res) {
-    const { projectId, billingCycle, amount } = req.body;
+    const { projectId, billingCycle, amount, ...rest } = req.body;
     const { role } = req.userData;
     try {
       const project = await Project.findById(projectId)
@@ -40,14 +41,16 @@ class QuoteController {
           model: User,
         });
       if (!project) {
-        ResponseUtil.setError(NOT_FOUND, 'Project not found');
-        return ResponseUtil.send(res);
+        return serverResponse(res, 404, 'Project not found');
       }
       const quote = await Quote.create({
         user: project.user,
         project: projectId,
         billingCycle,
         amount,
+        tax: rest.tax,
+        propasalText: rest.propasalText,
+        customerNote: rest.customerNote,
       });
       project.status = 'approved';
       await project.save();
@@ -63,16 +66,9 @@ class QuoteController {
         'quote_create',
         role,
       );
-
-      ResponseUtil.setSuccess(
-        CREATED,
-        'Quote has been created successfully',
-        quote,
-      );
-      return ResponseUtil.send(res);
+      return serverResponse(res, 200, 'Success');
     } catch (error) {
-      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
-      return ResponseUtil.send(res);
+      return serverResponse(res, 500, error.toString());
     }
   }
 

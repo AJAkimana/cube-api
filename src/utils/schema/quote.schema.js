@@ -15,15 +15,18 @@ export const quoteSchema = Joi.object({
       'any.only':
         'Billing Cycle must be one of [Monthly, Yearly, OneTime]',
     }),
-  amount: Joi.number()
-    .positive()
-    .integer()
-    .label('amount')
-    .required()
-    .messages({
-      'any.required': 'amount is required',
-      'string.empty': 'amount is not allowed to be empty',
-    }),
+  tax: Joi.number().required().messages({
+    'any.required': 'amount is required',
+    'string.empty': 'amount is not allowed to be empty',
+  }),
+  propasalText: Joi.string().required().messages({
+    'any.required': 'Propasal text is required',
+    'string.empty': 'Propasal text is not allowed to be empty',
+  }),
+  customerNote: Joi.string().required().messages({
+    'any.required': 'Customer note is required',
+    'string.empty': 'Customer note is not allowed to be empty',
+  }),
 }).options({ abortEarly: false });
 
 // ================ Quote update schema =========================
