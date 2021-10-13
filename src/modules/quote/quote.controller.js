@@ -26,7 +26,7 @@ class QuoteController {
    * @returns {object} function to create a quote
    */
   static async createQuote(req, res) {
-    const { projectId, billingCycle, amount, ...rest } = req.body;
+    const { projectId, ...restBody } = req.body;
     const { role } = req.userData;
     try {
       const project = await Project.findById(projectId)
@@ -46,11 +46,7 @@ class QuoteController {
       const quote = await Quote.create({
         user: project.user,
         project: projectId,
-        billingCycle,
-        amount,
-        tax: rest.tax,
-        propasalText: rest.propasalText,
-        customerNote: rest.customerNote,
+        ...restBody,
       });
       project.status = 'approved';
       await project.save();
@@ -82,8 +78,8 @@ class QuoteController {
     try {
       const { id: quoteId } = req.params;
       const { role } = req.userData;
-      const { amount, status, comment, billingCycle } = req.body;
-      const quote = await Quote.findById(quoteId)
+      const { amounts, status, comment, billingCycle } = req.body;
+      let quote = await Quote.findById(quoteId)
         .populate({
           path: 'user',
           select: 'email fullName',
@@ -106,27 +102,26 @@ class QuoteController {
         createdBy: req.userData,
       };
       let content = {};
+      let logAction = 'quote_update';
+      quote = { ...quote, ...req.body };
 
-      quote.amount = amount;
-      quote.billingCycle = billingCycle;
-      if (status) {
-        quote.status = status;
-        quote.comment = comment;
-
+      if (comment) {
         content.info = comment;
       }
-      await quote.save();
-      if (!status) {
-        content.quoteId = quoteId;
-        await logProject(entities, content, 'quote_update', role);
+      if (status === 'Draft') {
+        content.details = 'Quote items have been updated';
       }
-      if (status && status === 'approved') {
+
+      if (status === 'Pending') {
+        content.quoteId = quoteId;
+      }
+      if (status === 'Accepted') {
         let date = new Date();
         date.setHours(date.getHours() + 24);
         const invoice = {
           quote: quoteId,
           due_date: date,
-          amount,
+          amount: amounts?.total,
           user: quote.user._id,
           billingCycle,
           project: quote.project._id,
@@ -135,15 +130,15 @@ class QuoteController {
         const pdfBody = {
           orderId: newInvoice._id,
           due_date: moment(date).format('MMMM Do YYYY, HH:mm'),
-          amount,
+          amount: amounts?.total,
           project: quote.project,
           customerEmail: quote.user.email,
           message: 'Pay the invoice within 24 hours',
         };
         await invoiceHelper.generatePDF(pdfBody);
+        logAction = 'invoice_create';
         content.details = 'Quote approved and invoice created';
         content.invoiceId = newInvoice._id;
-        await logProject(entities, content, 'invoice_create', role);
 
         //Notify admin
         const subject = 'A.R.I project update';
@@ -155,22 +150,19 @@ class QuoteController {
           await sendUserEmail(user, subject, content);
         }
       }
-      if (status && status === 'declined') {
+      if (status === 'Lost' || status === 'Dead') {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
+        logAction = 'quote_status';
         content.details = 'Quote declined and project set to PENDING';
-        await logProject(entities, content, 'quote_status', role);
       }
-      ResponseUtil.setSuccess(
-        OK,
-        'Quote has been updated successfully',
-        quote,
-      );
-      return ResponseUtil.send(res);
+      await quote.save();
+      await logProject(entities, content, logAction, role);
+
+      return serverResponse(res, 200, 'Success', quote);
     } catch (error) {
-      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
-      return ResponseUtil.send(res);
+      return serverResponse(res, 500, error.toString());
     }
   }
 
@@ -200,18 +192,9 @@ class QuoteController {
           select: 'fullName',
           model: User,
         });
-      return ResponseUtil.handleSuccessResponse(
-        OK,
-        'All quotes have been retrieved',
-        quotes,
-        res,
-      );
+      return serverResponse(res, 200, 'Success', quote);
     } catch (error) {
-      return ResponseUtil.handleErrorResponse(
-        INTERNAL_SERVER_ERROR,
-        error.toString(),
-        res,
-      );
+      return serverResponse(res, 500, error.toString());
     }
   }
 }
