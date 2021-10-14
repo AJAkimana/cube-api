@@ -1,11 +1,4 @@
-import {
-  CREATED,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-  OK,
-} from 'http-status';
 import moment from 'moment';
-import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
@@ -15,6 +8,7 @@ import { logProject } from '../../utils/log.project';
 import { emailTemplate } from '../../utils/validationMail';
 import { sendUserEmail } from '../mail/mail.controller';
 import { serverResponse } from '../../utils/response';
+import { calculateAmounts } from '../../utils/helpers';
 
 /**
  * Quote controller class
@@ -78,7 +72,8 @@ class QuoteController {
     try {
       const { id: quoteId } = req.params;
       const { role } = req.userData;
-      const { amounts, status, comment, billingCycle } = req.body;
+      const { amounts, status, comment, billingCycle, items } =
+        req.body;
       let quote = await Quote.findById(quoteId)
         .populate({
           path: 'user',
@@ -103,19 +98,23 @@ class QuoteController {
       };
       let content = {};
       let logAction = 'quote_update';
-      quote = { ...quote, ...req.body };
+      // quote = { ...quote, ...req.body };
 
       if (comment) {
         content.info = comment;
       }
       if (status === 'Draft') {
-        content.details = 'Quote items have been updated';
+        content.details = 'Quote items updated';
+        content.quoteId = quoteId;
+        content.info = items.reduce((info, item) => {
+          let itemInfo = `Item name: ${item.name}, price: ${item.price},`;
+          itemInfo += ` qty: ${item.quantity}<br/>`;
+          return info + itemInfo;
+        }, '');
       }
 
-      if (status === 'Pending') {
-        content.quoteId = quoteId;
-      }
       if (status === 'Accepted') {
+        const createdAt = moment().format('MMMM Do YYYY, HH:mm');
         let date = new Date();
         date.setHours(date.getHours() + 24);
         const invoice = {
@@ -128,11 +127,13 @@ class QuoteController {
         };
         const newInvoice = await Invoice.create(invoice);
         const pdfBody = {
-          orderId: newInvoice._id,
+          order: newInvoice,
+          createdAt,
           due_date: moment(date).format('MMMM Do YYYY, HH:mm'),
-          amount: amounts?.total,
+          amounts,
           project: quote.project,
           customerEmail: quote.user.email,
+          userId: quote.user._id,
           message: 'Pay the invoice within 24 hours',
         };
         await invoiceHelper.generatePDF(pdfBody);
@@ -157,7 +158,13 @@ class QuoteController {
         logAction = 'quote_status';
         content.details = 'Quote declined and project set to PENDING';
       }
-      await quote.save();
+      if (
+        req.body.tax !== quote.tax ||
+        req.body.discount !== quote.discount
+      ) {
+        req.body.amounts = calculateAmounts(quote.items, quote);
+      }
+      await quote.updateOne(req.body);
       await logProject(entities, content, logAction, role);
 
       return serverResponse(res, 200, 'Success', quote);
@@ -192,7 +199,7 @@ class QuoteController {
           select: 'fullName',
           model: User,
         });
-      return serverResponse(res, 200, 'Success', quote);
+      return serverResponse(res, 200, 'Success', quotes);
     } catch (error) {
       return serverResponse(res, 500, error.toString());
     }
