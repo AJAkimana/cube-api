@@ -92,3 +92,22 @@ export const getDomainFromUrl = (url) => {
   }
   return result;
 };
+export const calculateAmounts = (
+  items = [],
+  { tax, discount, isFixed },
+) => {
+  const subTotal = Number(
+    items.reduce((sum, item) => sum + item.total, 0),
+  );
+  const totTax = (subTotal * tax) / 100;
+  const totDiscount = isFixed
+    ? discount
+    : (subTotal * discount) / 100;
+  const amounts = {
+    subtotal: subTotal.toFixed(2),
+    tax: totTax.toFixed(2),
+    discount: totDiscount.toFixed(2),
+    total: (subTotal + totTax - totDiscount).toFixed(2),
+  };
+  return amounts;
+};
