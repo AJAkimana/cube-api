@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Email tempate</title>
+    <meta name="description" content="" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1"
+    />
+    <link rel="stylesheet" href="" />
+    <style type="text/css">
+      .table-border {
+        border: 1px solid #dddddd;
+      }
+      .table-collapse {
+        border-collapse: collapse;
+      }
+      .grey-bg {
+        background-color: rgb(220, 233, 233);
+      }
+    </style>
+  </head>
+  <body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">
+        You are using an <strong>outdated</strong> browser. Please
+        <a href="#">upgrade your browser</a> to improve your
+        experience.
+      </p>
+    <![endif]-->
+    <table width="100%">
+      <tr>
+        <td>
+          <span>INVOICE #{{orderNumber}}</span>
+        </td>
+        <td>
+          <table width="100%">
+            <tr>
+              <td align="right">
+                <span>CloudOnex LOGO</span><br />
+                <span>CloudOnex LLC.</span><br />
+                <span>CloudOnex</span><br />
+                <span>1101 Marina Villae Parkway, Suite</span><br />
+                <span>201</span><br />
+                <span>Alameda, California 94501</span><br />
+                <span>United States</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"><hr /></td>
+      </tr>
+      <tr>
+        <td>
+          {{#with user}}
+          <span><b>Invoice To</b></span
+          ><br />
+          <span>{{{companyName}}}</span><br />
+          <span>ATTN: {{{fullName}}}</span><br />
+          <span>{{{address}}}</span><br />
+          <span>{{{city}}}</span><br />
+          <span>{{{country}}}</span><br />
+          <span>Phone: {{{phoneNumber}}}</span><br />
+          <span>Email: {{{email}}}</span>
+          {{/with}}
+        </td>
+        <td align="right">
+          <table border="0" class="table-collapse">
+            {{#with invoice}}
+            <tr class="table-border">
+              <td class="table-border grey-bg">INVOICE #</td>
+              <td align="right" class="table-border">
+                {{{invoiceNumber}}}
+              </td>
+            </tr>
+            <tr class="table-border">
+              <td class="table-border grey-bg">Status</td>
+              <td align="right" class="table-border">{{{status}}}</td>
+            </tr>
+            <tr>
+              <td class="table-border grey-bg">Invoice Date</td>
+              <td align="right" class="table-border">
+                {{{createdAt}}}
+              </td>
+            </tr>
+            <tr class="table-border">
+              <td class="table-border grey-bg">Due Date</td>
+              <td align="right" class="table-border">
+                {{{due_date}}}
+              </td>
+            </tr>
+            <tr class="table-border">
+              <td class="table-border grey-bg">Amount Due</td>
+              <td align="right" class="table-border">
+                ${{{amountDue}}}
+              </td>
+            </tr>
+            {{/with}}
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="2"></td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <table width="100%" class="table-collapse">
+            <tr class="table-border">
+              <th class="table-border grey-bg">Item</th>
+              <th class="table-border grey-bg">Price</th>
+              <th class="table-border grey-bg">Qty</th>
+              <th class="table-border grey-bg">Total</th>
+            </tr>
+            {{#with invoice}}
+            <tr class="table-border">
+              <td rowspan="2" class="table-border">
+                {{{projectName}}}
+              </td>
+              <td colspan="3" class="table-border">
+                Sub Total {{{subTotal}}}
+              </td>
+            </tr>
+            <tr class="table-border">
+              <td colspan="3" class="table-border grey-bg">
+                Grand Total {{{total}}}
+              </td>
+            </tr>
+            {{/with}}
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <script src="" async defer></script>
+  </body>
+</html>
