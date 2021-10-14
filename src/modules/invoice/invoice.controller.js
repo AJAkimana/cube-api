@@ -14,6 +14,7 @@ import Subscription from '../../database/model/subscription.model';
 import ResponseUtil from '../../utils/response.util';
 import invoiceHelper from './invoice.helper';
 import { logProject } from '../../utils/log.project';
+import { serverResponse } from '../../utils/response';
 
 /**
  * This class will contains all function to handle account
@@ -177,41 +178,53 @@ class InvoiceController {
     try {
       const { downloadId } = req.params;
       const { downloadType = 'invoice' } = req.query;
-      let DownloadModel = Invoice;
+      let download = null;
+      let message = 'Invoice';
+      if (downloadType === 'invoice') {
+        download = await Invoice.findById(downloadId)
+          .populate({
+            path: 'project',
+            select: 'name type',
+            model: Project,
+          })
+          .populate({
+            path: 'quote',
+            select: 'amounts',
+            model: Quote,
+          });
+      }
       if (downloadType === 'quote') {
-        DownloadModel = Quote;
+        download = await Quote.findById(downloadId).populate({
+          path: 'project',
+          select: 'name type',
+          model: Project,
+        });
+        message = 'Proposal';
       }
 
-      const download = await DownloadModel.findById(
-        downloadId,
-      ).populate({
-        path: 'project',
-        select: 'name type',
-        model: Project,
-      });
       if (!download) {
-        return ResponseUtil.handleErrorResponse(
-          INTERNAL_SERVER_ERROR,
-          'Sorry the invoice has not been generated',
-          res,
-        );
+        const errMsg = 'Sorry the invoice has not been generated';
+        return serverResponse(res, 404, errMsg);
       }
       const pdfBody = {
-        orderId: download._id,
+        order: download,
+        createdAt: moment(download.createdAt).format(
+          'MMMM Do YYYY, HH:mm',
+        ),
         due_date: moment(download.due_date).format(
           'MMMM Do YYYY, HH:mm',
         ),
-        amount: download.amount,
+        amounts: download?.amounts || download.quote.amounts,
+        items: download.items,
         project: download.project,
+        userId: download.user,
+        message,
+        type: downloadType,
       };
       await invoiceHelper.generatePDF(pdfBody, true);
-      return res.download('./invoice.pdf');
+      return res.download(`./${downloadType}.pdf`);
     } catch (error) {
-      return ResponseUtil.handleErrorResponse(
-        INTERNAL_SERVER_ERROR,
-        error.toString(),
-        res,
-      );
+      return serverResponse(res, 500, error.toString());
     }
   }
 }
