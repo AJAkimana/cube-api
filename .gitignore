@@ -9,4 +9,5 @@ package-lock.json
 tmp/
 public/
 invoice.pdf
+quote.pdf
 package-lock.json
