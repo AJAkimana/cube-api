@@ -74,10 +74,10 @@ class InvoiceHelpers {
       if (isDownload) {
         return invoiceDoc;
       }
-      fs.readFile(invoiceFileName, async (err, data) => {
+      fs.readFile(fileName, async (err, data) => {
         const attachments = [
           {
-            filename: 'invoice.pdf',
+            filename: fileName,
             content: data.toString('base64'),
             type: 'application/pdf',
             disposition: 'attachment',
