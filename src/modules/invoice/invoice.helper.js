@@ -34,7 +34,7 @@ class InvoiceHelpers {
       contents += '</div>';
 
       const options = {
-        format: 'A3',
+        format: 'A4',
         orientation: 'portrait',
         footer: {
           height: '20mm',
@@ -77,7 +77,7 @@ class InvoiceHelpers {
       fs.readFile(fileName, async (err, data) => {
         const attachments = [
           {
-            filename: fileName,
+            filename: `${type}.pdf`,
             content: data.toString('base64'),
             type: 'application/pdf',
             disposition: 'attachment',
