@@ -34,7 +34,7 @@ class InvoiceHelpers {
       contents += '</div>';
 
       const options = {
-        format: 'A4',
+        format: 'A2',
         orientation: 'portrait',
         footer: {
           height: '20mm',
@@ -42,11 +42,14 @@ class InvoiceHelpers {
         },
       };
 
+      const totalAmount = `$${body.amounts?.total?.toLocaleString(
+        'en-US',
+      )}`;
       const invoice = {
         orderId: body.order._id,
         due_date: body.due_date,
         createdAt: body.createdAt,
-        total: `$${body.amounts?.total?.toLocaleString('en-US')}`,
+        total: totalAmount,
         subTotal: `$${body.amounts?.subtotal?.toLocaleString(
           'en-US',
         )}`,
@@ -54,7 +57,7 @@ class InvoiceHelpers {
         projectType: body.project?.type,
         invoiceNumber: body.order.invoiceNumber || 4,
         status: body.order.status,
-        amountDue: 0,
+        amountDue: totalAmount,
       };
 
       const document = {
