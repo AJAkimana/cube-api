@@ -34,8 +34,8 @@ class InvoiceHelpers {
       contents += '</div>';
 
       const options = {
-        rmat: 'A6',
-        orientation: 'landscape',
+        format: 'A3',
+        orientation: 'portrait',
         footer: {
           height: '20mm',
           contents,

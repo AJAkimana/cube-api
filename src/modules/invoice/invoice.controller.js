@@ -206,6 +206,7 @@ class InvoiceController {
         const errMsg = 'Sorry the invoice has not been generated';
         return serverResponse(res, 404, errMsg);
       }
+      download = download.toObject();
       const pdfBody = {
         order: download,
         createdAt: moment(download.createdAt).format(
