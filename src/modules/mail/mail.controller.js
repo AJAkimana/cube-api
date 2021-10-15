@@ -14,14 +14,18 @@ const sendConfirmationEmail = async (
   action = '',
   content = '',
 ) => {
-  const url = `${process.env.FRONTEND_URL}/set-password/${user.resetKey}`;
-  const data = {
-    from: process.env.MAIL_FROM,
-    to: `${user.email}`,
-    subject,
-    html: validationMail(url, action, content),
-  };
-  await sgMail.send(data);
+  try {
+    const url = `${process.env.FRONTEND_URL}/set-password/${user.resetKey}`;
+    const data = {
+      from: process.env.MAIL_FROM,
+      to: `${user.email}`,
+      subject,
+      html: validationMail(url, action, content),
+    };
+    await sgMail.send(data);
+  } catch (error) {
+    throw error;
+  }
 };
 
 const mail = async (req, res) => {
@@ -65,15 +69,19 @@ const mail = async (req, res) => {
 };
 
 const sendInvoice = async (email, message, attachments) => {
-  const data = {
-    from: process.env.MAIL_FROM,
-    to: email,
-    subject: 'A.R.I Invoice',
-    attachments,
-    html: `<div><p>${message}</p><p><b>Contact Email:</b> ${process.env.MAIL_FROM}<br/>`,
-  };
-  if (process.env.NODE_ENV === 'production') {
-    await sgMail.send(data);
+  try {
+    const data = {
+      from: process.env.MAIL_FROM,
+      to: email,
+      subject: 'A.R.I Invoice',
+      attachments,
+      html: `<div><p>${message}</p><p><b>Contact Email:</b> ${process.env.MAIL_FROM}<br/>`,
+    };
+    if (process.env.NODE_ENV === 'production') {
+      await sgMail.send(data);
+    }
+  } catch (error) {
+    throw error;
   }
 };
 const sendUserEmail = async (
@@ -81,14 +89,18 @@ const sendUserEmail = async (
   subject = '',
   content = '',
 ) => {
-  const data = {
-    from: process.env.MAIL_FROM,
-    to: `${user.email}`,
-    subject,
-    html: content,
-  };
-  if (process.env.NODE_ENV === 'production') {
-    await sgMail.send(data);
+  try {
+    const data = {
+      from: process.env.MAIL_FROM,
+      to: `${user.email}`,
+      subject,
+      html: content,
+    };
+    if (process.env.NODE_ENV === 'production') {
+      await sgMail.send(data);
+    }
+  } catch (error) {
+    throw error;
   }
 };
 export { sendConfirmationEmail, mail, sendInvoice, sendUserEmail };
