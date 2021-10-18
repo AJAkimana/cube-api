@@ -37,6 +37,7 @@ const QuoteSchema = new Schema(
         total: { type: Number },
       },
     ],
+    expiryDate: { type: Date, required: true },
   },
   {
     timestamps: true,
