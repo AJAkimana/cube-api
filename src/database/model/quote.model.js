@@ -16,7 +16,7 @@ const QuoteSchema = new Schema(
       ref: 'Project',
     },
     billingCycle: { type: String, required: true },
-    status: { type: String, default: 'Pending' },
+    status: { type: String, default: 'Draft' },
     comment: { type: String },
     tax: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
