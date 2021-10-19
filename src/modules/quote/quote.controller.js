@@ -183,7 +183,7 @@ class QuoteController {
     try {
       const { _id: userId, role } = req.userData;
 
-      let conditions = { user: userId };
+      let conditions = { user: userId, status: { $ne: 'Draft' } };
       if (role !== 'Client') {
         conditions = {};
       }
