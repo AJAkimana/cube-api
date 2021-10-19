@@ -193,7 +193,7 @@ class InvoiceController {
             model: Quote,
           });
       }
-      if (downloadType === 'quote') {
+      if (downloadType === 'proposal') {
         download = await Quote.findById(downloadId).populate({
           path: 'project',
           select: 'name type',
