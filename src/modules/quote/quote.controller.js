@@ -103,7 +103,7 @@ class QuoteController {
       if (comment) {
         content.info = comment;
       }
-      if (status === 'Draft') {
+      if (status === 'Draft' && items.length > 0) {
         content.details = 'Quote items updated';
         content.quoteId = quoteId;
         content.info = items.reduce((info, item) => {
@@ -151,7 +151,7 @@ class QuoteController {
           await sendUserEmail(user, subject, content);
         }
       }
-      if (status === 'Lost' || status === 'Dead') {
+      if (status === 'Declined') {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
