@@ -68,6 +68,7 @@ class InvoiceHelpers {
           orderNumber: invoice.invoiceNumber,
           propasalText: body.order.propasalText || '',
           customerNote: body.order.customerNote || '',
+          logo: `${process.env.APP_URL}/assets/square_transparent.png`,
           items,
         },
         path: fileName,

@@ -21,6 +21,7 @@ app.use(
 );
 // app.use(uploader({ useTempFiles: true }));
 app.use(bodyParser.json({ limit: '50mb' }));
+app.use('/assets', express.static('assets'));
 app.use('/api/v1', router);
 
 export default app;
