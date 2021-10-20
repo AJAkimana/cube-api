@@ -18,7 +18,7 @@ const QuoteSchema = new Schema(
     billingCycle: { type: String, required: true },
     status: { type: String, default: 'Draft' },
     comment: { type: String },
-    tax: { type: Number, default: 0 },
+    taxes: [Number],
     discount: { type: Number, default: 0 },
     isFixed: { type: Boolean, default: false },
     amounts: {

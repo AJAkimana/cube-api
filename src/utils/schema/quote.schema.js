@@ -16,7 +16,7 @@ export const quoteSchema = Joi.object({
         'Billing Cycle must be one of [Monthly, Yearly, OneTime]',
     }),
   expiryDate: Joi.date().required(),
-  tax: Joi.number().required(),
+  taxes: Joi.array(),
   discount: Joi.number().required(),
   isFixed: Joi.boolean().required(),
   propasalText: Joi.string().required().messages({
@@ -46,7 +46,7 @@ export const quoteUpdateSchema = Joi.object({
         'Billing Cycle must be one of [Monthly, Yearly, OneTime]',
     }),
   expiryDate: Joi.date().required(),
-  tax: Joi.number().required(),
+  taxes: Joi.array(),
   discount: Joi.number().required(),
   isFixed: Joi.boolean().required(),
   comment: Joi.string(),
