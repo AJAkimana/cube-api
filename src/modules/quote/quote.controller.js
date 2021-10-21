@@ -21,7 +21,7 @@ class QuoteController {
    */
   static async createQuote(req, res) {
     const { projectId, ...restBody } = req.body;
-    const { role } = req.userData;
+    // const { role } = req.userData;
     try {
       const project = await Project.findById(projectId)
         .populate({
@@ -44,18 +44,18 @@ class QuoteController {
       });
       project.status = 'approved';
       await project.save();
-      const entities = {
-        project,
-        user: project.user,
-        manager: project.manager,
-        createdBy: req.userData,
-      };
-      await logProject(
-        entities,
-        { quoteId: quote._id },
-        'quote_create',
-        role,
-      );
+      // const entities = {
+      //   project,
+      //   user: project.user,
+      //   manager: project.manager,
+      //   createdBy: req.userData,
+      // };
+      // await logProject(
+      //   entities,
+      //   { quoteId: quote._id },
+      //   'quote_create',
+      //   role,
+      // );
       return serverResponse(res, 200, 'Success');
     } catch (error) {
       return serverResponse(res, 500, error.toString());
@@ -165,8 +165,9 @@ class QuoteController {
         req.body.amounts = calculateAmounts(quote.items, quote);
       }
       await quote.updateOne(req.body);
-      await logProject(entities, content, logAction, role);
-
+      if (status !== 'Draft') {
+        await logProject(entities, content, logAction, role);
+      }
       return serverResponse(res, 200, 'Success', quote);
     } catch (error) {
       return serverResponse(res, 500, error.toString());

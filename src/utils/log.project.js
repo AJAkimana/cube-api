@@ -19,7 +19,6 @@ const logActions = [
 const actionsToNotifyUser = [
   'project_create',
   'project_manager',
-  'quote_create',
   'quote_status',
   'invoice_create',
   'invoice_approve',
