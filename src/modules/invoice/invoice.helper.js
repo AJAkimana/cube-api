@@ -60,6 +60,8 @@ class InvoiceHelpers {
         amountDue: totalAmount,
       };
 
+      // const logoBE = `${process.env.APP_URL}/assets/square_transparent.png`;
+      const logoFE = `${process.env.FRONTEND_URL}/static/media/ari_cube.2edefd08.png`;
       const document = {
         html,
         data: {
@@ -68,7 +70,7 @@ class InvoiceHelpers {
           orderNumber: invoice.invoiceNumber,
           propasalText: body.order.propasalText || '',
           customerNote: body.order.customerNote || '',
-          logo: `${process.env.APP_URL}/assets/square_transparent.png`,
+          logo: logoFE,
           items,
         },
         path: fileName,
