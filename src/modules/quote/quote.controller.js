@@ -96,16 +96,17 @@ class QuoteController {
         manager: quote.project.manager,
         createdBy: req.userData,
       };
-      let content = {};
+      let content = { info: comment };
       let logAction = 'quote_update';
-      // quote = { ...quote, ...req.body };
 
-      if (comment) {
-        content.info = comment;
+      content.quoteId = quoteId;
+      if (status === 'Pending') {
+        content.details = `New Proposal - ${quote.project.name}`;
+        logAction = 'quote_pending';
       }
+
       if (status === 'Draft' && items.length > 0) {
-        content.details = 'Quote items updated';
-        content.quoteId = quoteId;
+        content.details = 'Proposal items updated';
         content.info = items.reduce((info, item) => {
           let itemInfo = `Item name: ${item.name}, price: ${item.price},`;
           itemInfo += ` qty: ${item.quantity}<br/>`;
@@ -138,7 +139,7 @@ class QuoteController {
         };
         await invoiceHelper.generatePDF(pdfBody);
         logAction = 'invoice_create';
-        content.details = 'Quote approved and invoice created';
+        content.details = 'Proposal approved and invoice created';
         content.invoiceId = newInvoice._id;
 
         //Notify admin
@@ -155,8 +156,9 @@ class QuoteController {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
-        logAction = 'quote_status';
-        content.details = 'Quote declined and project set to PENDING';
+        logAction = 'quote_declined';
+        content.details =
+          'Proposal declined and project set to PENDING';
       }
       if (
         req.body.tax !== quote.tax ||
