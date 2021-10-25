@@ -1,11 +1,12 @@
 import { INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
-import Invoice from '../../database/model/invoice.model';
+// import Invoice from '../../database/model/invoice.model';
 import Quote from '../../database/model/quote.model';
 import User from '../../database/model/user.model';
 import Subscription from '../../database/model/subscription.model';
 import Notification from '../../database/model/notification.model';
+import { serverResponse } from '../../utils/response';
 
 /**
  * Home controller class
@@ -20,36 +21,38 @@ class HomeController {
     const { _id: userId, role } = req.userData;
     try {
       let conditions = { user: userId };
+      let quoteConditions = conditions;
+
       if (role !== 'Client') {
         conditions = {};
+      }
+      if (role === 'Client') {
+        quoteConditions = {
+          ...quoteConditions,
+          status: { $ne: 'Draft' },
+        };
       }
 
       const projects = await Project.countDocuments(conditions);
       const users = await User.countDocuments();
-      const invoices = await Invoice.aggregate([
-        { $match: conditions },
-        { $group: { _id: null, amount: { $sum: '$amount' } } },
-      ]);
+      // const invoices = await Invoice.aggregate([
+      //   { $match: conditions },
+      //   { $group: { _id: null, amount: { $sum: '$amount' } } },
+      // ]);
       const subscriptions = await Subscription.countDocuments(
         conditions,
       );
-      const quotes = await Quote.countDocuments(conditions);
+      const quotes = await Quote.countDocuments(quoteConditions);
 
       const counts = {
         projects,
         users,
-        invoicesAmount: invoices[0]?.amount,
         subscriptions,
         quotes,
       };
-      ResponseUtil.setSuccess(OK, 'Success', counts);
-      return ResponseUtil.send(res);
+      return serverResponse(res, 200, 'Successful', counts);
     } catch (error) {
-      return ResponseUtil.handleErrorResponse(
-        INTERNAL_SERVER_ERROR,
-        error.toString(),
-        res,
-      );
+      return serverResponse(res, 500, error.toString());
     }
   }
   /**
