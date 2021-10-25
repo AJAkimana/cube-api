@@ -25,6 +25,7 @@ class HomeController {
 
       if (role !== 'Client') {
         conditions = {};
+        quoteConditions = {};
       }
       if (role === 'Client') {
         quoteConditions = {
