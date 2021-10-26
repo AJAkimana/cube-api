@@ -221,6 +221,9 @@ class InvoiceController {
         userId: download.user,
         message,
         type: downloadType,
+        taxes: download?.taxes || download.quote?.taxes,
+        isFixed: download?.isFixed || download.quote?.isFixed,
+        discount: download?.discount || download.quote?.discount,
       };
       await invoiceHelper.generatePDF(pdfBody, true);
       return res.download(`./${downloadType}.pdf`);
