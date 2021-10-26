@@ -45,6 +45,7 @@ class InvoiceHelpers {
       const totalAmount = `$${body.amounts?.total?.toLocaleString(
         'en-US',
       )}`;
+      const tax = body.taxes.reduce((a, b) => a + b.amount, 0);
       const invoice = {
         orderId: body.order._id,
         due_date: body.due_date,
@@ -60,12 +61,14 @@ class InvoiceHelpers {
         amountDue: totalAmount,
       };
       const taxe = {
-        percent: '',
-        amount: '',
+        percent: `${tax}%`,
+        amount: `$${body.amounts?.tax?.toLocaleString('en-US')}`,
       };
       const discount = {
-        percent: '',
-        amount: '',
+        percent: body.isFixed
+          ? `$${body.discount}`
+          : `${body.discount}%`,
+        amount: `$${body.amounts?.discount?.toLocaleString('en-US')}`,
       };
 
       // const logoBE = `${process.env.APP_URL}/assets/square_transparent.png`;
