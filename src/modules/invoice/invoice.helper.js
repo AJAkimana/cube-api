@@ -59,6 +59,14 @@ class InvoiceHelpers {
         status: body.order.status,
         amountDue: totalAmount,
       };
+      const taxe = {
+        percent: '',
+        amount: '',
+      };
+      const discount = {
+        percent: '',
+        amount: '',
+      };
 
       // const logoBE = `${process.env.APP_URL}/assets/square_transparent.png`;
       const logoFE = `${process.env.FRONTEND_URL}/static/media/ari_cube.2edefd08.png`;
@@ -72,6 +80,8 @@ class InvoiceHelpers {
           customerNote: body.order.customerNote || '',
           logo: logoFE,
           items,
+          taxe,
+          discount,
         },
         path: fileName,
       };

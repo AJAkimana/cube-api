@@ -145,11 +145,27 @@
             </tr>
             {{/each}}
             <tr class="table-border">
-              <td rowspan="2" class="table-border"></td>
+              <td rowspan="4" class="table-border"></td>
               {{#with invoice}}
               <td colspan="3" class="table-border">
                 Sub Total {{{subTotal}}}
               </td>
+              {{/with}}
+            </tr>
+            <tr>
+              {{#with taxe}}
+              <td colspan="2" class="table-border">
+                Taxes {{percent}}
+              </td>
+              <td class="table-border">{{amount}}</td>
+              {{/with}}
+            </tr>
+            <tr>
+              {{#with discount}}
+              <td colspan="2" class="table-border">
+                Discount {{percent}}
+              </td>
+              <td class="table-border">{{amount}}</td>
               {{/with}}
             </tr>
             <tr class="table-border">

@@ -135,6 +135,22 @@
                 Sub Total {{{subTotal}}}
               </td>
             </tr>
+            <tr>
+              {{#with taxe}}
+              <td colspan="2" class="table-border">
+                Taxes {{percent}}
+              </td>
+              <td class="table-border">{{amount}}</td>
+              {{/with}}
+            </tr>
+            <tr>
+              {{#with discount}}
+              <td colspan="2" class="table-border">
+                Discount {{percent}}
+              </td>
+              <td class="table-border">{{amount}}</td>
+              {{/with}}
+            </tr>
             <tr class="table-border">
               <td colspan="3" class="table-border grey-bg">
                 Total {{{total}}}
