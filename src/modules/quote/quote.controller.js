@@ -136,6 +136,9 @@ class QuoteController {
           customerEmail: quote.user.email,
           userId: quote.user._id,
           message: 'Pay the invoice within 24 hours',
+          taxes: quote.taxes,
+          isFixed: quote.isFixed,
+          discount: quote.discount,
         };
         await invoiceHelper.generatePDF(pdfBody);
         logAction = 'invoice_create';
