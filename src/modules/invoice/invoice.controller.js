@@ -189,7 +189,8 @@ class InvoiceController {
           })
           .populate({
             path: 'quote',
-            select: 'amounts',
+            select:
+              'amounts taxes discount isFixed expiryDate createdAt',
             model: Quote,
           });
       }
@@ -207,15 +208,16 @@ class InvoiceController {
         return serverResponse(res, 404, errMsg);
       }
       download = download.toObject();
+      console.log(download);
       const pdfBody = {
         order: download,
-        createdAt: moment(download.createdAt).format(
-          'MMMM Do YYYY, HH:mm',
-        ),
-        due_date: moment(download.due_date).format(
-          'MMMM Do YYYY, HH:mm',
-        ),
-        amounts: download?.amounts || download.quote.amounts,
+        createdAt: moment(
+          download?.createdAt || download.quote?.createdAt,
+        ).format('MMMM Do YYYY, HH:mm'),
+        due_date: moment(
+          download?.expiryDate || download.quote?.expiryDate,
+        ).format('MMMM Do YYYY, HH:mm'),
+        amounts: download?.amounts || download?.quote.amounts,
         items: download.items,
         project: download.project,
         userId: download.user,
