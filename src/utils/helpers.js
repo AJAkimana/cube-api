@@ -92,22 +92,26 @@ export const getDomainFromUrl = (url) => {
   }
   return result;
 };
-export const calculateAmounts = (
+export const calculateAmounts = ({
   items = [],
-  { tax, discount, isFixed },
-) => {
-  const subTotal = Number(
+  taxes,
+  discount,
+  isFixed,
+}) => {
+  const grandTotal = Number(
     items.reduce((sum, item) => sum + item.total, 0),
   );
-  const totTax = (subTotal * tax) / 100;
   const totDiscount = isFixed
-    ? discount
-    : (subTotal * discount) / 100;
+    ? Number(discount)
+    : (grandTotal * Number(discount)) / 100;
+  const subTotal = grandTotal - totDiscount;
+  const tax = taxes.reduce((a, b) => a + b.amount, 0);
+  const totTax = (subTotal * tax) / 100;
   const amounts = {
-    subtotal: subTotal.toFixed(2),
+    subtotal: grandTotal.toFixed(2),
     tax: totTax.toFixed(2),
     discount: totDiscount.toFixed(2),
-    total: (subTotal + totTax - totDiscount).toFixed(2),
+    total: (subTotal + totTax).toFixed(2),
   };
   return amounts;
 };

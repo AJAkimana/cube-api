@@ -167,7 +167,7 @@ class QuoteController {
         req.body.tax !== quote.tax ||
         req.body.discount !== quote.discount
       ) {
-        req.body.amounts = calculateAmounts(quote.items, quote);
+        req.body.amounts = calculateAmounts(req.body);
       }
       await quote.updateOne(req.body);
       if (status !== 'Draft') {
