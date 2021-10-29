@@ -105,7 +105,7 @@ export const calculateAmounts = ({
     ? Number(discount)
     : (grandTotal * Number(discount)) / 100;
   const subTotal = grandTotal - totDiscount;
-  const tax = taxes.reduce((a, b) => a + b.amount, 0);
+  const tax = taxes.reduce((a, b) => a + Number(b.amount), 0);
   const totTax = (subTotal * tax) / 100;
   const amounts = {
     subtotal: grandTotal.toFixed(2),
@@ -114,4 +114,9 @@ export const calculateAmounts = ({
     total: (subTotal + totTax).toFixed(2),
   };
   return amounts;
+};
+export const haveTaxesChanged = (prev = [], curr = []) => {
+  const totalPrev = prev.reduce((sum, t) => sum + t.amount, 0);
+  const totalCurr = curr.reduce((sum, t) => sum + t.amount, 0);
+  return totalPrev !== totalCurr;
 };

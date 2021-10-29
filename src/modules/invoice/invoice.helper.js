@@ -45,7 +45,15 @@ class InvoiceHelpers {
       const totalAmount = `$${body.amounts?.total?.toLocaleString(
         'en-US',
       )}`;
-      const tax = body.taxes.reduce((a, b) => a + b.amount, 0);
+      let tax = 0;
+      let taxText = '';
+      body.taxes.forEach((t, tIndex, taxesArr) => {
+        tax += t.amount;
+        taxText += `${t.title}: ${t.amount}%`;
+        if (tIndex !== taxesArr.length - 1) {
+          taxText += ',';
+        }
+      });
       const invoice = {
         orderId: body.order._id,
         due_date: body.due_date,
@@ -61,13 +69,18 @@ class InvoiceHelpers {
         amountDue: totalAmount,
       };
       const taxe = {
-        percent: `${tax}%`,
+        taxes: taxText || '0',
+        percent: tax ? `${tax}%` : 0,
         amount: `$${body.amounts?.tax?.toLocaleString('en-US')}`,
       };
-      const discount = {
-        percent: body.isFixed
+      let discountPct = 0;
+      if (body.discount) {
+        discountPct = body.isFixed
           ? `$${body.discount}`
-          : `${body.discount}%`,
+          : `${body.discount}%`;
+      }
+      const discount = {
+        percent: discountPct,
         amount: `$${body.amounts?.discount?.toLocaleString('en-US')}`,
       };
 

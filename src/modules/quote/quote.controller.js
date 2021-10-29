@@ -8,7 +8,10 @@ import { logProject } from '../../utils/log.project';
 import { emailTemplate } from '../../utils/validationMail';
 import { sendUserEmail } from '../mail/mail.controller';
 import { serverResponse } from '../../utils/response';
-import { calculateAmounts } from '../../utils/helpers';
+import {
+  calculateAmounts,
+  haveTaxesChanged,
+} from '../../utils/helpers';
 
 /**
  * Quote controller class
@@ -164,7 +167,7 @@ class QuoteController {
           'Proposal declined and project set to PENDING';
       }
       if (
-        req.body.tax !== quote.tax ||
+        haveTaxesChanged(quote.taxes, req.body.taxes) ||
         req.body.discount !== quote.discount
       ) {
         req.body.amounts = calculateAmounts(req.body);
