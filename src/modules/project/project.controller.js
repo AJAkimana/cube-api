@@ -40,7 +40,7 @@ class ProjectController {
       await logProject(entities, content);
       return ResponseUtil.send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return ResponseUtil.handleErrorResponse(
         INTERNAL_SERVER_ERROR,
         error.toString(),

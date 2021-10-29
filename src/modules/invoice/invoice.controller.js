@@ -208,7 +208,6 @@ class InvoiceController {
         return serverResponse(res, 404, errMsg);
       }
       download = download.toObject();
-      console.log(download);
       const pdfBody = {
         order: download,
         createdAt: moment(
