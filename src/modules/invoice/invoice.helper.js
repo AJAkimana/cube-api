@@ -117,6 +117,7 @@ class InvoiceHelpers {
       };
 
       const invoiceDoc = await pdf.create(document, options);
+      console.log(document);
       if (isDownload) {
         return invoiceDoc;
       }
