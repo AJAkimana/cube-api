@@ -228,7 +228,7 @@ class InvoiceController {
       };
       console.log('Got here==============>');
       await invoiceHelper.generatePDF(pdfBody, true);
-      console.log('Got here to==============>');
+      console.log('Got here to==============>', downloadType);
       return res.download(`./${downloadType}.pdf`);
     } catch (error) {
       return serverResponse(res, 500, error.toString());
