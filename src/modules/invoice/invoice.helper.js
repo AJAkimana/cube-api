@@ -68,17 +68,31 @@ class InvoiceHelpers {
         status: body.order.status,
         amountDue: totalAmount,
       };
+      let discountPct = `${body.discount}%`;
+      let theDiscount = Number(discount);
+      if (body.isFixed) {
+        discountPct = `$${body.discount}`;
+        theDiscount = (grandTotal * Number(discount)) / 100;
+      }
+      const grandTotal = Number(
+        items.reduce((sum, item) => sum + item.total, 0),
+      );
       const taxe = {
         taxes: taxText || '0',
         percent: tax ? `${tax}%` : 0,
         amount: `$${body.amounts?.tax?.toLocaleString('en-US')}`,
+        taxesList: body.taxes.map((t) => {
+          const theTotal =
+            body.amounts?.subtotal - body.amounts?.discount;
+          const amount = (theTotal * t.amount) / 100;
+          return {
+            tax: `${t.title} ${t.amount}% $${amount.toLocaleString(
+              'en-US',
+            )}`,
+          };
+        }),
       };
-      let discountPct = 0;
-      if (body.discount) {
-        discountPct = body.isFixed
-          ? `$${body.discount}`
-          : `${body.discount}%`;
-      }
+
       const discount = {
         percent: discountPct,
         amount: `$${body.amounts?.discount?.toLocaleString('en-US')}`,
