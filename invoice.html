@@ -136,17 +136,21 @@
               </td>
             </tr>
             <tr>
-              {{#with taxe}}
+              {{#with discount}}
               <td colspan="2" class="table-border">
-                Taxes {{taxes}}
+                Discount {{percent}}
               </td>
               <td class="table-border">{{amount}}</td>
               {{/with}}
             </tr>
             <tr>
-              {{#with discount}}
+              {{#with taxe}}
               <td colspan="2" class="table-border">
-                Discount {{percent}}
+                <ul>
+                  {{#each taxesList}}
+                  <li>{{this.tax}}</li>
+                  {{/each}}
+                </ul>
               </td>
               <td class="table-border">{{amount}}</td>
               {{/with}}
