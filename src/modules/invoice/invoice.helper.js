@@ -69,21 +69,16 @@ class InvoiceHelpers {
         amountDue: totalAmount,
       };
       let discountPct = `${body.discount}%`;
-      let theDiscount = Number(discount);
       if (body.isFixed) {
         discountPct = `$${body.discount}`;
-        theDiscount = (grandTotal * Number(discount)) / 100;
       }
-      const grandTotal = Number(
-        items.reduce((sum, item) => sum + item.total, 0),
-      );
+      const theTotal =
+        body.amounts?.subtotal - body.amounts?.discount;
       const taxe = {
         taxes: taxText || '0',
         percent: tax ? `${tax}%` : 0,
         amount: `$${body.amounts?.tax?.toLocaleString('en-US')}`,
         taxesList: body.taxes.map((t) => {
-          const theTotal =
-            body.amounts?.subtotal - body.amounts?.discount;
           const amount = (theTotal * t.amount) / 100;
           return {
             tax: `${t.title} ${t.amount}% $${amount.toLocaleString(
@@ -117,7 +112,7 @@ class InvoiceHelpers {
       };
 
       const invoiceDoc = await pdf.create(document, options);
-      console.log(document);
+      // console.log(document);
       if (isDownload) {
         return invoiceDoc;
       }

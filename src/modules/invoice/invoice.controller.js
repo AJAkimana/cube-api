@@ -226,9 +226,9 @@ class InvoiceController {
         isFixed: download?.isFixed || download.quote?.isFixed,
         discount: download?.discount || download.quote?.discount,
       };
-      console.log('Got here==============>');
+      // console.log('Got here==============>');
       await invoiceHelper.generatePDF(pdfBody, true);
-      console.log('Got here to==============>', downloadType);
+      // console.log('Got here to==============>', downloadType);
       return res.download(`./${downloadType}.pdf`);
     } catch (error) {
       return serverResponse(res, 500, error.toString());
