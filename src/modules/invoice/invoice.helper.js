@@ -95,6 +95,11 @@ class InvoiceHelpers {
 
       // const logoBE = `${process.env.APP_URL}/assets/square_transparent.png`;
       const logoFE = `${process.env.FRONTEND_URL}/static/media/ari_cube.2edefd08.png`;
+      const theItems = items.map((item) => ({
+        ...item,
+        price: `$${item.price.toLocaleString('en-US')}`,
+        total: `$${item.total.toLocaleString('en-US')}`,
+      }));
       const document = {
         html,
         data: {
@@ -104,7 +109,7 @@ class InvoiceHelpers {
           propasalText: body.order.propasalText || '',
           customerNote: body.order.customerNote || '',
           logo: logoFE,
-          items,
+          items: theItems,
           taxe,
           discount,
         },
