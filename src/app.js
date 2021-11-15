@@ -9,6 +9,7 @@ import router from './modules';
 const app = express();
 
 app.use(cors({ origin: true }));
+app.set('trust proxy', true);
 app.use(helmet());
 app.use(morgan('dev'));
 

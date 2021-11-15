@@ -5,6 +5,8 @@ import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ProjectProduct from './projectProduct.model';
 import { logProject } from '../../utils/log.project';
+import { getRequestIp } from '../../utils/helpers';
+import ProductVisit from './productVisit.model';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -120,6 +122,7 @@ export class ProductController {
   }
   static async getProductDetails(req, res) {
     const { productId } = req.params;
+    const { addVisit } = req.query;
     const images3DStorage = process.env.IMAGES_3D_ZONE;
     try {
       const product = await Product.findById(productId);
@@ -136,6 +139,11 @@ export class ProductController {
         });
       const productObj = product.toObject();
       productObj.imagesSrc = images;
+      if (addVisit) {
+        const visitBody = { product: productId };
+        await ProductVisit.create(visitBody);
+        console.log('req.ip', getRequestIp(req.ip));
+      }
 
       return serverResponse(res, 200, 'success', productObj);
     } catch (error) {

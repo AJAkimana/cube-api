@@ -1,6 +1,7 @@
 import { readdir, unlink } from 'fs';
 import path, { resolve } from 'path';
 import { Types } from 'mongoose';
+import ipAddr from 'ipaddr.js';
 
 export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
@@ -119,4 +120,15 @@ export const haveTaxesChanged = (prev = [], curr = []) => {
   const totalPrev = prev.reduce((sum, t) => sum + t.amount, 0);
   const totalCurr = curr.reduce((sum, t) => sum + t.amount, 0);
   return totalPrev !== totalCurr;
+};
+export const getRequestIp = (reqIp) => {
+  let remoteAddress = '';
+  console.log(ipAddr.parse(reqIp).toIPv4Address());
+  if (ipAddr.isValid(reqIp)) {
+    const addr = ipAddr.parse(reqIp);
+    if (addr.isIPv4MappedAddress()) {
+      remoteAddress = addr.toIPv4Address().toString();
+    }
+  }
+  return remoteAddress;
 };

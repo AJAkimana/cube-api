@@ -33,7 +33,7 @@ productRouter.post(
 productRouter.get('/', authorization, getProducts);
 productRouter.get(
   '/:productId',
-  isSiteAllowed,
+  // isSiteAllowed,
   doesProductExist,
   getProductDetails,
 );
