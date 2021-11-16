@@ -5,8 +5,7 @@ import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ProjectProduct from './projectProduct.model';
 import { logProject } from '../../utils/log.project';
-import { getRequestIp } from '../../utils/helpers';
-import ProductVisit from './productVisit.model';
+import { createAnalytics } from '../../utils/product.util';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -140,9 +139,7 @@ export class ProductController {
       const productObj = product.toObject();
       productObj.imagesSrc = images;
       if (addVisit) {
-        const visitBody = { product: productId };
-        await ProductVisit.create(visitBody);
-        console.log('req.ip', getRequestIp(req.ip));
+        await createAnalytics(req, product);
       }
 
       return serverResponse(res, 200, 'success', productObj);
@@ -213,6 +210,19 @@ export class ProductController {
       const msg = 'Image deleted';
 
       return serverResponse(res, 200, msg, imageFileName);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
+
+  static async addProductClick(req, res) {
+    try {
+      const { productId } = req.params;
+      const product = await Product.findById(productId);
+
+      const newClick = await createAnalytics(req, product, 'click');
+
+      return serverResponse(res, 200, 'Success', newClick);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }

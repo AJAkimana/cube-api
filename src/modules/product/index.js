@@ -21,6 +21,7 @@ const {
   updateAttributes,
   getProductDetails,
   deleteAttrImage,
+  addProductClick,
 } = ProductController;
 
 productRouter.post(
@@ -75,6 +76,11 @@ productRouter.delete(
   isAdminOrManager,
   doesProductExist,
   deleteAttrImage,
+);
+productRouter.get(
+  '/:productId/click',
+  doesProductExist,
+  addProductClick,
 );
 
 export default productRouter;
