@@ -1,41 +1,83 @@
 import MobileDetect from 'mobile-detect';
 import { Reader } from '@maxmind/geoip2-node';
-import ProductVisit from '../modules/product/productVisit.model';
 // import { getRequestIp } from './helpers';
-import ProductClick from '../modules/product/productClick.model';
+import ProductAnalytic from '../modules/product/productAnalytic.model';
 
 /**
  *
  * @param {Request} req
  * @param {*} product
- * @param {string} analyticType
  *
  * @returns {Promise<any>}
  */
-export const createAnalytics = async (
-  req,
-  product,
-  analyticType = 'visit',
-) => {
+export const createAnalytics = async (req, product) => {
   try {
+    const { analyticType = 'visit' } = req.query;
     const md = new MobileDetect(req.headers['user-agent']);
+
     const reader = await Reader.open(process.env.GEOIP_PATH);
-    const city = reader.city(req.ip);
-    const analyticBody = {
+    let ipAddress = process.env.TEST_IP;
+    if (process.env.NODE_ENV === 'production') {
+      ipAddress = req.ip;
+    }
+    const city = reader.city(ipAddress);
+
+    let analyticBody = {
       product: product._id,
       project: product.project,
       device: md.os() || 'Desktop',
       country: city.country.names.en,
       city: city.city.names.en,
+      actionType: analyticType,
     };
-    let newAnalytic;
-    if (analyticType === 'click') {
-      newAnalytic = await ProductClick.create(analyticBody);
-    } else {
-      newAnalytic = await ProductVisit.create(analyticBody);
-    }
+    const newAnalytic = await ProductAnalytic.create(analyticBody);
+
     return newAnalytic;
   } catch (error) {
     throw error;
   }
+};
+
+/**
+ *
+ * @param {*} analytics
+ * @returns
+ */
+export const organizeAnalytics = (analytics = []) => {
+  const organized = [];
+  analytics.forEach((analytic) => {
+    const organizedIndex = organized.findIndex((item) =>
+      item.product.equals(analytic.product),
+    );
+    const androids = analytic.device === 'AndroidOS' ? 1 : 0;
+    const iOs = analytic.device === 'iOs' ? 1 : 0;
+    const desktops = analytic.device === 'Desktop' ? 1 : 0;
+    const clicks = analytic.actionType === 'click' ? 1 : 0;
+    if (organizedIndex < 0) {
+      organized.push({
+        ...analytic,
+        countries: [analytic.country],
+        users: 1,
+        androids,
+        iOs,
+        desktops,
+        clicks,
+      });
+    } else {
+      organized[organizedIndex].users += 1;
+      organized[organizedIndex].androids += androids;
+      organized[organizedIndex].iOs += iOs;
+      organized[organizedIndex].desktops += desktops;
+      organized[organizedIndex].clicks += clicks;
+      if (organized[organizedIndex].countries.length < 4) {
+        const countryIndex = organized[
+          organizedIndex
+        ].countries.indexOf(analytic.country);
+        if (countryIndex < 0) {
+          organized[organizedIndex].countries.push(analytic.country);
+        }
+      }
+    }
+  });
+  return organized;
 };

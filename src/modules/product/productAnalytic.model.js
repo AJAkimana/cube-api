@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const productClickSchema = new Schema(
+const productAnalyticSchema = new Schema(
   {
     product: {
       type: Schema.Types.ObjectId,
@@ -15,12 +15,20 @@ const productClickSchema = new Schema(
     device: { type: String, required: true },
     country: { type: String, required: true },
     city: { type: String, required: true },
+    actionType: {
+      type: String,
+      enum: ['visit', 'click'],
+      default: 'visit',
+    },
   },
   {
     timestamps: true,
     writeConcern: { w: 'majority', j: true, wtimeout: 1000 },
   },
 );
-const ProductClick = model('ProductClick', productClickSchema);
+const ProductAnalytic = model(
+  'ProductAnalytic',
+  productAnalyticSchema,
+);
 
-export default ProductClick;
+export default ProductAnalytic;
