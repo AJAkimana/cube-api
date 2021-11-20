@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { serverResponse } from '../../utils/response';
 import Product from './product.model';
@@ -5,7 +6,11 @@ import User from '../../database/model/user.model';
 import Project from '../../database/model/project.schema';
 import ProjectProduct from './projectProduct.model';
 import { logProject } from '../../utils/log.project';
-import { createAnalytics } from '../../utils/product.util';
+import {
+  createAnalytics,
+  organizeAnalytics,
+} from '../../utils/product.util';
+import ProductAnalytic from './productAnalytic.model';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -215,14 +220,43 @@ export class ProductController {
     }
   }
 
-  static async addProductClick(req, res) {
+  static async addProductAnalytic(req, res) {
     try {
       const { productId } = req.params;
       const product = await Product.findById(productId);
 
-      const newClick = await createAnalytics(req, product, 'click');
+      const newClick = await createAnalytics(req, product);
 
       return serverResponse(res, 200, 'Success', newClick);
+    } catch (error) {
+      return serverResponse(res, 500, error.message);
+    }
+  }
+
+  static async getProductAnalytics(req, res) {
+    try {
+      const { project, time } = req.query;
+      let filters = {};
+      if (project) {
+        filters = { ...filters, project };
+      }
+      if (time) {
+        let startDate = moment().startOf('day').toDate();
+        let endDate = moment().endOf('day').toDate();
+        if (time === '7days') {
+          startDate = moment().subtract(7, 'd').toDate();
+        } else if (time === '30days') {
+          startDate = moment().subtract(30, 'd').toDate();
+        }
+        filters = {
+          ...filters,
+          createdAt: { $gte: startDate, $lte: endDate },
+        };
+      }
+      const analytics = await ProductAnalytic.find(filters).lean();
+      const organized = organizeAnalytics(analytics);
+
+      return serverResponse(res, 200, 'Success', organized);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }

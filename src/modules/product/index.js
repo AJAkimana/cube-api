@@ -8,7 +8,7 @@ import authorization, {
 import {
   doesProductExist,
   isProductValid,
-  isSiteAllowed,
+  // isSiteAllowed,
 } from './product.middleware';
 
 const productRouter = Router();
@@ -21,7 +21,8 @@ const {
   updateAttributes,
   getProductDetails,
   deleteAttrImage,
-  addProductClick,
+  addProductAnalytic,
+  getProductAnalytics,
 } = ProductController;
 
 productRouter.post(
@@ -77,10 +78,11 @@ productRouter.delete(
   doesProductExist,
   deleteAttrImage,
 );
-productRouter.get(
-  '/:productId/click',
+productRouter.get('/get/analytics', getProductAnalytics);
+productRouter.post(
+  '/:productId/analytics',
   doesProductExist,
-  addProductClick,
+  addProductAnalytic,
 );
 
 export default productRouter;
