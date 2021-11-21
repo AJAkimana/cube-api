@@ -126,7 +126,7 @@ export class ProductController {
   }
   static async getProductDetails(req, res) {
     const { productId } = req.params;
-    const { addVisit } = req.query;
+    const { analyticType } = req.query;
     const images3DStorage = process.env.IMAGES_3D_ZONE;
     try {
       const product = await Product.findById(productId);
@@ -143,7 +143,7 @@ export class ProductController {
         });
       const productObj = product.toObject();
       productObj.imagesSrc = images;
-      if (addVisit) {
+      if (analyticType) {
         await createAnalytics(req, product);
       }
 
