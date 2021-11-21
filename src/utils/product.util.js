@@ -53,18 +53,19 @@ export const organizeAnalytics = (analytics = []) => {
     const iOs = analytic.device === 'iOs' ? 1 : 0;
     const desktops = analytic.device === 'Desktop' ? 1 : 0;
     const clicks = analytic.actionType === 'click' ? 1 : 0;
+    const users = analytic.actionType === 'visit' ? 1 : 0;
     if (organizedIndex < 0) {
       organized.push({
         ...analytic,
         countries: [analytic.country],
-        users: 1,
+        users,
         androids,
         iOs,
         desktops,
         clicks,
       });
     } else {
-      organized[organizedIndex].users += 1;
+      organized[organizedIndex].users += users;
       organized[organizedIndex].androids += androids;
       organized[organizedIndex].iOs += iOs;
       organized[organizedIndex].desktops += desktops;
