@@ -47,7 +47,7 @@ export const organizeAnalytics = (analytics = []) => {
   const organized = [];
   analytics.forEach((analytic) => {
     const organizedIndex = organized.findIndex((item) =>
-      item.product.equals(analytic.product),
+      item.product._id.equals(analytic.product._id),
     );
     const androids = analytic.device === 'AndroidOS' ? 1 : 0;
     const iOs = analytic.device === 'iOs' ? 1 : 0;

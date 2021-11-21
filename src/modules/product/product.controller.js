@@ -240,7 +240,7 @@ export class ProductController {
       if (project) {
         filters = { ...filters, project };
       }
-      if (time) {
+      if (time && time !== 'allTime') {
         let startDate = moment().startOf('day').toDate();
         let endDate = moment().endOf('day').toDate();
         if (time === '7days') {
@@ -253,7 +253,13 @@ export class ProductController {
           createdAt: { $gte: startDate, $lte: endDate },
         };
       }
-      const analytics = await ProductAnalytic.find(filters).lean();
+      const analytics = await ProductAnalytic.find(filters)
+        .populate({
+          path: 'product',
+          select: 'name',
+          model: Product,
+        })
+        .lean();
       const organized = organizeAnalytics(analytics);
 
       return serverResponse(res, 200, 'Success', organized);
