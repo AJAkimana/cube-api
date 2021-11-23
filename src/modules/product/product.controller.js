@@ -149,6 +149,7 @@ export class ProductController {
 
       return serverResponse(res, 200, 'success', productObj);
     } catch (error) {
+      console.log(error);
       return serverResponse(res, 500, error.message);
     }
   }
