@@ -21,13 +21,14 @@ export const createAnalytics = async (req, product) => {
       ipAddress = req.ip;
     }
     const city = reader.city(ipAddress);
+    // console.log(city);
 
     let analyticBody = {
       product: product._id,
       project: product.project,
       device: md.os() || 'Desktop',
       country: city.country.names.en,
-      city: city.city.names.en,
+      city: city.city?.names?.en || 'Not captured',
       actionType: analyticType,
     };
     const newAnalytic = await ProductAnalytic.create(analyticBody);
