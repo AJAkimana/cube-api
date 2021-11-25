@@ -58,7 +58,7 @@ export const organizeAnalytics = (analytics = []) => {
     if (organizedIndex < 0) {
       organized.push({
         ...analytic,
-        countries: [analytic.country],
+        countries: [{ name: analytic.country, count: 1 }],
         users,
         androids,
         iOs,
@@ -71,12 +71,17 @@ export const organizeAnalytics = (analytics = []) => {
       organized[organizedIndex].iOs += iOs;
       organized[organizedIndex].desktops += desktops;
       organized[organizedIndex].clicks += clicks;
-      if (organized[organizedIndex].countries.length < 4) {
-        const countryIndex = organized[
-          organizedIndex
-        ].countries.indexOf(analytic.country);
-        if (countryIndex < 0) {
-          organized[organizedIndex].countries.push(analytic.country);
+      const countryIndex = organized[
+        organizedIndex
+      ].countries.findIndex((el) => el.name === analytic.country);
+      if (countryIndex >= 0) {
+        organized[organizedIndex].countries[countryIndex].count += 1;
+      } else {
+        if (organized[organizedIndex].countries.length < 4) {
+          organized[organizedIndex].countries.push({
+            name: analytic.country,
+            count: 1,
+          });
         }
       }
     }
