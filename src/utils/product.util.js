@@ -1,7 +1,25 @@
-import MobileDetect from 'mobile-detect';
+// import MobileDetect from 'mobile-detect';
 import { Reader } from '@maxmind/geoip2-node';
 // import { getRequestIp } from './helpers';
 import ProductAnalytic from '../modules/product/productAnalytic.model';
+
+/**
+ *
+ * @param {*} userAgent
+ * @returns Os
+ */
+export const getRequestOs = (userAgent = {}) => {
+  if (userAgent.isDesktop) {
+    return 'Desktop';
+  }
+  if (userAgent.isAndroid) {
+    return 'AndroidOS';
+  }
+  if (userAgent.isMobile && userAgent.os === 'OS X') {
+    return 'iOs';
+  }
+  return 'Others';
+};
 
 /**
  *
@@ -13,7 +31,7 @@ import ProductAnalytic from '../modules/product/productAnalytic.model';
 export const createAnalytics = async (req, product) => {
   try {
     const { analyticType = 'visit' } = req.query;
-    const md = new MobileDetect(req.headers['user-agent']);
+    // const md = new MobileDetect(req.headers['user-agent']);
 
     const reader = await Reader.open(process.env.GEOIP_PATH);
     let ipAddress = process.env.TEST_IP;
@@ -21,12 +39,11 @@ export const createAnalytics = async (req, product) => {
       ipAddress = req.ip;
     }
     const city = reader.city(ipAddress);
-    // console.log(city);
 
     let analyticBody = {
       product: product._id,
       project: product.project,
-      device: md.os() || 'Desktop',
+      device: getRequestOs(req.useragent),
       country: city.country.names.en,
       city: city.city?.names?.en || 'Not captured',
       actionType: analyticType,

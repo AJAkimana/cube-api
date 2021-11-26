@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 // import uploader from 'express-fileupload';
+import userAgent from 'express-useragent';
 import router from './modules';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors({ origin: true }));
 app.set('trust proxy', true);
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(userAgent.express());
 
 app.use(
   bodyParser.urlencoded({
