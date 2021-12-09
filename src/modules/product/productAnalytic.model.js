@@ -12,6 +12,11 @@ const productAnalyticSchema = new Schema(
       ref: 'Project',
       required: true,
     },
+    customer: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     device: { type: String, required: true },
     country: { type: String, required: true },
     city: { type: String, required: true },

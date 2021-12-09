@@ -43,6 +43,7 @@ export const createAnalytics = async (req, product) => {
     let analyticBody = {
       product: product._id,
       project: product.project,
+      customer: product.customer,
       device: getRequestOs(req.useragent),
       country: city.country.names.en,
       city: city.city?.names?.en || 'Not captured',

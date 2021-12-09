@@ -236,8 +236,12 @@ export class ProductController {
 
   static async getProductAnalytics(req, res) {
     try {
+      const { _id: userId, role } = req.userData || {};
+      let filters = { customer: userId };
+      if (role === 'Manager' || role === 'Admin') {
+        filters = {};
+      }
       const { project, time } = req.query;
-      let filters = {};
       if (project) {
         filters = { ...filters, project };
       }
