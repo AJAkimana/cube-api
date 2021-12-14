@@ -78,7 +78,11 @@ productRouter.delete(
   doesProductExist,
   deleteAttrImage,
 );
-productRouter.get('/get/analytics', getProductAnalytics);
+productRouter.get(
+  '/get/analytics',
+  authorization,
+  getProductAnalytics,
+);
 productRouter.post(
   '/:productId/analytics',
   doesProductExist,
