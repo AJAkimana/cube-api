@@ -258,7 +258,7 @@ export class ProductController {
           createdAt: { $gte: startDate, $lte: endDate },
         };
       }
-      console.log('=========>', filters);
+      console.log('=========>', filters, req.userData);
       const analytics = await ProductAnalytic.find(filters)
         .populate({
           path: 'product',
