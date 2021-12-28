@@ -4,7 +4,6 @@ import {
   validateUserBody,
   validateSecurePassword,
   validateLoginBody,
-  validateUdateProfile,
   validateNewPassword,
 } from './auth.validation';
 import {

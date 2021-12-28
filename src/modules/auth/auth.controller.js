@@ -64,7 +64,7 @@ class AuthController {
     try {
       const user = await User.findById(userId);
       const { firstName, lastName } = req.body;
-      req.body.fullName = firstName + ' ' + lastName;
+      req.body.fullName = `${firstName} ${lastName}`;
       await user.updateOne(req.body);
 
       const resMsg = 'User account update successfully';
@@ -73,6 +73,7 @@ class AuthController {
       return serverResponse(res, 500, error.toString());
     }
   }
+
   /**
    * This function to handle delete user request.
    * @param {object} req The http request.
@@ -246,6 +247,7 @@ class AuthController {
       return ResponseUtil.send(res);
     }
   }
+
   /**
    * This function is for sending reset link email.
    * @param {object} req The http request.
@@ -283,6 +285,7 @@ class AuthController {
       return ResponseUtil.send(res);
     }
   }
+
   /**
    * This function is for resetting a user password.
    * @param {object} req The http request.

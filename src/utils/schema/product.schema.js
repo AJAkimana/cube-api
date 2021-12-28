@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+// eslint-disable-next-line import/prefer-default-export
 export const productSchema = Joi.object({
   name: Joi.string().required().messages({
     'any.required': 'Name is required',
