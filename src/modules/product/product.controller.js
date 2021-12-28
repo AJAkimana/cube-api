@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import moment from 'moment';
 import { existsSync, mkdirSync, readdirSync, unlinkSync } from 'fs';
 import { serverResponse } from '../../utils/response';
@@ -26,14 +27,14 @@ export class ProductController {
         product: newProduct._id,
       });
       const theProject = await Project.findById(project);
-      let logAction = 'asset_add';
-      let entities = {
+      const logAction = 'asset_add';
+      const entities = {
         project: theProject,
         createdBy: req.userData,
         manager: { _id: theProject.manager },
         user: { _id: theProject.user },
       };
-      let content = {
+      const content = {
         title: '3D asset added',
         info: '3D asset added',
       };
@@ -43,6 +44,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async editProduct(req, res) {
     const { productId } = req.params;
     const { _id: userId, role } = req.userData || {};
@@ -74,14 +76,14 @@ export class ProductController {
             product: productId,
           });
           const theProject = await Project.findById(project);
-          let logAction = 'asset_add';
-          let entities = {
+          const logAction = 'asset_add';
+          const entities = {
             project: theProject,
             createdBy: req.userData,
             manager: { _id: theProject.manager },
             user: { _id: theProject.user },
           };
-          let content = {
+          const content = {
             title: '3D asset added',
             info: '3D asset added',
           };
@@ -93,6 +95,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async deleteProduct(req, res) {
     const { productId } = req.params;
     try {
@@ -102,6 +105,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async getProductImages(req, res) {
     const { fileName } = req.body;
     const imagesStorage = process.env.IMAGES_ZONE;
@@ -112,7 +116,7 @@ export class ProductController {
       const images = {};
       readdirSync(imagesStorage)
         .filter((file) => file.includes(fileName))
-        .map((img) => {
+        .forEach((img) => {
           if (img.endsWith('.glb')) {
             images.glb = img;
           } else {
@@ -124,6 +128,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async getProductDetails(req, res) {
     const { productId } = req.params;
     const { analyticType } = req.query;
@@ -134,7 +139,7 @@ export class ProductController {
       const images = {};
       readdirSync(images3DStorage)
         .filter((file) => file.includes(fileName))
-        .map((img) => {
+        .forEach((img) => {
           if (img.endsWith('.glb')) {
             images.glb = img;
           } else {
@@ -153,6 +158,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async getProducts(req, res) {
     const { _id: userId, role } = req.userData || {};
     const { project } = req.query;
@@ -186,6 +192,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async updateAttributes(req, res) {
     try {
       const { productId } = req.params;
@@ -200,6 +207,7 @@ export class ProductController {
       return serverResponse(res, 500, error.message);
     }
   }
+
   static async deleteAttrImage(req, res) {
     try {
       const { productId, imageFileName } = req.params;
@@ -247,7 +255,7 @@ export class ProductController {
       }
       if (time && time !== 'allTime') {
         let startDate = moment().startOf('day').toDate();
-        let endDate = moment().endOf('day').toDate();
+        const endDate = moment().endOf('day').toDate();
         if (time === '7days') {
           startDate = moment().subtract(7, 'd').toDate();
         } else if (time === '30days') {
