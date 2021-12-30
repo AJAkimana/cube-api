@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { uploadFiles } from '../../utils/file.uploader';
 import { ProductController } from './product.controller';
-import authorization, {
+import {
+  isAuthenticated,
   isAdmin,
   isAdminOrManager,
 } from '../middleware/auth.middleware';
@@ -27,12 +28,12 @@ const {
 
 productRouter.post(
   '/',
-  authorization,
+  isAuthenticated,
   isAdminOrManager,
   isProductValid,
   addNewProduct,
 );
-productRouter.get('/', authorization, getProducts);
+productRouter.get('/', isAuthenticated, getProducts);
 productRouter.get(
   '/:productId',
   // isSiteAllowed,
@@ -41,21 +42,21 @@ productRouter.get(
 );
 productRouter.patch(
   '/:productId',
-  authorization,
+  isAuthenticated,
   doesProductExist,
   isProductValid,
   editProduct,
 );
 productRouter.delete(
   '/:productId',
-  authorization,
+  isAuthenticated,
   isAdmin,
   doesProductExist,
   deleteProduct,
 );
 productRouter.post(
   '/upload/:fileType',
-  authorization,
+  isAuthenticated,
   isAdminOrManager,
   uploadFiles,
 );
@@ -66,21 +67,21 @@ productRouter.get(
 );
 productRouter.patch(
   '/attributes/:productId',
-  authorization,
-  isAdminOrManager,
+  isAuthenticated,
+  // isAdminOrManager,
   doesProductExist,
   updateAttributes,
 );
 productRouter.delete(
   '/:productId/image/:imageFileName',
-  authorization,
+  isAuthenticated,
   isAdminOrManager,
   doesProductExist,
   deleteAttrImage,
 );
 productRouter.get(
   '/get/analytics',
-  authorization,
+  isAuthenticated,
   getProductAnalytics,
 );
 productRouter.post(
