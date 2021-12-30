@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import authorization, {
+import {
+  isAuthenticated,
   isAdminOrManager,
 } from '../middleware/auth.middleware';
 import invoice from './invoice.controller';
@@ -14,12 +15,12 @@ const invoiceRouter = Router();
 invoiceRouter.post('/', validateInvoiceBody, invoice.generateInvoice);
 invoiceRouter.patch(
   '/:id',
-  authorization,
+  isAuthenticated,
   validateInvoiceUpdate,
   isAdminOrManager,
   paymentOfInvoice,
 );
-invoiceRouter.get('/', authorization, getAllInvoices);
+invoiceRouter.get('/', isAuthenticated, getAllInvoices);
 invoiceRouter.get('/:downloadId', downloadInvoice);
 
 export default invoiceRouter;

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import quote from './quote.controller';
-import authorization, {
+import {
+  isAuthenticated,
   isAdminOrManager,
   isNotVisitor,
 } from '../middleware/auth.middleware';
@@ -15,7 +16,7 @@ const { createQuote, getAllQuotes, updateQuote } = quote;
 
 quoteRouter.post(
   '/',
-  authorization,
+  isAuthenticated,
   isAdminOrManager,
   validateQuoteBody,
   createQuote,
@@ -23,12 +24,12 @@ quoteRouter.post(
 
 quoteRouter.patch(
   '/:id',
-  authorization,
+  isAuthenticated,
   validateQuoteUpdate,
   isNotVisitor,
   doesQuoteExist,
   updateQuote,
 );
-quoteRouter.get('/', authorization, getAllQuotes);
+quoteRouter.get('/', isAuthenticated, getAllQuotes);
 
 export default quoteRouter;

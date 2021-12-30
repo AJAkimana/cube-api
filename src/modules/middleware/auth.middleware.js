@@ -8,7 +8,7 @@ import ResponseUtil from '../../utils/response.util';
  * @param  {object} next
  * @returns {object} protect route
  */
-export default (req, res, next) => {
+export const isAuthenticated = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
 
   if (typeof bearerHeader !== 'undefined') {
@@ -34,13 +34,12 @@ export default (req, res, next) => {
     }
     req.userData = TokenUtil.verifyToken(req.token);
     return next();
-  } else {
-    ResponseUtil.setError(
-      FORBIDDEN,
-      'You can not proceed without setting authorization token',
-    );
-    return ResponseUtil.send(res);
   }
+  ResponseUtil.setError(
+    FORBIDDEN,
+    'You can not proceed without setting authorization token',
+  );
+  return ResponseUtil.send(res);
 };
 /**
  * @param  {object} req
