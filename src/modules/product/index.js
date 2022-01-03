@@ -1,13 +1,15 @@
 import { Router } from 'express';
 import { uploadFiles } from '../../utils/file.uploader';
 import { ProductController } from './product.controller';
-import authorization, {
+import {
+  isAuthenticated,
   isAdmin,
   isAdminOrManager,
 } from '../middleware/auth.middleware';
 import {
   doesProductExist,
   isProductValid,
+  // isSiteAllowed,
 } from './product.middleware';
 
 const productRouter = Router();
@@ -19,36 +21,43 @@ const {
   getProductImages,
   updateAttributes,
   getProductDetails,
+  deleteAttrImage,
+  addProductAnalytic,
+  getProductAnalytics,
 } = ProductController;
 
 productRouter.post(
   '/',
-  authorization,
-  isAdmin,
+  isAuthenticated,
+  isAdminOrManager,
   isProductValid,
   addNewProduct,
 );
-productRouter.get('/', getProducts);
-productRouter.get('/:productId', getProductDetails);
+productRouter.get('/', isAuthenticated, getProducts);
+productRouter.get(
+  '/:productId',
+  // isSiteAllowed,
+  doesProductExist,
+  getProductDetails,
+);
 productRouter.patch(
   '/:productId',
-  authorization,
-  isAdmin,
+  isAuthenticated,
   doesProductExist,
   isProductValid,
   editProduct,
 );
 productRouter.delete(
   '/:productId',
-  authorization,
+  isAuthenticated,
   isAdmin,
   doesProductExist,
   deleteProduct,
 );
 productRouter.post(
   '/upload/:fileType',
-  authorization,
-  isAdmin,
+  isAuthenticated,
+  isAdminOrManager,
   uploadFiles,
 );
 productRouter.get(
@@ -58,10 +67,27 @@ productRouter.get(
 );
 productRouter.patch(
   '/attributes/:productId',
-  authorization,
-  // isAdmin,
+  isAuthenticated,
+  // isAdminOrManager,
   doesProductExist,
   updateAttributes,
+);
+productRouter.delete(
+  '/:productId/image/:imageFileName',
+  isAuthenticated,
+  isAdminOrManager,
+  doesProductExist,
+  deleteAttrImage,
+);
+productRouter.get(
+  '/get/analytics',
+  isAuthenticated,
+  getProductAnalytics,
+);
+productRouter.post(
+  '/:productId/analytics',
+  doesProductExist,
+  addProductAnalytic,
 );
 
 export default productRouter;

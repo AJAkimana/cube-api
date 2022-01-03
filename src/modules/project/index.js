@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import project from './project.controller';
+import ProjectCtrl from './project.controller';
 import {
   validateProjectBody,
   updateProjectStatus,
@@ -7,8 +7,10 @@ import {
 import {
   checkManagerRoleAndProjectExists,
   doesProjectExist,
+  isAddProductValid,
 } from './project.middleware';
-import authorization, {
+import {
+  isAuthenticated,
   isClient,
   isNotVisitor,
 } from '../middleware/auth.middleware';
@@ -21,34 +23,36 @@ const {
   getProjectHistories,
   getProjectDetail,
   createNewLog,
-} = project;
+  addProductToProject,
+  getProductProjects,
+} = ProjectCtrl;
 const projectRouter = Router();
 
 projectRouter.post(
   '/',
-  authorization,
+  isAuthenticated,
   isClient,
   validateProjectBody,
   uploadImage,
   createProject,
 );
 
-projectRouter.get('/', authorization, getProjects);
+projectRouter.get('/', isAuthenticated, getProjects);
 projectRouter.get(
   '/:id',
-  authorization,
+  isAuthenticated,
   doesProjectExist,
   getProjectDetail,
 );
 projectRouter.get(
   '/:id/histories',
-  authorization,
+  isAuthenticated,
   doesProjectExist,
   getProjectHistories,
 );
 projectRouter.patch(
   '/:id',
-  authorization,
+  isAuthenticated,
   isNotVisitor,
   validateProjectBody,
   doesProjectExist,
@@ -57,16 +61,28 @@ projectRouter.patch(
 
 projectRouter.patch(
   '/approve-project/:id',
-  authorization,
+  isAuthenticated,
   updateProjectStatus,
   checkManagerRoleAndProjectExists,
   updateProject,
 );
 projectRouter.post(
   '/:id/histories',
-  authorization,
+  isAuthenticated,
   doesProjectExist,
   createNewLog,
+);
+projectRouter.post(
+  '/:id/products',
+  isAuthenticated,
+  doesProjectExist,
+  isAddProductValid,
+  addProductToProject,
+);
+projectRouter.get(
+  '/:id/products',
+  isAuthenticated,
+  getProductProjects,
 );
 
 export default projectRouter;

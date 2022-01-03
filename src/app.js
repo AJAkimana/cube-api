@@ -4,24 +4,27 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 // import uploader from 'express-fileupload';
-import indexRouter from './modules';
+import userAgent from 'express-useragent';
+import router from './modules';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: true }));
+app.set('trust proxy', true);
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(userAgent.express());
 
 app.use(
   bodyParser.urlencoded({
     extended: false,
-    limit: '1mb',
+    limit: '50mb',
     parameterLimit: 500,
   }),
 );
 // app.use(uploader({ useTempFiles: true }));
-app.use(bodyParser.json({ limit: '1mb' }));
-app.use('/images', express.static('public/images'));
-app.use('/api/v1', indexRouter);
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use('/assets', express.static('assets'));
+app.use('/api/v1', router);
 
 export default app;

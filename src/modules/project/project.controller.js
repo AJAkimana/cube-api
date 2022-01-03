@@ -2,14 +2,13 @@ import { CREATED, INTERNAL_SERVER_ERROR, OK } from 'http-status';
 import ResponseUtil from '../../utils/response.util';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
-import {
-  logProject,
-  sendEmailNotification,
-} from '../../utils/log.project';
+import { logProject } from '../../utils/log.project';
 import Notification from '../../database/model/notification.model';
 import { serverResponse } from '../../utils/response';
 import { sendUserEmail } from '../mail/mail.controller';
 import { emailTemplate } from '../../utils/validationMail';
+import Product from '../product/product.model';
+import ProjectProduct from '../product/projectProduct.model';
 
 /**
  * Service controller class
@@ -41,7 +40,7 @@ class ProjectController {
       await logProject(entities, content);
       return ResponseUtil.send(res);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       return ResponseUtil.handleErrorResponse(
         INTERNAL_SERVER_ERROR,
         error.toString(),
@@ -57,7 +56,7 @@ class ProjectController {
    */
   static async getProjects(req, res) {
     const { _id: userId, role } = req.userData;
-    const { status } = req.query;
+    const { status, client } = req.query;
 
     let conditions = { user: userId };
     if (role === 'Manager') {
@@ -68,6 +67,9 @@ class ProjectController {
     }
     if (status) {
       conditions = { ...conditions, status: { $ne: status } };
+    }
+    if (client) {
+      conditions = { ...conditions, user: client };
     }
     const projects = await Project.find(conditions)
       .populate({
@@ -243,6 +245,46 @@ class ProjectController {
         const msg = 'Log saved, but notification not sent';
         return serverResponse(res, 200, msg);
       });
+  }
+
+  static async addProductToProject(req, res) {
+    const { id: projectId } = req.params;
+    const { product, website, domainName } = req.body;
+    try {
+      await ProjectProduct.findOneAndUpdate(
+        { project: projectId, product },
+        { website, domainName },
+        { upsert: true },
+      );
+      return serverResponse(res, 201, 'Product added');
+    } catch (error) {
+      return serverResponse(res, 500, 'Something went wrong');
+    }
+  }
+  static async getProductProjects(req, res) {
+    const { id } = req.params;
+    const { type } = req.query;
+    try {
+      let conditions = { project: id };
+      if (type === 'product') {
+        conditions = { product: id };
+      }
+      const projProducts = await ProjectProduct.find(conditions)
+        .populate({
+          path: 'product',
+          select: 'name',
+          model: Product,
+        })
+        .populate({
+          path: 'project',
+          select: 'name',
+          model: Project,
+        })
+        .sort({ createdAt: -1 });
+      return serverResponse(res, 200, 'Success', projProducts);
+    } catch (error) {
+      return serverResponse(res, 500, 'Something went wrong');
+    }
   }
 }
 

@@ -1,11 +1,4 @@
-import {
-  CREATED,
-  NOT_FOUND,
-  INTERNAL_SERVER_ERROR,
-  OK,
-} from 'http-status';
 import moment from 'moment';
-import ResponseUtil from '../../utils/response.util';
 import Quote from '../../database/model/quote.model';
 import Project from '../../database/model/project.schema';
 import User from '../../database/model/user.model';
@@ -14,6 +7,11 @@ import invoiceHelper from '../invoice/invoice.helper';
 import { logProject } from '../../utils/log.project';
 import { emailTemplate } from '../../utils/validationMail';
 import { sendUserEmail } from '../mail/mail.controller';
+import { serverResponse } from '../../utils/response';
+import {
+  calculateAmounts,
+  haveTaxesChanged,
+} from '../../utils/helpers';
 
 /**
  * Quote controller class
@@ -25,8 +23,8 @@ class QuoteController {
    * @returns {object} function to create a quote
    */
   static async createQuote(req, res) {
-    const { projectId, billingCycle, amount } = req.body;
-    const { role } = req.userData;
+    const { projectId, ...restBody } = req.body;
+    // const { role } = req.userData;
     try {
       const project = await Project.findById(projectId)
         .populate({
@@ -40,39 +38,30 @@ class QuoteController {
           model: User,
         });
       if (!project) {
-        ResponseUtil.setError(NOT_FOUND, 'Project not found');
-        return ResponseUtil.send(res);
+        return serverResponse(res, 404, 'Project not found');
       }
       const quote = await Quote.create({
         user: project.user,
         project: projectId,
-        billingCycle,
-        amount,
+        ...restBody,
       });
       project.status = 'approved';
       await project.save();
-      const entities = {
-        project,
-        user: project.user,
-        manager: project.manager,
-        createdBy: req.userData,
-      };
-      await logProject(
-        entities,
-        { quoteId: quote._id },
-        'quote_create',
-        role,
-      );
-
-      ResponseUtil.setSuccess(
-        CREATED,
-        'Quote has been created successfully',
-        quote,
-      );
-      return ResponseUtil.send(res);
+      // const entities = {
+      //   project,
+      //   user: project.user,
+      //   manager: project.manager,
+      //   createdBy: req.userData,
+      // };
+      // await logProject(
+      //   entities,
+      //   { quoteId: quote._id },
+      //   'quote_create',
+      //   role,
+      // );
+      return serverResponse(res, 200, 'Success');
     } catch (error) {
-      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
-      return ResponseUtil.send(res);
+      return serverResponse(res, 500, error.toString());
     }
   }
 
@@ -86,8 +75,9 @@ class QuoteController {
     try {
       const { id: quoteId } = req.params;
       const { role } = req.userData;
-      const { amount, status, comment, billingCycle } = req.body;
-      const quote = await Quote.findById(quoteId)
+      const { amounts, status, comment, billingCycle, items } =
+        req.body;
+      let quote = await Quote.findById(quoteId)
         .populate({
           path: 'user',
           select: 'email fullName',
@@ -109,45 +99,54 @@ class QuoteController {
         manager: quote.project.manager,
         createdBy: req.userData,
       };
-      let content = {};
+      let content = { info: comment };
+      let logAction = 'quote_update';
 
-      quote.amount = amount;
-      quote.billingCycle = billingCycle;
-      if (status) {
-        quote.status = status;
-        quote.comment = comment;
+      content.quoteId = quoteId;
+      if (status === 'Pending') {
+        content.details = `New Proposal - ${quote.project.name}`;
+        logAction = 'quote_pending';
+      }
 
-        content.info = comment;
+      if (status === 'Draft' && items.length > 0) {
+        content.details = 'Proposal items updated';
+        content.info = items.reduce((info, item) => {
+          let itemInfo = `Item name: ${item.name}, price: ${item.price},`;
+          itemInfo += ` qty: ${item.quantity}<br/>`;
+          return info + itemInfo;
+        }, '');
       }
-      await quote.save();
-      if (!status) {
-        content.quoteId = quoteId;
-        await logProject(entities, content, 'quote_update', role);
-      }
-      if (status && status === 'approved') {
+
+      if (status === 'Accepted') {
+        const createdAt = moment().format('MMMM Do YYYY, HH:mm');
         let date = new Date();
         date.setHours(date.getHours() + 24);
         const invoice = {
           quote: quoteId,
           due_date: date,
-          amount,
+          amount: amounts?.total,
           user: quote.user._id,
           billingCycle,
           project: quote.project._id,
         };
         const newInvoice = await Invoice.create(invoice);
         const pdfBody = {
-          orderId: newInvoice._id,
+          order: newInvoice,
+          createdAt,
           due_date: moment(date).format('MMMM Do YYYY, HH:mm'),
-          amount,
+          amounts,
           project: quote.project,
           customerEmail: quote.user.email,
+          userId: quote.user._id,
           message: 'Pay the invoice within 24 hours',
+          taxes: quote.taxes,
+          isFixed: quote.isFixed,
+          discount: quote.discount,
         };
         await invoiceHelper.generatePDF(pdfBody);
-        content.details = 'Quote approved and invoice created';
+        logAction = 'invoice_create';
+        content.details = 'Proposal approved and invoice created';
         content.invoiceId = newInvoice._id;
-        await logProject(entities, content, 'invoice_create', role);
 
         //Notify admin
         const subject = 'A.R.I project update';
@@ -159,22 +158,27 @@ class QuoteController {
           await sendUserEmail(user, subject, content);
         }
       }
-      if (status && status === 'declined') {
+      if (status === 'Declined') {
         await Project.findByIdAndUpdate(quote.project._id, {
           status: 'pending',
         });
-        content.details = 'Quote declined and project set to PENDING';
-        await logProject(entities, content, 'quote_status', role);
+        logAction = 'quote_declined';
+        content.details =
+          'Proposal declined and project set to PENDING';
       }
-      ResponseUtil.setSuccess(
-        OK,
-        'Quote has been updated successfully',
-        quote,
-      );
-      return ResponseUtil.send(res);
+      if (
+        haveTaxesChanged(quote.taxes, req.body.taxes) ||
+        req.body.discount !== quote.discount
+      ) {
+        req.body.amounts = calculateAmounts(req.body);
+      }
+      await quote.updateOne(req.body);
+      if (status !== 'Draft') {
+        await logProject(entities, content, logAction, role);
+      }
+      return serverResponse(res, 200, 'Success', quote);
     } catch (error) {
-      ResponseUtil.setError(INTERNAL_SERVER_ERROR, error.toString());
-      return ResponseUtil.send(res);
+      return serverResponse(res, 500, error.toString());
     }
   }
 
@@ -188,7 +192,7 @@ class QuoteController {
     try {
       const { _id: userId, role } = req.userData;
 
-      let conditions = { user: userId };
+      let conditions = { user: userId, status: { $ne: 'Draft' } };
       if (role !== 'Client') {
         conditions = {};
       }
@@ -204,18 +208,9 @@ class QuoteController {
           select: 'fullName',
           model: User,
         });
-      return ResponseUtil.handleSuccessResponse(
-        OK,
-        'All quotes have been retrieved',
-        quotes,
-        res,
-      );
+      return serverResponse(res, 200, 'Success', quotes);
     } catch (error) {
-      return ResponseUtil.handleErrorResponse(
-        INTERNAL_SERVER_ERROR,
-        error.toString(),
-        res,
-      );
+      return serverResponse(res, 500, error.toString());
     }
   }
 }

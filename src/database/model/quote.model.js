@@ -16,9 +16,33 @@ const QuoteSchema = new Schema(
       ref: 'Project',
     },
     billingCycle: { type: String, required: true },
-    amount: { type: Number, required: true },
-    status: { type: String },
+    status: { type: String, default: 'Draft' },
     comment: { type: String },
+    taxes: [
+      {
+        title: { type: String, default: '' },
+        amount: { type: Number, default: 0 },
+      },
+    ],
+    discount: { type: Number, default: 0 },
+    isFixed: { type: Boolean, default: false },
+    amounts: {
+      subtotal: { type: Number, default: 0 },
+      tax: { type: Number, default: 0 },
+      discount: { type: Number, default: 0 },
+      total: { type: Number, default: 0 },
+    },
+    propasalText: { type: String },
+    customerNote: { type: String },
+    items: [
+      {
+        name: { type: String },
+        price: { type: Number },
+        quantity: { type: Number },
+        total: { type: Number },
+      },
+    ],
+    expiryDate: { type: Date, required: true },
   },
   {
     timestamps: true,

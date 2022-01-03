@@ -9,7 +9,7 @@ const data = {
       email: 'admin@sample.com',
       phoneNumber: '+250788558899',
       password: BcryptUtil.hashPassword(process.env.PASSWORD),
-      role: 'Manager',
+      role: 'Admin',
       companyName: 'Timecapsule 3D',
       companyUrl: 'http://timecapsule.com',
       address: 'Kigali, RWanda',

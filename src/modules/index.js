@@ -1,10 +1,10 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import homeRouter from './home';
 import mailRouter from './mail';
 import userRouter from './auth/user.route';
 import invoiceRouter from './invoice';
 import serviceRouter from './services/service.route';
-import authVerification from './middleware/auth.middleware';
+import { isAuthenticated } from './middleware/auth.middleware';
 import orderRouter from './order';
 import subscriptionRouter from './subscription';
 import projectRouter from './project';
@@ -12,23 +12,25 @@ import quoteRouter from './quote';
 import productRouter from './product';
 import { serverResponse } from '../utils/response';
 
-const indexRouter = Router();
+const router = Router();
 
-indexRouter.use('/home', homeRouter);
-indexRouter.use('/auth', userRouter);
-indexRouter.use('/mail', mailRouter);
-indexRouter.use('/user', userRouter);
-indexRouter.use('/invoice', invoiceRouter);
-indexRouter.use('/services', serviceRouter);
-indexRouter.use('/edit-profile', userRouter);
-indexRouter.use('/order', authVerification, orderRouter);
-indexRouter.use('/subscription', subscriptionRouter);
-indexRouter.use('/project', projectRouter);
-indexRouter.use('/quote', quoteRouter);
-indexRouter.use('/products', productRouter);
+router.use('/home', homeRouter);
+router.use('/auth', userRouter);
+router.use('/mail', mailRouter);
+router.use('/user', userRouter);
+router.use('/invoice', invoiceRouter);
+router.use('/services', serviceRouter);
+router.use('/edit-profile', userRouter);
+router.use('/order', isAuthenticated, orderRouter);
+router.use('/subscription', subscriptionRouter);
+router.use('/project', projectRouter);
+router.use('/quote', quoteRouter);
+router.use('/products', productRouter);
 
-indexRouter.all('/*', (_req, res) => {
+router.use('/images', express.static(process.env.IMAGES_ZONE));
+router.use('/files', express.static(process.env.IMAGES_3D_ZONE));
+router.all('/*', (_req, res) => {
   return serverResponse(res, 404, 'Oops, you have lost');
 });
 
-export default indexRouter;
+export default router;
