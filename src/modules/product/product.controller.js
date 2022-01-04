@@ -61,6 +61,8 @@ export class ProductController {
       });
 
       req.body.price = req.body.price || 0;
+      // eslint-disable-next-line no-console
+      console.log('req.body.price', req.body.price);
       await product.updateOne(req.body);
       if (projProduct?.project !== project) {
         if (projProduct) {
