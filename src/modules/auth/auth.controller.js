@@ -232,7 +232,6 @@ class AuthController {
       });
       if (user) {
         user.password = BcryptUtil.hashPassword(password);
-        user.role = 'Client';
         user.resetKey = null;
 
         await user.save();

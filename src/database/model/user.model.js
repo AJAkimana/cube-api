@@ -30,6 +30,7 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
+// eslint-disable-next-line func-names
 userSchema.pre('save', function (next) {
   const user = this;
   // Save fullName if it has been modified (or is new)
@@ -37,9 +38,10 @@ userSchema.pre('save', function (next) {
     return next();
   }
 
-  user.fullName = user.firstName + ' ' + user.lastName;
+  user.fullName = `${user.firstName} ${user.lastName}`;
   next();
 });
+// eslint-disable-next-line func-names
 userSchema.methods.generateFullName = function (fName, lName, cb) {
   const fullName = `${fName} ${lName}`;
   cb(null, fullName);
