@@ -60,6 +60,7 @@ export class ProductController {
         product: productId,
       });
 
+      req.body.price = req.body.price || 0;
       await product.updateOne(req.body);
       if (projProduct?.project !== project) {
         if (projProduct) {

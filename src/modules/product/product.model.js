@@ -100,6 +100,7 @@ const productSchema = new Schema(
   },
 );
 productSchema.plugin(AutoIncreament, { inc_field: 'itemNumber' });
+// eslint-disable-next-line func-names
 productSchema.pre('save', function (next) {
   const product = this;
   product.image.alt = product.image.alt || product.name;
