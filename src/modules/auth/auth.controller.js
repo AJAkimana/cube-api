@@ -230,7 +230,7 @@ class AuthController {
         password: 0,
         resetKey: 0,
       });
-      if (user && user.role === 'visitor') {
+      if (user) {
         user.password = BcryptUtil.hashPassword(password);
         user.role = 'Client';
         user.resetKey = null;
