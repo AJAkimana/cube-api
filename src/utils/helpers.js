@@ -7,7 +7,7 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
   const images = process.env.IMAGES_ZONE;
   const images3D = process.env.IMAGES_3D_ZONE;
   // Allowed exts
-  const allowed3DImages = /glb|usdz/;
+  const allowed3DImages = /glb|gltf|usdz/;
   const allowedImages = /jpeg|jpg|png/;
   // Check ext
   let extname = false;

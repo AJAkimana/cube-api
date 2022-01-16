@@ -2,14 +2,11 @@ import { existsSync, mkdirSync } from 'fs';
 import multer from 'multer';
 import path from 'path';
 import { randomBytes } from 'crypto';
-import {
-  ACCEPTED_FILE_SIZE,
-  deleteDirFilesUsingPattern,
-  isFileAllowed,
-} from './helpers';
+import { ACCEPTED_FILE_SIZE, isFileAllowed } from './helpers';
 import { serverResponse } from './response';
 import Product from '../modules/product/product.model';
 
+// eslint-disable-next-line import/prefer-default-export
 export const uploadFiles = (req, res) => {
   let fileStorage = null;
   const { fileType } = req.params;
@@ -29,16 +26,16 @@ export const uploadFiles = (req, res) => {
    * Delete the previous file if exist
    */
   if (prevFile) {
-    const prevFileName = prevFile.split('@')[0];
+    // const prevFileName = prevFile.split('@')[0];
     // deleteDirFilesUsingPattern(prevFileName, fileStorage);
   }
   const storage = multer.diskStorage({
-    destination: (req, file, callBack) => {
+    destination: (_req, file, callBack) => {
       return callBack(null, fileStorage);
     },
-    filename: (req, file, callBack) => {
-      let ext = path.extname(file.originalname).split('.')[1];
-      let fileName = file.originalname.split('.')[0];
+    filename: (_req, file, callBack) => {
+      const ext = path.extname(file.originalname).split('.')[1];
+      const fileName = file.originalname.split('.')[0];
       let mediaLink = `${fileName}-${Date.now()}.${ext}`;
       if (fileStorage === process.env.IMAGES_3D_ZONE) {
         mediaLink = `${fileName}-${randStr}@${Date.now()}.${ext}`;
@@ -49,7 +46,7 @@ export const uploadFiles = (req, res) => {
   const upload = multer({
     storage,
     limits: { fileSize: ACCEPTED_FILE_SIZE },
-    fileFilter: (req, file, filterCallBack) => {
+    fileFilter: (_req, file, filterCallBack) => {
       isFileAllowed(file, fileStorage, (error, allowed) => {
         return filterCallBack(error, allowed);
       });
