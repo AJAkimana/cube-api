@@ -140,10 +140,10 @@ export class ProductController {
       readdirSync(images3DStorage)
         .filter((file) => file.includes(fileName))
         .forEach((img) => {
-          if (img.endsWith('.glb')) {
-            images.glb = img;
-          } else {
+          if (img.endsWith('.usdz')) {
             images.usdz = img;
+          } else {
+            images.glb = img;
           }
         });
       const productObj = product.toObject();
