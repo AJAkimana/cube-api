@@ -8,6 +8,8 @@ dist
 package-lock.json
 tmp/
 public/
+ARi-invoice.pdf
+ARi-proposal.pdf
 invoice.pdf
 proposal.pdf
 package-lock.json

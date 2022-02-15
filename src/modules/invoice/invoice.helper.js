@@ -24,9 +24,11 @@ class InvoiceHelpers {
   static async generatePDF(body, isDownload = false) {
     const { message, type = 'invoice', items = [] } = body;
     // console.log(items);
+    const dlFile =
+      type === 'invoice' ? 'ARi-invoice' : 'ARi-proposal';
     try {
-      let fileName = `./${type}.pdf`;
-      let html = fs.readFileSync(`${type}.html`, 'utf8');
+      const fileName = `./${dlFile}.pdf`;
+      const html = fs.readFileSync(`${type}.html`, 'utf8');
       const user = await User.findById(body.userId);
       let contents =
         '<div style="font-weight:900;margin-top:00px;text-align:center;">';
@@ -124,7 +126,7 @@ class InvoiceHelpers {
       fs.readFile(fileName, async (err, data) => {
         const attachments = [
           {
-            filename: `${type}.pdf`,
+            filename: `${dlFile}.pdf`,
             content: data.toString('base64'),
             type: 'application/pdf',
             disposition: 'attachment',
