@@ -1,3 +1,5 @@
+/* eslint-disable prefer-destructuring */
+/* eslint-disable no-cond-assign */
 import { readdir, unlink } from 'fs';
 import path, { resolve } from 'path';
 import { Types } from 'mongoose';
@@ -33,12 +35,11 @@ export const isFileAllowed = (file, filePath, fileCallBack) => {
 
   if (mimetype && extname) {
     return fileCallBack(null, true);
-  } else {
-    return fileCallBack(errorMessage);
   }
+  return fileCallBack(errorMessage);
 };
 const MB = 1024 * 1024;
-export const ACCEPTED_FILE_SIZE = 50 * MB; //50 mbs
+export const ACCEPTED_FILE_SIZE = 50 * MB; // 50 mbs
 
 export const deleteDirFilesUsingPattern = (
   pattern = 'dssd',
@@ -48,10 +49,11 @@ export const deleteDirFilesUsingPattern = (
 
   // get all file names in directory
   const regPattern = new RegExp(pattern, 'g');
-  readdir(resolve(dirPath), (err, fileNames) => {
-    if (err) throw err;
+  readdir(resolve(dirPath), (error, fileNames) => {
+    if (error) throw error;
 
     // iterate through the found file names
+    // eslint-disable-next-line no-restricted-syntax
     for (const name of fileNames) {
       // if file name matches the pattern
       if (regPattern.test(name)) {

@@ -1,6 +1,4 @@
-// import MobileDetect from 'mobile-detect';
 import { Reader } from '@maxmind/geoip2-node';
-// import { getRequestIp } from './helpers';
 import ProductAnalytic from '../modules/product/productAnalytic.model';
 
 /**
@@ -29,32 +27,28 @@ export const getRequestOs = (userAgent = {}) => {
  * @returns {Promise<any>}
  */
 export const createAnalytics = async (req, product) => {
-  try {
-    const { analyticType = 'visit' } = req.query;
-    // const md = new MobileDetect(req.headers['user-agent']);
+  const { analyticType = 'visit' } = req.query;
+  // const md = new MobileDetect(req.headers['user-agent']);
 
-    const reader = await Reader.open(process.env.GEOIP_PATH);
-    let ipAddress = process.env.TEST_IP;
-    if (process.env.NODE_ENV === 'production') {
-      ipAddress = req.ip;
-    }
-    const city = reader.city(ipAddress);
-
-    let analyticBody = {
-      product: product._id,
-      project: product.project,
-      customer: product.customer,
-      device: getRequestOs(req.useragent),
-      country: city.country.names.en,
-      city: city.city?.names?.en || 'Not captured',
-      actionType: analyticType,
-    };
-    const newAnalytic = await ProductAnalytic.create(analyticBody);
-
-    return newAnalytic;
-  } catch (error) {
-    throw error;
+  const reader = await Reader.open(process.env.GEOIP_PATH);
+  let ipAddress = process.env.TEST_IP;
+  if (process.env.NODE_ENV === 'production') {
+    ipAddress = req.ip;
   }
+  const city = reader.city(ipAddress);
+
+  const analyticBody = {
+    product: product._id,
+    project: product.project,
+    customer: product.customer,
+    device: getRequestOs(req.useragent),
+    country: city.country?.names?.en || 'Not specified',
+    city: city.city?.names?.en || 'Not specifie',
+    actionType: analyticType,
+  };
+  const newAnalytic = await ProductAnalytic.create(analyticBody);
+
+  return newAnalytic;
 };
 
 /**
@@ -94,13 +88,11 @@ export const organizeAnalytics = (analytics = []) => {
       ].countries.findIndex((el) => el.name === analytic.country);
       if (countryIndex >= 0) {
         organized[organizedIndex].countries[countryIndex].count += 1;
-      } else {
-        if (organized[organizedIndex].countries.length < 4) {
-          organized[organizedIndex].countries.push({
-            name: analytic.country,
-            count: 1,
-          });
-        }
+      } else if (organized[organizedIndex].countries.length < 4) {
+        organized[organizedIndex].countries.push({
+          name: analytic.country,
+          count: 1,
+        });
       }
     }
   });
