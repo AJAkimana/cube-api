@@ -140,6 +140,7 @@ class QuoteController {
           userId: quote.user._id,
           message: 'Pay the invoice within 24 hours',
           taxes: quote.taxes,
+          items: quote.items,
           isFixed: quote.isFixed,
           discount: quote.discount,
         };
