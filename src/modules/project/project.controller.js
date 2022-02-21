@@ -83,6 +83,7 @@ class ProjectController {
     ResponseUtil.setSuccess(OK, 'Success', projects);
     return ResponseUtil.send(res);
   }
+
   /**
    * @param  {object} req
    * @param  {object} res
@@ -99,6 +100,7 @@ class ProjectController {
     ResponseUtil.setSuccess(OK, 'Success', projects);
     return ResponseUtil.send(res);
   }
+
   /**
    * @param  {object} req
    * @param  {object} res
@@ -149,6 +151,7 @@ class ProjectController {
       );
     }
   }
+
   /**
    * @param  {object} req
    * @param  {object} res
@@ -171,6 +174,7 @@ class ProjectController {
     ResponseUtil.setSuccess(OK, 'Success', histories);
     return ResponseUtil.send(res);
   }
+
   /**
    * @param  {object} req
    * @param  {object} res
@@ -261,6 +265,7 @@ class ProjectController {
       return serverResponse(res, 500, 'Something went wrong');
     }
   }
+
   static async getProductProjects(req, res) {
     const { id } = req.params;
     const { type } = req.query;

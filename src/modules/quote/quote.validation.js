@@ -23,5 +23,6 @@ export const validateQuoteBody = (req, res, next) => {
  * @returns {object} Object
  */
 export const validateQuoteUpdate = (req, res, next) => {
+  delete req.body.idNumber;
   return handleErrorsUtil(quoteUpdateSchema, req.body, res, next);
 };

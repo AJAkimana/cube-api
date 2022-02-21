@@ -17,6 +17,7 @@ const invoiceSchema = new Schema(
       ref: 'User',
     },
     status: { type: String, default: 'pending' },
+    idNumber: { type: Number, default: 4 },
   },
   {
     timestamps: true,
@@ -27,5 +28,13 @@ const invoiceSchema = new Schema(
     },
   },
 );
+invoiceSchema.pre('save', function (next) {
+  if (this.isNew) {
+    this.constructor.find({}).then((records) => {
+      this.idNumber = records.length + 1;
+      next();
+    });
+  }
+});
 const Invoice = model('Invoice', invoiceSchema);
 export default Invoice;

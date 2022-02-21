@@ -43,11 +43,20 @@ const QuoteSchema = new Schema(
       },
     ],
     expiryDate: { type: Date, required: true },
+    idNumber: { type: Number, default: 4 },
   },
   {
     timestamps: true,
     writeConcern: { w: 'majority', j: true, wtimeout: 1000 },
   },
 );
+QuoteSchema.pre('save', function (next) {
+  if (this.isNew) {
+    this.constructor.find({}).then((records) => {
+      this.idNumber = records.length + 1;
+      next();
+    });
+  }
+});
 const Quote = model('Quote', QuoteSchema);
 export default Quote;
