@@ -70,6 +70,7 @@ export const uploadFiles = (req, res) => {
             'image.imageFiles': {
               imageType: imgType,
               imageFileName: fileName,
+              canBeDeleted: true,
             },
           },
         },

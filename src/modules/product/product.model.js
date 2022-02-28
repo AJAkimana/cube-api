@@ -1,5 +1,6 @@
 import mongoose, { Schema, model } from 'mongoose';
 import MongoSequence from 'mongoose-sequence';
+import defaultImages from '../../utils/constants';
 
 const AutoIncreament = MongoSequence(mongoose);
 const orbits = {
@@ -7,6 +8,13 @@ const orbits = {
   ud: { type: Number, default: 50 },
   io: { type: Number, default: 50 },
 };
+
+const ImageSchema = new Schema({
+  imageType: { type: String },
+  imageFileName: { type: String },
+  canBeDeleted: { type: Boolean, default: false },
+});
+
 const productSchema = new Schema(
   {
     name: { type: String, required: true },
@@ -64,12 +72,7 @@ const productSchema = new Schema(
         active: { type: Boolean, default: false },
         image: { type: String },
       },
-      imageFiles: [
-        {
-          imageType: { type: String },
-          imageFileName: { type: String },
-        },
-      ],
+      imageFiles: { type: [ImageSchema], default: defaultImages },
       hotspots: [
         {
           dataPosition: { type: String },
