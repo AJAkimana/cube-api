@@ -24,9 +24,11 @@ class InvoiceHelpers {
   static async generatePDF(body, isDownload = false) {
     const { message, type = 'invoice', items = [] } = body;
     // console.log(items);
+    const dlFile =
+      type === 'invoice' ? 'ARi-invoice' : 'ARi-proposal';
     try {
-      let fileName = `./${type}.pdf`;
-      let html = fs.readFileSync(`${type}.html`, 'utf8');
+      const fileName = `./${dlFile}.pdf`;
+      const html = fs.readFileSync(`${type}.html`, 'utf8');
       const user = await User.findById(body.userId);
       let contents =
         '<div style="font-weight:900;margin-top:00px;text-align:center;">';
@@ -55,7 +57,6 @@ class InvoiceHelpers {
         }
       });
       const invoice = {
-        orderId: body.order._id,
         due_date: body.due_date,
         createdAt: body.createdAt,
         total: totalAmount,
@@ -64,8 +65,8 @@ class InvoiceHelpers {
         )}`,
         projectName: body.project?.name,
         projectType: body.project?.type,
-        invoiceNumber: body.order.invoiceNumber || 4,
-        status: body.order.status,
+        idNumber: body.order?.idNumber || 4,
+        status: body.order?.status,
         amountDue: totalAmount,
       };
       let discountPct = `${body.discount}%`;
@@ -105,7 +106,7 @@ class InvoiceHelpers {
         data: {
           invoice,
           user: user.toObject(),
-          orderNumber: invoice.invoiceNumber,
+          idNumber: invoice.idNumber,
           propasalText: body.order.propasalText || '',
           customerNote: body.order.customerNote || '',
           logo: logoFE,
@@ -124,11 +125,11 @@ class InvoiceHelpers {
       fs.readFile(fileName, async (err, data) => {
         const attachments = [
           {
-            filename: `${type}.pdf`,
+            filename: `${dlFile}.pdf`,
             content: data.toString('base64'),
             type: 'application/pdf',
             disposition: 'attachment',
-            contentId: body.orderId,
+            contentId: body.idNumber,
           },
         ];
         await sendInvoice(

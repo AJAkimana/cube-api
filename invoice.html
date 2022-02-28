@@ -40,7 +40,7 @@
     <table width="100%">
       <tr>
         <td>
-          <span>INVOICE #{{orderNumber}}</span>
+          <span>INVOICE #{{idNumber}}</span>
         </td>
         <td>
           <table width="100%">
@@ -82,7 +82,7 @@
             <tr class="table-border">
               <td class="table-border grey-bg">INVOICE #</td>
               <td align="right" class="table-border">
-                {{{invoiceNumber}}}
+                {{{idNumber}}}
               </td>
             </tr>
             <tr class="table-border">
@@ -128,22 +128,22 @@
             </tr>
             {{#with invoice}}
             <tr class="table-border">
-              <td rowspan="2" class="table-border">
+              <td rowspan="4" class="table-border">
                 {{{projectName}}}
               </td>
               <td colspan="3" class="table-border">
                 Sub Total {{{subTotal}}}
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               {{#with discount}}
               <td colspan="2" class="table-border">
                 Discount {{percent}}
               </td>
               <td class="table-border">{{amount}}</td>
               {{/with}}
-            </tr>
-            <tr>
+            </tr> -->
+            <!-- <tr>
               {{#with taxe}}
               <td colspan="2" class="table-border">
                 <ul>
@@ -154,7 +154,7 @@
               </td>
               <td class="table-border">{{amount}}</td>
               {{/with}}
-            </tr>
+            </tr> -->
             <tr class="table-border">
               <td colspan="3" class="table-border grey-bg">
                 Total {{{total}}}

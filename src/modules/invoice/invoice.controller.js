@@ -190,7 +190,7 @@ class InvoiceController {
           .populate({
             path: 'quote',
             select:
-              'amounts taxes discount isFixed expiryDate createdAt',
+              'amounts taxes discount isFixed expiryDate createdAt idNumber',
             model: Quote,
           });
       }
@@ -202,7 +202,6 @@ class InvoiceController {
         });
         message = 'Proposal';
       }
-
       if (!download) {
         const errMsg = 'Sorry the invoice has not been generated';
         return serverResponse(res, 404, errMsg);
@@ -217,7 +216,7 @@ class InvoiceController {
           download?.expiryDate || download.quote?.expiryDate,
         ).format('MMMM Do YYYY, HH:mm'),
         amounts: download?.amounts || download?.quote.amounts,
-        items: download.items,
+        items: download.items || download?.quote.items,
         project: download.project,
         userId: download.user,
         message,
@@ -229,7 +228,9 @@ class InvoiceController {
       // console.log('Got here==============>');
       await invoiceHelper.generatePDF(pdfBody, true);
       // console.log('Got here to==============>', downloadType);
-      return res.download(`./${downloadType}.pdf`);
+      const dlFile =
+        downloadType === 'invoice' ? 'ARi-invoice' : 'ARi-proposal';
+      return res.download(`./${dlFile}.pdf`);
     } catch (error) {
       return serverResponse(res, 500, error.toString());
     }

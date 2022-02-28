@@ -40,7 +40,7 @@
     <table width="100%">
       <tr>
         <td>
-          <span>PROPASAL #{{orderNumber}}</span>
+          <span>PROPOSAL #{{idNumber}}</span>
         </td>
         <td>
           <table width="100%">
@@ -80,8 +80,10 @@
           {{#with invoice}}
           <table border="0" class="table-collapse">
             <tr class="table-border">
-              <td class="table-border grey-bg">PROPASAL #</td>
-              <td align="right" class="table-border">4</td>
+              <td class="table-border grey-bg">PROPOSAL #</td>
+              <td align="right" class="table-border">
+                {{{idNumber}}}
+              </td>
             </tr>
             <tr class="table-border">
               <td class="table-border grey-bg">Status</td>

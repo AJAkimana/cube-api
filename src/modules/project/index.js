@@ -14,7 +14,6 @@ import {
   isClient,
   isNotVisitor,
 } from '../middleware/auth.middleware';
-import { uploadImage } from '../../utils/image.util';
 
 const {
   createProject,
@@ -33,7 +32,6 @@ projectRouter.post(
   isAuthenticated,
   isClient,
   validateProjectBody,
-  uploadImage,
   createProject,
 );
 

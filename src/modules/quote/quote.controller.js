@@ -77,7 +77,7 @@ class QuoteController {
       const { role } = req.userData;
       const { amounts, status, comment, billingCycle, items } =
         req.body;
-      let quote = await Quote.findById(quoteId)
+      const quote = await Quote.findById(quoteId)
         .populate({
           path: 'user',
           select: 'email fullName',
@@ -99,7 +99,7 @@ class QuoteController {
         manager: quote.project.manager,
         createdBy: req.userData,
       };
-      let content = { info: comment };
+      const content = { info: comment };
       let logAction = 'quote_update';
 
       content.quoteId = quoteId;
@@ -119,7 +119,7 @@ class QuoteController {
 
       if (status === 'Accepted') {
         const createdAt = moment().format('MMMM Do YYYY, HH:mm');
-        let date = new Date();
+        const date = new Date();
         date.setHours(date.getHours() + 24);
         const invoice = {
           quote: quoteId,
@@ -140,6 +140,7 @@ class QuoteController {
           userId: quote.user._id,
           message: 'Pay the invoice within 24 hours',
           taxes: quote.taxes,
+          items: quote.items,
           isFixed: quote.isFixed,
           discount: quote.discount,
         };
@@ -148,7 +149,7 @@ class QuoteController {
         content.details = 'Proposal approved and invoice created';
         content.invoiceId = newInvoice._id;
 
-        //Notify admin
+        // Notify admin
         const subject = 'A.R.I project update';
         let tempMail = `<b>${content.details}</b><br/>`;
         tempMail += comment || '';
