@@ -40,13 +40,13 @@
     <table width="100%">
       <tr>
         <td>
-          <span>PROPASAL #{{orderNumber}}</span>
+          <span>PROPOSAL #{{idNumber}}</span>
         </td>
         <td>
           <table width="100%">
             <tr>
               <td align="right">
-                <img src="https://res.cloudinary.com/fridolin/image/upload/v1644479711/ari_cube_smrkay.png" alt="ARI logo" width="100px" />
+                <img src="{{logo}}" alt="ARI logo" width="100px" />
                 <br />
                 <span>Augmented Reality Innovations</span><br />
                 <span>80F Centurian Dr. Suite 10,</span><br />
@@ -80,8 +80,10 @@
           {{#with invoice}}
           <table border="0" class="table-collapse">
             <tr class="table-border">
-              <td class="table-border grey-bg">PROPASAL #</td>
-              <td align="right" class="table-border">4</td>
+              <td class="table-border grey-bg">PROPOSAL #</td>
+              <td align="right" class="table-border">
+                {{{idNumber}}}
+              </td>
             </tr>
             <tr class="table-border">
               <td class="table-border grey-bg">Status</td>
