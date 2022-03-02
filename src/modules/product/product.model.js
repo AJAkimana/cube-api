@@ -1,6 +1,6 @@
 import mongoose, { Schema, model } from 'mongoose';
 import MongoSequence from 'mongoose-sequence';
-import defaultImages from '../../utils/constants';
+import { defaultImages } from '../../utils/constants';
 
 const AutoIncreament = MongoSequence(mongoose);
 const orbits = {

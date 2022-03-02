@@ -19,7 +19,8 @@ const customArBtnImages = [
   'white.png',
 ];
 
-export default defaultImages = [
+// eslint-disable-next-line import/prefer-default-export
+export const defaultImages = [
   ...skyboxImages.map((img) => ({
     imageType: 'skybox',
     imageFileName: img,
