@@ -1,4 +1,5 @@
-const skyboxImages = [
+const customArBtnImages = [
+  'blackwhite.png',
   'lightgrey.png',
   'spacegrey.png',
   'wallblack.png',
@@ -8,8 +9,7 @@ const skyboxImages = [
   'white.png',
 ];
 
-const customArBtnImages = [
-  'blackwhite.png',
+const skyboxImages = [
   'evening_bridge.jpg',
   'evening_in_the_6.jpg',
   'forest_tree.jpg',
