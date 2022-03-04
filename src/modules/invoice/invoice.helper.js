@@ -94,8 +94,6 @@ class InvoiceHelpers {
         amount: `$${body.amounts?.discount?.toLocaleString('en-US')}`,
       };
 
-      // const logoBE = `${process.env.APP_URL}/assets/square_transparent.png`;
-      const logoFE = `${process.env.FRONTEND_URL}/static/media/ari_cube.2edefd08.png`;
       const theItems = items.map((item) => ({
         ...item,
         price: `$${item.price.toLocaleString('en-US')}`,
@@ -109,7 +107,6 @@ class InvoiceHelpers {
           idNumber: invoice.idNumber,
           propasalText: body.order.propasalText || '',
           customerNote: body.order.customerNote || '',
-          logo: logoFE,
           items: theItems,
           taxe,
           discount,
