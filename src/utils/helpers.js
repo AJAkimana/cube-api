@@ -1,6 +1,6 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-cond-assign */
-import { readdir, unlink } from 'fs';
+import { readdir, readdirSync, unlink, unlinkSync } from 'fs';
 import path, { resolve } from 'path';
 import { Types } from 'mongoose';
 // import ipAddr from 'ipaddr.js';
@@ -132,4 +132,26 @@ export const getRequestIp = (reqIp) => {
     }
   }
   return remoteAddress;
+};
+export const deleteProductImages = async ({
+  src = '',
+  imageFiles = [],
+}) => {
+  const imagesZone = process.env.IMAGES_ZONE;
+  const images3DZone = process.env.IMAGES_3D_ZONE;
+  try {
+    readdirSync(images3DZone).forEach((img) => {
+      if (img.includes(src)) {
+        unlinkSync(`${images3DZone}/${img}`);
+      }
+    });
+    imageFiles.forEach((image) => {
+      if (image.canBeDeleted) {
+        unlinkSync(`${imagesZone}/${image.imageFileName}`);
+      }
+    });
+    return 'Images Deleted';
+  } catch (error) {
+    return 'There was an when deleting images';
+  }
 };

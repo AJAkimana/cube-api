@@ -1,4 +1,4 @@
-import { Response } from 'express';
+/* eslint-disable import/prefer-default-export */
 
 /**
  *

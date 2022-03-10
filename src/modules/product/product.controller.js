@@ -12,6 +12,7 @@ import {
   organizeAnalytics,
 } from '../../utils/product.util';
 import ProductAnalytic from './productAnalytic.model';
+import { deleteProductImages } from '../../utils/helpers';
 
 export class ProductController {
   static async addNewProduct(req, res) {
@@ -99,8 +100,13 @@ export class ProductController {
   static async deleteProduct(req, res) {
     const { productId } = req.params;
     try {
-      await Product.remove({ _id: productId });
-      return serverResponse(res);
+      const product = await Product.findById(productId);
+      const productImage = product.image;
+      await product.remove();
+      await ProductAnalytic.remove({ product: productId });
+      // Delete skybox and environment images
+      const msg = await deleteProductImages(productImage);
+      return serverResponse(res, 200, msg);
     } catch (error) {
       return serverResponse(res, 500, error.message);
     }
