@@ -3,7 +3,6 @@ import { uploadFiles } from '../../utils/file.uploader';
 import { ProductController } from './product.controller';
 import {
   isAuthenticated,
-  isAdmin,
   isAdminOrManager,
 } from '../middleware/auth.middleware';
 import {
@@ -50,7 +49,7 @@ productRouter.patch(
 productRouter.delete(
   '/:productId',
   isAuthenticated,
-  isAdmin,
+  isAdminOrManager,
   doesProductExist,
   deleteProduct,
 );
