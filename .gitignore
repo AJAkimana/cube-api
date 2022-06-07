@@ -9,4 +9,5 @@ package-lock.json
 tmp/
 invoice.pdf
 proposal.pdf
-package-lock.json
+public/
+geolite2_data/
